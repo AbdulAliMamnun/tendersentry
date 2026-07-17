@@ -9,6 +9,7 @@ import re
 import shutil
 import time
 import zipfile
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Iterable
 from urllib.parse import unquote, urlparse
@@ -29,7 +30,6 @@ CACHE_MAX_AGE_SECONDS = 24 * 60 * 60
 DOWNLOAD_TIMEOUT_SECONDS = 60
 SUPPORTED_EXTENSIONS = {".pdf", ".doc", ".docx", ".zip"}
 ARCHIVE_DOCUMENT_EXTENSIONS = {".pdf", ".doc", ".docx"}
-CONSTRUCTION_UNSPSC_SEGMENTS = ("72", "30")
 
 
 def fetch_notices_csv(dest_path: str) -> str:
@@ -79,29 +79,51 @@ def parse_notices(csv_path: str) -> list[dict]:
     columns = _map_columns(headers)
 
     notices: list[dict] = []
+    closed_count = 0
+    invalid_closing_count = 0
+    now = datetime.now().astimezone()
     for row_number, (_, row) in enumerate(dataframe.iterrows(), start=2):
+        closing_date = _cell_text(row[columns["closing_date"]])
+        closing_is_future = _is_future_closing(closing_date, now)
+        if closing_is_future is None:
+            invalid_closing_count += 1
+            LOGGER.warning(
+                "Skipping CSV row %d: invalid closing date %r",
+                row_number,
+                closing_date,
+            )
+            continue
+        if not closing_is_future:
+            closed_count += 1
+            continue
+
         regions = _join_values(row, columns["regions"])
         if not _matches_region(regions, str(config.REGION_FILTER)):
             continue
 
         title = _cell_text(row[columns["title"]])
         description = _cell_text(row[columns["description"]])
-        category_codes = _join_values(row, columns["category_codes"])
-        if not _matches_category(category_codes, title, description):
-            continue
-
         reference = _cell_text(row[columns["reference_number"]])
         tender_id = _sanitize_tender_id(reference)
         if not tender_id:
             LOGGER.warning("Skipping CSV row %d: missing reference number", row_number)
             continue
 
+        procurement_category = _cell_text(row[columns["procurement_category"]])
+        category_rule = _category_match_rule(
+            procurement_category, title, description
+        )
+        if category_rule is None:
+            continue
+
+        LOGGER.info("Keeping notice %s: matched by %s", tender_id, category_rule)
+
         notices.append(
             {
                 "tender_id": tender_id,
                 "title": title,
                 "publication_date": _cell_text(row[columns["publication_date"]]),
-                "closing_date": _cell_text(row[columns["closing_date"]]),
+                "closing_date": closing_date,
                 "regions": regions,
                 "description": description,
                 "attachment_urls": _split_attachment_urls(
@@ -109,6 +131,13 @@ def parse_notices(csv_path: str) -> list[dict]:
                 ),
                 "notice_url": _cell_text(row[columns["notice_url"]]),
             }
+        )
+
+    LOGGER.info("Excluded %d notices as closed", closed_count)
+    if invalid_closing_count:
+        LOGGER.info(
+            "Excluded %d notices with invalid closing dates",
+            invalid_closing_count,
         )
 
     notices_path = Path(config.NOTICES_PATH)
@@ -176,9 +205,17 @@ def ingest_demo_set(limit: int = 10) -> None:
     """Ingest up to ``limit`` notices with attachments and print a summary table."""
     csv_path = fetch_notices_csv(str(config.OPEN_TENDERS_CSV_PATH))
     notices = parse_notices(csv_path)
-    selected = [notice for notice in notices if notice["attachment_urls"]][
-        : max(0, limit)
-    ]
+    with_attachments: list[dict] = []
+    zero_attachment_count = 0
+    for notice in notices:
+        if notice["attachment_urls"]:
+            with_attachments.append(notice)
+        else:
+            zero_attachment_count += 1
+    LOGGER.info(
+        "%d filtered notices had zero attachment URLs", zero_attachment_count
+    )
+    selected = with_attachments[: max(0, limit)]
 
     rows: list[list[str]] = []
     for notice in selected:
@@ -260,25 +297,20 @@ def _map_columns(headers: list[str]) -> dict[str, Any]:
     )
     attachments = first(matching("attachment", "eng"))
     notice_url = first(matching("noticeurl")) or first(matching("url", "eng"))
+    procurement_category = first(matching("procurementcategory"))
 
     region_candidates = matching("region")
     english_regions = [
         header for header in region_candidates if "eng" in normalized[header]
     ]
     regions = english_regions or region_candidates
-    category_codes = [
-        header
-        for header, value in normalized.items()
-        if ("unspsc" in value or "gsin" in value) and "description" not in value
-    ]
-
     mapped: dict[str, Any] = {
         "reference_number": reference,
         "title": title,
         "publication_date": publication,
         "closing_date": closing,
         "regions": regions,
-        "category_codes": category_codes,
+        "procurement_category": procurement_category,
         "description": description,
         "attachments": attachments,
         "notice_url": notice_url,
@@ -323,27 +355,37 @@ def _matches_region(regions: str, region_filter: str) -> bool:
     return wanted in region_text
 
 
-def _matches_category(codes: str, title: str, description: str) -> bool:
-    category_filter = str(config.CATEGORY_FILTER).strip().casefold()
-    if not category_filter:
-        return True
+def _category_match_rule(
+    procurement_category: str, title: str, description: str
+) -> str | None:
+    if "cnst" in procurement_category.casefold():
+        return "procurementCategory=CNST"
 
     searchable_text = f"{title}\n{description}".casefold()
-    keyword_match = any(
-        re.search(
+    matched_keywords = [
+        str(keyword)
+        for keyword in config.CATEGORY_KEYWORDS
+        if re.search(
             rf"(?<![a-z0-9_]){re.escape(str(keyword).casefold())}(?![a-z0-9_])",
             searchable_text,
         )
-        for keyword in config.CATEGORY_KEYWORDS
-    )
-    if category_filter == "construction":
-        numeric_codes = re.findall(r"(?<!\d)(\d+)", codes)
-        code_match = any(
-            code.startswith(CONSTRUCTION_UNSPSC_SEGMENTS) for code in numeric_codes
-        )
-        return code_match or keyword_match
+    ]
+    if matched_keywords:
+        return f"keyword fallback ({', '.join(matched_keywords)})"
+    return None
 
-    return category_filter in codes.casefold() or keyword_match
+
+def _is_future_closing(closing_date: str, now: datetime) -> bool | None:
+    if not closing_date:
+        return None
+    try:
+        parsed = datetime.fromisoformat(closing_date.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+
+    if parsed.tzinfo is None:
+        return parsed > now.replace(tzinfo=None)
+    return parsed > now.astimezone(parsed.tzinfo)
 
 
 def _split_attachment_urls(value: str) -> list[str]:
