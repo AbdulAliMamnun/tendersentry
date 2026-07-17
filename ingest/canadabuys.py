@@ -12,10 +12,11 @@ import zipfile
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Iterable
-from urllib.parse import unquote, urlparse
+from urllib.parse import unquote, urljoin, urlparse
 
 import pandas as pd
 import requests
+from bs4 import BeautifulSoup
 
 import config
 
@@ -30,6 +31,9 @@ CACHE_MAX_AGE_SECONDS = 24 * 60 * 60
 DOWNLOAD_TIMEOUT_SECONDS = 60
 SUPPORTED_EXTENSIONS = {".pdf", ".doc", ".docx", ".zip"}
 ARCHIVE_DOCUMENT_EXTENSIONS = {".pdf", ".doc", ".docx"}
+DOCUMENT_LINK_HINT = re.compile(
+    r"attachment|document|download|bid[\s_-]*package", re.IGNORECASE
+)
 
 
 def fetch_notices_csv(dest_path: str) -> str:
@@ -77,43 +81,88 @@ def parse_notices(csv_path: str) -> list[dict]:
     headers = [str(column) for column in dataframe.columns]
     LOGGER.info("CanadaBuys CSV header: %s", headers)
     columns = _map_columns(headers)
+    LOGGER.info(
+        "Sample procurementCategory values: %s",
+        _sample_column_values(dataframe, columns["procurement_category"]),
+    )
+    LOGGER.info(
+        "Sample closing dates: %s",
+        _sample_column_values(dataframe, columns["closing_date"]),
+    )
 
     notices: list[dict] = []
+    total_count = len(dataframe)
+    region_count = 0
+    category_count = 0
+    cnst_count = 0
+    keyword_count = 0
+    future_count = 0
+    attachment_count = 0
     closed_count = 0
     invalid_closing_count = 0
+    naive_closing_count = 0
+    aware_closing_count = 0
     now = datetime.now().astimezone()
     for row_number, (_, row) in enumerate(dataframe.iterrows(), start=2):
-        closing_date = _cell_text(row[columns["closing_date"]])
-        closing_is_future = _is_future_closing(closing_date, now)
-        if closing_is_future is None:
-            invalid_closing_count += 1
-            LOGGER.warning(
-                "Skipping CSV row %d: invalid closing date %r",
-                row_number,
-                closing_date,
-            )
-            continue
-        if not closing_is_future:
-            closed_count += 1
-            continue
-
         regions = _join_values(row, columns["regions"])
         if not _matches_region(regions, str(config.REGION_FILTER)):
             continue
+        region_count += 1
 
         title = _cell_text(row[columns["title"]])
         description = _cell_text(row[columns["description"]])
-        reference = _cell_text(row[columns["reference_number"]])
-        tender_id = _sanitize_tender_id(reference)
-        if not tender_id:
-            LOGGER.warning("Skipping CSV row %d: missing reference number", row_number)
-            continue
-
         procurement_category = _cell_text(row[columns["procurement_category"]])
         category_rule = _category_match_rule(
             procurement_category, title, description
         )
         if category_rule is None:
+            continue
+        category_count += 1
+        if category_rule == "procurementCategory=CNST":
+            cnst_count += 1
+        else:
+            keyword_count += 1
+
+        closing_date = _cell_text(row[columns["closing_date"]])
+        parsed_closing = _parse_closing_datetime(closing_date)
+        if parsed_closing is None:
+            invalid_closing_count += 1
+            LOGGER.warning(
+                "Date parse failure on CSV row %d: %r",
+                row_number,
+                closing_date,
+            )
+            continue
+        if parsed_closing.tzinfo is None:
+            naive_closing_count += 1
+        else:
+            aware_closing_count += 1
+        try:
+            closing_is_future = _is_future_closing(parsed_closing, now)
+        except TypeError as exc:
+            invalid_closing_count += 1
+            LOGGER.warning(
+                "Date comparison failure on CSV row %d for %r: %s",
+                row_number,
+                closing_date,
+                exc,
+            )
+            continue
+        if not closing_is_future:
+            closed_count += 1
+            continue
+        future_count += 1
+
+        attachment_urls = _split_attachment_urls(
+            _cell_text(row[columns["attachments"]])
+        )
+        if attachment_urls:
+            attachment_count += 1
+
+        reference = _cell_text(row[columns["reference_number"]])
+        tender_id = _sanitize_tender_id(reference)
+        if not tender_id:
+            LOGGER.warning("Skipping CSV row %d: missing reference number", row_number)
             continue
 
         LOGGER.info("Keeping notice %s: matched by %s", tender_id, category_rule)
@@ -126,19 +175,31 @@ def parse_notices(csv_path: str) -> list[dict]:
                 "closing_date": closing_date,
                 "regions": regions,
                 "description": description,
-                "attachment_urls": _split_attachment_urls(
-                    _cell_text(row[columns["attachments"]])
-                ),
+                "attachment_urls": attachment_urls,
                 "notice_url": _cell_text(row[columns["notice_url"]]),
             }
         )
 
+    LOGGER.info(
+        "Filter funnel: total rows=%d -> region %s=%d -> category matches=%d "
+        "(CNST=%d, keyword fallback=%d) -> future closing=%d -> with attachments=%d",
+        total_count,
+        config.REGION_FILTER,
+        region_count,
+        category_count,
+        cnst_count,
+        keyword_count,
+        future_count,
+        attachment_count,
+    )
+    LOGGER.info(
+        "Closing-date timezone profile after category filter: naive=%d, "
+        "timezone-aware=%d, parse/comparison failures=%d",
+        naive_closing_count,
+        aware_closing_count,
+        invalid_closing_count,
+    )
     LOGGER.info("Excluded %d notices as closed", closed_count)
-    if invalid_closing_count:
-        LOGGER.info(
-            "Excluded %d notices with invalid closing dates",
-            invalid_closing_count,
-        )
 
     notices_path = Path(config.NOTICES_PATH)
     notices_path.parent.mkdir(parents=True, exist_ok=True)
@@ -147,6 +208,52 @@ def parse_notices(csv_path: str) -> list[dict]:
         output.write("\n")
     LOGGER.info("Wrote %d filtered notices to %s", len(notices), notices_path)
     return notices
+
+
+def fetch_attachments_from_notice_page(notice: dict) -> list[str]:
+    """Find and return deduplicated document links from a notice web page."""
+    notice_url = _effective_notice_url(notice)
+    if not notice_url:
+        LOGGER.warning("Cannot inspect notice page: missing notice_url")
+        return []
+
+    try:
+        with requests.get(
+            notice_url,
+            headers={"User-Agent": USER_AGENT},
+            timeout=DOWNLOAD_TIMEOUT_SECONDS,
+            allow_redirects=True,
+        ) as response:
+            response.raise_for_status()
+            page_url = response.url
+            html = response.text
+    except requests.RequestException as exc:
+        LOGGER.warning("Could not inspect notice page %s: %s", notice_url, exc)
+        return []
+
+    document_urls: list[str] = []
+    soup = BeautifulSoup(html, "html.parser")
+    for link in soup.find_all("a", href=True):
+        href = str(link.get("href", "")).strip()
+        if not href or href.lower().startswith(("javascript:", "mailto:", "tel:")):
+            continue
+        resolved = urljoin(page_url, href)
+        parsed = urlparse(resolved)
+        if parsed.scheme not in {"http", "https"}:
+            continue
+        link_text = link.get_text(" ", strip=True)
+        is_document_file = Path(parsed.path).suffix.casefold() in SUPPORTED_EXTENSIONS
+        has_document_hint = bool(DOCUMENT_LINK_HINT.search(f"{link_text} {href}"))
+        if is_document_file or has_document_hint:
+            document_urls.append(resolved)
+
+    deduplicated = list(dict.fromkeys(document_urls))
+    LOGGER.info(
+        "Found %d document link(s) on notice page %s",
+        len(deduplicated),
+        notice_url,
+    )
+    return deduplicated
 
 
 def download_tender(notice: dict) -> dict:
@@ -174,6 +281,22 @@ def download_tender(notice: dict) -> dict:
         for url in attachment_urls
         if _cell_text(url).lower().startswith(("http://", "https://"))
     ]
+    url_source = "CSV"
+    if not urls:
+        url_source = "notice page"
+        urls = fetch_attachments_from_notice_page(notice)
+    LOGGER.info(
+        "Tender %s attachment URLs came from %s (%d found)",
+        tender_id,
+        url_source,
+        len(urls),
+    )
+
+    notice_url = _effective_notice_url(notice)
+    if not urls:
+        _record_manual_download(summary, notice_url, tender_id)
+        return summary
+
     urls, language_skips = _prefer_english_urls(urls)
     summary["skipped"].extend(language_skips)
 
@@ -192,12 +315,17 @@ def download_tender(notice: dict) -> dict:
         and path.stat().st_size > 0
     }
 
+    download_failed = False
     for url in urls:
         outcome = _download_attachment(url, raw_dir, archive_cache)
         summary["downloaded"].extend(outcome["downloaded"])
         summary["skipped"].extend(outcome["skipped"])
+        if outcome["skipped"]:
+            download_failed = True
 
     summary["downloaded"] = list(dict.fromkeys(summary["downloaded"]))
+    if download_failed:
+        _record_manual_download(summary, notice_url, tender_id)
     return summary
 
 
@@ -215,9 +343,13 @@ def ingest_demo_set(limit: int = 10) -> None:
     LOGGER.info(
         "%d filtered notices had zero attachment URLs", zero_attachment_count
     )
-    selected = with_attachments[: max(0, limit)]
+    without_attachments = [
+        notice for notice in notices if not notice["attachment_urls"]
+    ]
+    selected = [*with_attachments, *without_attachments][: max(0, limit)]
 
     rows: list[list[str]] = []
+    manual_download_urls: list[str] = []
     for notice in selected:
         try:
             result = download_tender(notice)
@@ -229,8 +361,21 @@ def ingest_demo_set(limit: int = 10) -> None:
             )
             result = {
                 "downloaded": [],
-                "skipped": [{"url": "", "reason": str(exc)}],
+                "skipped": [
+                    {"url": _effective_notice_url(notice), "reason": str(exc)},
+                    {
+                        "url": _effective_notice_url(notice),
+                        "reason": "manual_download_needed",
+                    },
+                ],
             }
+        for skipped in result["skipped"]:
+            if (
+                skipped["reason"] == "manual_download_needed"
+                and skipped["url"]
+                and skipped["url"] not in manual_download_urls
+            ):
+                manual_download_urls.append(skipped["url"])
         rows.append(
             [
                 notice["tender_id"],
@@ -242,6 +387,7 @@ def ingest_demo_set(limit: int = 10) -> None:
         )
 
     _print_summary(rows)
+    _print_manual_downloads(manual_download_urls)
 
 
 def _read_csv(csv_path: str) -> pd.DataFrame:
@@ -267,6 +413,32 @@ def _configured_tenders_dir() -> Path:
     if path.is_absolute():
         return path
     return Path(config.PROJECT_ROOT) / path
+
+
+def _effective_notice_url(notice: dict) -> str:
+    notice_url = _cell_text(notice.get("notice_url", ""))
+    if notice_url:
+        return notice_url
+    tender_id = _sanitize_tender_id(_cell_text(notice.get("tender_id", "")))
+    if tender_id.casefold().startswith("cb-"):
+        return (
+            "https://canadabuys.canada.ca/en/tender-opportunities/"
+            f"tender-notice/{tender_id}"
+        )
+    return ""
+
+
+def _record_manual_download(
+    summary: dict[str, Any], notice_url: str, tender_id: str
+) -> None:
+    LOGGER.warning(
+        "Notice %s (%s): manual_download_needed",
+        notice_url or "<missing notice_url>",
+        tender_id,
+    )
+    marker = {"url": notice_url, "reason": "manual_download_needed"}
+    if marker not in summary["skipped"]:
+        summary["skipped"].append(marker)
 
 
 def _map_columns(headers: list[str]) -> dict[str, Any]:
@@ -334,6 +506,19 @@ def _cell_text(value: Any) -> str:
     return str(value).strip()
 
 
+def _sample_column_values(
+    dataframe: pd.DataFrame, column: str, limit: int = 5
+) -> list[str]:
+    samples: list[str] = []
+    for raw_value in dataframe[column]:
+        value = _cell_text(raw_value)
+        if value and value not in samples:
+            samples.append(value)
+        if len(samples) == limit:
+            break
+    return samples
+
+
 def _join_values(row: pd.Series, columns: Iterable[str]) -> str:
     values: list[str] = []
     for column in columns:
@@ -375,14 +560,16 @@ def _category_match_rule(
     return None
 
 
-def _is_future_closing(closing_date: str, now: datetime) -> bool | None:
+def _parse_closing_datetime(closing_date: str) -> datetime | None:
     if not closing_date:
         return None
     try:
-        parsed = datetime.fromisoformat(closing_date.replace("Z", "+00:00"))
+        return datetime.fromisoformat(closing_date.replace("Z", "+00:00"))
     except ValueError:
         return None
 
+
+def _is_future_closing(parsed: datetime, now: datetime) -> bool:
     if parsed.tzinfo is None:
         return parsed > now.replace(tzinfo=None)
     return parsed > now.astimezone(parsed.tzinfo)
@@ -675,6 +862,15 @@ def _print_summary(rows: list[list[str]]) -> None:
     print("-+-".join("-" * width for width in widths))
     for row in rows:
         print(format_row(row))
+
+
+def _print_manual_downloads(urls: list[str]) -> None:
+    print("\nmanual_download_needed:")
+    if not urls:
+        print("(none)")
+        return
+    for url in urls:
+        print(url)
 
 
 if __name__ == "__main__":
