@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from extract import pipeline
+from extract import env
 
 
 class EnvLoadingTests(unittest.TestCase):
@@ -29,7 +29,7 @@ class EnvLoadingTests(unittest.TestCase):
                     "UNQUOTED": "",
                 },
             ):
-                loaded = pipeline._load_env_file(env_path)
+                loaded = env.load_env_file(env_path)
 
                 self.assertEqual(os.environ["OPENAI_API_KEY"], "sk-test-value")
                 self.assertEqual(os.environ["SECOND_VALUE"], " spaced value ")
@@ -41,20 +41,20 @@ class EnvLoadingTests(unittest.TestCase):
     def test_supports_existing_bare_key_file(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
             env_path = Path(temporary_directory) / ".env"
-            env_path.write_text("sk-test-bare-key\n", encoding="utf-8")
+            env_path.write_bytes(b"  'sk-test-bare-key'  \r\n")
             with patch.dict(os.environ, {"OPENAI_API_KEY": ""}):
-                with self.assertLogs(pipeline.LOGGER, logging.WARNING):
-                    loaded = pipeline._load_env_file(env_path)
+                with self.assertLogs(env.LOGGER, logging.WARNING):
+                    loaded = env.load_env_file(env_path)
 
                 self.assertEqual(os.environ["OPENAI_API_KEY"], "sk-test-bare-key")
                 self.assertEqual(loaded, {"OPENAI_API_KEY"})
 
     def test_environment_wins_and_log_masks_after_six_characters(self) -> None:
         with patch.dict(os.environ, {"OPENAI_API_KEY": "sk-env-secret-value"}):
-            with patch.object(pipeline, "_API_KEY_SOURCE_LOGGED", False):
-                with self.assertLogs(pipeline.LOGGER, logging.INFO) as messages:
+            with patch.object(env, "_SOURCE_LOGGED", False):
+                with self.assertLogs(env.LOGGER, logging.INFO) as messages:
                     self.assertEqual(
-                        pipeline._require_api_key(), "sk-env-secret-value"
+                        env.require_openai_api_key(), "sk-env-secret-value"
                     )
 
         output = "\n".join(messages.output)
@@ -63,8 +63,8 @@ class EnvLoadingTests(unittest.TestCase):
 
     def test_default_env_path_is_anchored_to_pipeline_repository(self) -> None:
         self.assertEqual(
-            pipeline.REPO_ROOT,
-            Path(pipeline.__file__).resolve().parents[1],
+            env.REPO_ROOT,
+            Path(env.__file__).resolve().parents[1],
         )
 
 

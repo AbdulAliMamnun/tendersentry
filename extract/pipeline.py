@@ -5,7 +5,6 @@ from __future__ import annotations
 import argparse
 import json
 import logging
-import os
 import re
 from pathlib import Path
 from typing import Any
@@ -13,12 +12,11 @@ from typing import Any
 from openai import OpenAI
 
 import config
+from extract.env import require_openai_api_key
 from extract.pages import extract_pages, find_quote, normalize
 
 
 LOGGER = logging.getLogger(__name__)
-REPO_ROOT = Path(__file__).resolve().parents[1]
-_API_KEY_SOURCE_LOGGED = False
 
 CATEGORIES = {
     "eligibility",
@@ -279,7 +277,7 @@ def run_extraction(tender_id: str, force: bool = False) -> dict:
             "dropped": len(dropped),
         }
 
-    api_key = _require_api_key()
+    api_key = require_openai_api_key()
     pages_by_file = extract_pages(safe_tender_id, force=force)
     chunks = chunk_pages(pages_by_file)
     client = _UsageTrackingClient(api_key)
@@ -415,88 +413,6 @@ def _assert_verified_output(requirements: list[dict], pages_by_file: dict) -> No
     )
 
 
-def _load_env_file(env_path: Path | None = None) -> set[str]:
-    """Load unset variables from the repository .env and return their names."""
-    env_path = env_path or REPO_ROOT / ".env"
-    if not env_path.exists():
-        return set()
-    try:
-        lines = env_path.read_text(encoding="utf-8").splitlines()
-    except OSError as exc:
-        LOGGER.warning("Could not read %s: %s", env_path, exc)
-        return set()
-
-    loaded: set[str] = set()
-    content_lines: list[str] = []
-    for line in lines:
-        stripped = line.strip()
-        if not stripped or stripped.startswith("#"):
-            continue
-        content_lines.append(stripped)
-        match = re.fullmatch(
-            r"(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)",
-            stripped,
-        )
-        if match is None:
-            continue
-        key, raw_value = match.groups()
-        value = _parse_env_value(raw_value)
-        if not os.environ.get(key, "").strip():
-            os.environ[key] = value
-            loaded.add(key)
-
-    # Compatibility for a one-line file containing only the OpenAI key instead
-    # of KEY=value syntax.
-    if (
-        "OPENAI_API_KEY" not in loaded
-        and not os.environ.get("OPENAI_API_KEY", "").strip()
-        and len(content_lines) == 1
-        and content_lines[0].startswith("sk-")
-        and "=" not in content_lines[0]
-    ):
-        os.environ["OPENAI_API_KEY"] = content_lines[0]
-        loaded.add("OPENAI_API_KEY")
-        LOGGER.warning(
-            "%s contains a bare API key; prefer OPENAI_API_KEY=<key>", env_path
-        )
-    return loaded
-
-
-def _parse_env_value(raw_value: str) -> str:
-    """Parse a quoted or unquoted dotenv value without exposing it in logs."""
-    value = raw_value.strip()
-    if not value:
-        return ""
-    if value[0] in {'"', "'"}:
-        quote = value[0]
-        closing_quote = value.find(quote, 1)
-        if closing_quote != -1:
-            remainder = value[closing_quote + 1 :].strip()
-            if not remainder or remainder.startswith("#"):
-                return value[1:closing_quote]
-    return re.split(r"\s+#", value, maxsplit=1)[0].strip()
-
-
-def _require_api_key() -> str:
-    global _API_KEY_SOURCE_LOGGED
-
-    api_key = os.environ.get("OPENAI_API_KEY", "").strip()
-    source = "environment"
-    if not api_key:
-        loaded = _load_env_file()
-        api_key = os.environ.get("OPENAI_API_KEY", "").strip()
-        if "OPENAI_API_KEY" in loaded:
-            source = ".env"
-    if not api_key:
-        raise RuntimeError(
-            "OPENAI_API_KEY is missing; set it in the environment or .env"
-        )
-    if not _API_KEY_SOURCE_LOGGED:
-        LOGGER.info("OPENAI_API_KEY found in %s: %s...", source, api_key[:6])
-        _API_KEY_SOURCE_LOGGED = True
-    return api_key
-
-
 def _read_json_list(path: Path) -> list[dict]:
     try:
         with path.open(encoding="utf-8") as source:
@@ -581,7 +497,7 @@ def _main() -> None:
     args = parser.parse_args()
 
     try:
-        _require_api_key()
+        require_openai_api_key()
     except RuntimeError as exc:
         raise SystemExit(str(exc)) from exc
 

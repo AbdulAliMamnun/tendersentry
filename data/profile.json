@@ -1,0 +1,32 @@
+{
+  "firm_name": "Georgian Bay Civil Ltd.",
+  "certifications": ["COR"],
+  "bonding_capacity_cad": 2000000,
+  "insurance": {
+    "cgl_limit": 5000000,
+    "auto_limit": 2000000
+  },
+  "regions": ["Ontario"],
+  "past_projects": [
+    {
+      "name": "Culvert replacement, Simcoe County",
+      "value_cad": 850000,
+      "year": 2024,
+      "type": "civil"
+    },
+    {
+      "name": "Pumphouse upgrade, Orillia",
+      "value_cad": 1200000,
+      "year": 2023,
+      "type": "civil"
+    },
+    {
+      "name": "Shoreline stabilization, Tay Twp",
+      "value_cad": 400000,
+      "year": 2022,
+      "type": "civil"
+    }
+  ],
+  "staff_designations": ["P.Eng on staff"],
+  "submission_capabilities": ["email", "portal", "physical"]
+}
