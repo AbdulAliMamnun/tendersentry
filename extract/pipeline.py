@@ -17,6 +17,8 @@ from extract.pages import extract_pages, find_quote, normalize
 
 
 LOGGER = logging.getLogger(__name__)
+REPO_ROOT = Path(__file__).resolve().parents[1]
+_API_KEY_SOURCE_LOGGED = False
 
 CATEGORIES = {
     "eligibility",
@@ -413,33 +415,85 @@ def _assert_verified_output(requirements: list[dict], pages_by_file: dict) -> No
     )
 
 
-def _load_env_file() -> None:
-    env_path = Path(config.PROJECT_ROOT) / ".env"
+def _load_env_file(env_path: Path | None = None) -> set[str]:
+    """Load unset variables from the repository .env and return their names."""
+    env_path = env_path or REPO_ROOT / ".env"
     if not env_path.exists():
-        return
+        return set()
     try:
         lines = env_path.read_text(encoding="utf-8").splitlines()
     except OSError as exc:
         LOGGER.warning("Could not read %s: %s", env_path, exc)
-        return
+        return set()
+
+    loaded: set[str] = set()
+    content_lines: list[str] = []
     for line in lines:
         stripped = line.strip()
-        if not stripped or stripped.startswith("#") or "=" not in stripped:
+        if not stripped or stripped.startswith("#"):
             continue
-        key, value = stripped.split("=", 1)
-        key = key.strip()
-        value = value.strip().strip('"').strip("'")
-        if key:
-            os.environ.setdefault(key, value)
+        content_lines.append(stripped)
+        match = re.fullmatch(
+            r"(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)",
+            stripped,
+        )
+        if match is None:
+            continue
+        key, raw_value = match.groups()
+        value = _parse_env_value(raw_value)
+        if not os.environ.get(key, "").strip():
+            os.environ[key] = value
+            loaded.add(key)
+
+    # Compatibility for a one-line file containing only the OpenAI key instead
+    # of KEY=value syntax.
+    if (
+        "OPENAI_API_KEY" not in loaded
+        and not os.environ.get("OPENAI_API_KEY", "").strip()
+        and len(content_lines) == 1
+        and content_lines[0].startswith("sk-")
+        and "=" not in content_lines[0]
+    ):
+        os.environ["OPENAI_API_KEY"] = content_lines[0]
+        loaded.add("OPENAI_API_KEY")
+        LOGGER.warning(
+            "%s contains a bare API key; prefer OPENAI_API_KEY=<key>", env_path
+        )
+    return loaded
+
+
+def _parse_env_value(raw_value: str) -> str:
+    """Parse a quoted or unquoted dotenv value without exposing it in logs."""
+    value = raw_value.strip()
+    if not value:
+        return ""
+    if value[0] in {'"', "'"}:
+        quote = value[0]
+        closing_quote = value.find(quote, 1)
+        if closing_quote != -1:
+            remainder = value[closing_quote + 1 :].strip()
+            if not remainder or remainder.startswith("#"):
+                return value[1:closing_quote]
+    return re.split(r"\s+#", value, maxsplit=1)[0].strip()
 
 
 def _require_api_key() -> str:
-    _load_env_file()
+    global _API_KEY_SOURCE_LOGGED
+
     api_key = os.environ.get("OPENAI_API_KEY", "").strip()
+    source = "environment"
+    if not api_key:
+        loaded = _load_env_file()
+        api_key = os.environ.get("OPENAI_API_KEY", "").strip()
+        if "OPENAI_API_KEY" in loaded:
+            source = ".env"
     if not api_key:
         raise RuntimeError(
             "OPENAI_API_KEY is missing; set it in the environment or .env"
         )
+    if not _API_KEY_SOURCE_LOGGED:
+        LOGGER.info("OPENAI_API_KEY found in %s: %s...", source, api_key[:6])
+        _API_KEY_SOURCE_LOGGED = True
     return api_key
 
 
