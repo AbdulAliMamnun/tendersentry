@@ -70,6 +70,7 @@ data/
   "id": "str, unique within tender",
   "tender_id": "str",
   "category": "eligibility | bid_security | submission | certification | insurance | evaluation | other_mandatory",
+  "phase": "bid_phase_mandatory | contract_condition | not_a_requirement",
   "requirement_text": "str, plain-language restatement",
   "verbatim_quote": "str, exact text from the source PDF",
   "page_number": "int, true page after repair",

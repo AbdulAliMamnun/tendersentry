@@ -28,6 +28,12 @@ CATEGORIES = {
     "other_mandatory",
 }
 
+PHASES = {
+    "bid_phase_mandatory",
+    "contract_condition",
+    "not_a_requirement",
+}
+
 SYSTEM_PROMPT = """You are a compliance analyst extracting MANDATORY requirements from a Canadian public tender.
 
 Extract only items a bidder MUST do, have, or provide: eligibility conditions; certifications; bid security including type, form, and amount; insurance types and limits; submission method, format, and deadline rules; signatures; addenda acknowledgment; mandatory site meetings; and evaluation criteria that are pass/fail.
@@ -47,6 +53,18 @@ For every requirement return:
 Quotes are machine-verified against the source. Any quote that cannot be located exactly is discarded. Never paraphrase, repair, combine, or invent verbatim_quote text.
 
 Return one JSON object with this shape: {"requirements": [...]}.
+"""
+
+PHASE_CLASSIFICATION_PROMPT = """You classify verified Canadian tender requirements by when they apply.
+
+For every supplied requirement, return exactly one label:
+- bid_phase_mandatory: the bidder must do, have, or provide this to submit a compliant bid.
+- contract_condition: the obligation applies only after contract award or only to the winning contractor.
+- not_a_requirement: background, descriptive, permissive, or otherwise not an obligation.
+
+Use the requirement text, exact source quote, and category together. Do not invent ids and do
+not omit requirements. Return one JSON object shaped as:
+{"judgments": [{"requirement_id": "...", "phase": "..."}]}.
 """
 
 
@@ -249,6 +267,90 @@ def verify_requirements(
     return verified, dropped
 
 
+def classify_requirement_phases(
+    requirements: list[dict], client: Any
+) -> list[dict]:
+    """Classify all verified requirements in one guarded, fail-safe API call."""
+    if not requirements:
+        return []
+
+    by_id = {str(item.get("id", "")): item for item in requirements}
+    phases = {requirement_id: "bid_phase_mandatory" for requirement_id in by_id}
+    payload = [
+        {
+            "requirement_id": requirement_id,
+            "requirement_text": requirement.get("requirement_text", ""),
+            "verbatim_quote": requirement.get("verbatim_quote", ""),
+            "category": requirement.get("category", ""),
+        }
+        for requirement_id, requirement in by_id.items()
+    ]
+    try:
+        response = client.chat.completions.create(
+            model=config.OPENAI_MODEL,
+            temperature=0,
+            response_format={"type": "json_object"},
+            messages=[
+                {"role": "system", "content": PHASE_CLASSIFICATION_PROMPT},
+                {
+                    "role": "user",
+                    "content": json.dumps(
+                        {"requirements": payload}, ensure_ascii=False
+                    ),
+                },
+            ],
+        )
+        if hasattr(client, "record_usage"):
+            client.record_usage(response)
+        content = response.choices[0].message.content or "{}"
+        proposed = json.loads(content).get("judgments", [])
+        if not isinstance(proposed, list):
+            raise ValueError("API response field 'judgments' is not a list")
+    except Exception as exc:
+        LOGGER.error(
+            "Phase classification failed; defaulting all requirements to "
+            "bid_phase_mandatory: %s",
+            exc,
+        )
+        proposed = []
+
+    for judgment in proposed:
+        if not isinstance(judgment, dict):
+            continue
+        requirement_id = str(judgment.get("requirement_id", ""))
+        if requirement_id not in by_id:
+            LOGGER.warning(
+                "Discarding phase judgment for unknown id %r", requirement_id
+            )
+            continue
+        phase = str(judgment.get("phase", "")).strip().casefold()
+        if phase not in PHASES:
+            LOGGER.warning(
+                "Invalid phase %r for %s; defaulting to bid_phase_mandatory",
+                phase,
+                requirement_id,
+            )
+            continue
+        phases[requirement_id] = phase
+
+    classified = [
+        {**requirement, "phase": phases[str(requirement.get("id", ""))]}
+        for requirement in requirements
+    ]
+    counts = {
+        phase: sum(item["phase"] == phase for item in classified)
+        for phase in sorted(PHASES)
+    }
+    LOGGER.info(
+        "Phase classification tally: bid-phase %d, contract conditions %d, "
+        "not requirements %d",
+        counts["bid_phase_mandatory"],
+        counts["contract_condition"],
+        counts["not_a_requirement"],
+    )
+    return classified
+
+
 def run_extraction(tender_id: str, force: bool = False) -> dict:
     """Run extraction through verification, persist results, and return a summary."""
     safe_tender_id = _sanitize_tender_id(tender_id)
@@ -295,6 +397,7 @@ def run_extraction(tender_id: str, force: bool = False) -> dict:
 
     reduced = reduce_requirements(proposed_requirements)
     verified, dropped = verify_requirements(reduced, pages_by_file)
+    verified = classify_requirement_phases(verified, client)
     tender_dir.mkdir(parents=True, exist_ok=True)
     _write_json(requirements_path, verified)
     _write_json(dropped_path, dropped)
@@ -357,6 +460,7 @@ def _canonical_requirement(proposed: dict) -> dict:
         "id": "",
         "tender_id": str(proposed.get("tender_id", "")),
         "category": category,
+        "phase": "bid_phase_mandatory",
         "requirement_text": str(proposed.get("requirement_text", "")),
         "verbatim_quote": str(proposed.get("verbatim_quote", "")),
         "page_number": _as_int(proposed.get("page_number"), default=0),

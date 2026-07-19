@@ -1,6 +1,11 @@
 import unittest
 
-from match.engine import _assemble_decision, evaluate_rule, numeric
+from match.engine import (
+    _assemble_decision,
+    _bid_phase_requirements,
+    evaluate_rule,
+    numeric,
+)
 
 
 class MatchEngineTests(unittest.TestCase):
@@ -33,6 +38,28 @@ class MatchEngineTests(unittest.TestCase):
         self.assertEqual(decision["verdict"], "no_bid")
         self.assertEqual(decision["blockers"], ["T-R001"])
         self.assertEqual(decision["open_questions"], ["T-R002"])
+
+    def test_only_bid_phase_requirements_are_counted(self) -> None:
+        requirements = [
+            {
+                "id": "T-R001",
+                "phase": "bid_phase_mandatory",
+                "is_mandatory": True,
+            },
+            {
+                "id": "T-R002",
+                "phase": "contract_condition",
+                "is_mandatory": True,
+            },
+            {
+                "id": "T-R003",
+                "phase": "not_a_requirement",
+                "is_mandatory": True,
+            },
+        ]
+        bid_phase = _bid_phase_requirements(requirements)
+
+        self.assertEqual([item["id"] for item in bid_phase], ["T-R001"])
 
 
 if __name__ == "__main__":

@@ -232,7 +232,7 @@ def decide(
 
     requirements = _read_json_list(tender_dir / "requirements.json")
     profile = _read_json_object(Path(config.PROJECT_ROOT) / "data" / "profile.json")
-    mandatory = [item for item in requirements if item.get("is_mandatory") is True]
+    mandatory = _bid_phase_requirements(requirements)
 
     if not mandatory:
         decision = _assemble_decision(safe_tender_id, mandatory, [], fuzzy_used=False)
@@ -344,6 +344,16 @@ def _assemble_decision(
             "uncertain": uncertain_count,
         },
     }
+
+
+def _bid_phase_requirements(requirements: list[dict]) -> list[dict]:
+    """Return only mandatory requirements that apply during bid submission."""
+    return [
+        item
+        for item in requirements
+        if item.get("is_mandatory") is True
+        and item.get("phase") == "bid_phase_mandatory"
+    ]
 
 
 def _decision_rationale(prefix: str, ids: list[str], by_id: dict[str, dict]) -> str:
