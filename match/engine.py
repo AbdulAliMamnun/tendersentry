@@ -17,6 +17,16 @@ from extract.env import require_openai_api_key
 
 LOGGER = logging.getLogger(__name__)
 MAX_JUDGMENT_BATCH = 10
+SUBMISSION_METHODS = {"email", "portal", "physical", "fax", "mail", "in_person"}
+PORTAL_HINTS = {
+    "ariba",
+    "biddingo",
+    "bids&tenders",
+    "bidsandtenders",
+    "bonfire",
+    "canadabuys",
+    "merx",
+}
 
 JUDGMENT_SYSTEM_PROMPT = """You are a bid qualification analyst.
 
@@ -54,18 +64,56 @@ def numeric(value: Any) -> float | None:
     return number
 
 
-def _submission_methods(value: Any) -> set[str]:
-    """Normalize a submission-method value into comparable method names."""
-    text = str(value or "").strip().casefold().replace("in person", "in-person")
-    methods = {
-        item.strip()
-        for item in re.split(r"\s*(?:,|/|\bor\b)\s*", text)
-        if item.strip()
+def _submission_methods(value: Any, context: str = "") -> set[str]:
+    """Canonicalize submission values, returning no method when inference is unsafe."""
+    text = str(value or "").strip().casefold()
+    if not text:
+        return set()
+    aliases = {
+        "courier": "mail",
+        "e-mail": "email",
+        "facsimile": "fax",
+        "hand delivery": "in_person",
+        "hard copy": "physical",
+        "in person": "in_person",
+        "in-person": "in_person",
+        "post": "mail",
     }
+    methods: set[str] = set()
+    for item in re.split(r"\s*(?:,|/|\bor\b)\s*", text):
+        normalized = item.strip().replace("-", "_")
+        method = aliases.get(item.strip(), normalized)
+        if method in SUBMISSION_METHODS:
+            methods.add(method)
+    if methods:
+        return methods
+
+    combined = f"{text} {context}".casefold()
+    if "@" in text or re.search(r"\be-?mail\b", combined):
+        return {"email"}
+    if any(hint in combined for hint in PORTAL_HINTS) or re.search(
+        r"\b(?:procurement|bidding|submission) portal\b", combined
+    ):
+        return {"portal"}
+    if re.search(r"\b(?:fax|facsimile)\b", combined):
+        return {"fax"}
+    if re.search(r"\b(?:courier|mail|post)\b", combined):
+        return {"mail"}
+    if re.search(r"\b(?:hand deliver|in[ -]person)\b", combined):
+        return {"in_person"}
+    if re.search(r"\b(?:hard copy|physical)\b", combined):
+        return {"physical"}
+    return set()
+
+
+def _comparable_submission_methods(methods: set[str]) -> set[str]:
+    """Expand the physical-delivery umbrella for capability comparison."""
+    comparable = set(methods)
     if "physical" in methods:
-        methods.remove("physical")
-        methods.update({"in-person", "courier"})
-    return methods
+        comparable.update({"in_person", "mail"})
+    if methods & {"in_person", "mail"}:
+        comparable.add("physical")
+    return comparable
 
 
 def evaluate_rule(requirement: dict, profile: dict) -> dict:
@@ -139,11 +187,18 @@ def evaluate_rule(requirement: dict, profile: dict) -> dict:
         )
 
     if field == "submission_method":
-        required = _submission_methods(check_value)
+        context = " ".join(
+            str(requirement.get(key) or "")
+            for key in ("requirement_text", "verbatim_quote")
+        )
+        required = _comparable_submission_methods(
+            _submission_methods(check_value, context)
+        )
         operator = str(requirement.get("check_operator") or "").strip()
         available: set[str] = set()
         for item in profile.get("submission_capabilities", []):
             available.update(_submission_methods(item))
+        available = _comparable_submission_methods(available)
         if not required or operator not in {"==", "!=", "in"}:
             return result(
                 "unknown",

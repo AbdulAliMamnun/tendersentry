@@ -5,6 +5,7 @@ from __future__ import annotations
 import html
 import json
 import logging
+import re
 import sys
 from datetime import date, datetime
 from pathlib import Path
@@ -43,6 +44,22 @@ def _read_json(path: Path, default: Any) -> Any:
         return default
 
 
+def _notice_key(value: Any) -> str:
+    """Match notice ids to their filesystem-safe tender directory names."""
+    return re.sub(r"[^A-Za-z0-9_-]+", "_", str(value)).strip("_-")
+
+
+def _index_notices(notices: list[Any]) -> dict[str, dict]:
+    indexed: dict[str, dict] = {}
+    for item in notices:
+        if not isinstance(item, dict) or not item.get("tender_id"):
+            continue
+        tender_id = str(item["tender_id"])
+        indexed.setdefault(tender_id, item)
+        indexed.setdefault(_notice_key(tender_id), item)
+    return indexed
+
+
 def _data_snapshot() -> tuple[tuple[str, int, int], ...]:
     """Return file and directory mtimes used as the cache key."""
     paths = [NOTICES_PATH, PROFILE_PATH, TENDERS_DIR]
@@ -75,11 +92,7 @@ def load_all_data(snapshot: tuple[tuple[str, int, int], ...]) -> dict:
     del snapshot
     notices_value = _read_json(NOTICES_PATH, [])
     notices = notices_value if isinstance(notices_value, list) else []
-    notices_by_id = {
-        str(item.get("tender_id", "")): item
-        for item in notices
-        if isinstance(item, dict) and item.get("tender_id")
-    }
+    notices_by_id = _index_notices(notices)
     profile_value = _read_json(PROFILE_PATH, {})
     profile = profile_value if isinstance(profile_value, dict) else {}
 
@@ -138,7 +151,9 @@ def _closing_text(value: Any) -> tuple[str, int | None]:
         return "Closing date unavailable", None
     days = (closing.date() - date.today()).days
     text = closing.strftime("%b %-d, %Y at %-I:%M %p")
-    if 0 <= days < 14:
+    if days < 0:
+        text = f"Closed {text}"
+    elif days < 14:
         text += f" · closes in {days} day{'s' if days != 1 else ''}"
     return text, days
 
@@ -167,6 +182,7 @@ div[class*="st-key-requirement-"] {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700;
 }
 .estimator-fail, .estimator-urgent { color: #b91c1c; font-weight: 700; }
+.estimator-closed { color: #64748b; }
 .estimator-letterhead {
   border-bottom: 1px solid #111827; padding-bottom: 0.35rem; margin-bottom: 0.7rem;
 }
@@ -241,13 +257,16 @@ def _truncate(text: str, limit: int = 90) -> str:
     return text if len(text) <= limit else text[: limit - 3].rstrip() + "..."
 
 
-def _closing_board_text(value: Any) -> tuple[str, bool]:
+def _closing_board_text(value: Any) -> tuple[str, str]:
     closing = _parse_closing(value)
     if closing is None:
-        return "Closing unavailable", False
+        return "Closing unavailable", ""
     days = (closing.date() - date.today()).days
-    day_text = f"{days} day{'s' if days != 1 else ''}" if days >= 0 else "closed"
-    return f"Closes {closing.strftime('%a %b %-d')} — {day_text}", 0 <= days < 5
+    if days < 0:
+        return f"Closed {closing.strftime('%a %b %-d, %Y')}", "estimator-closed"
+    day_text = f"{days} day{'s' if days != 1 else ''}"
+    css_class = "estimator-urgent" if days < 5 else ""
+    return f"Closes {closing.strftime('%a %b %-d')} — {day_text}", css_class
 
 
 def _counts_text(decision: dict) -> str:
@@ -259,7 +278,7 @@ def _counts_text(decision: dict) -> str:
     )
 
 
-def _bid_security_text(tender: dict) -> str:
+def _bid_security_text(tender: dict) -> str | None:
     requirement = next(
         (
             item
@@ -271,7 +290,7 @@ def _bid_security_text(tender: dict) -> str:
         None,
     )
     if requirement is None:
-        return "Bid security: not identified"
+        return None
     return "Bid security: " + _truncate(
         str(requirement.get("requirement_text") or "requirement identified"), 85
     )
@@ -334,16 +353,17 @@ def _render_tender_card(tender: dict, analyzed: bool = True) -> None:
     safe_id = tender_id.replace(".", "-")
     with st.container(border=True, key=f"tender-{verdict}-{safe_id}"):
         closing_column, title_column, verdict_column = st.columns([2.1, 5.9, 1.35])
-        closing_text, urgent = _closing_board_text(tender.get("closing_date"))
+        closing_text, closing_class = _closing_board_text(tender.get("closing_date"))
         with closing_column:
-            css_class = "estimator-urgent" if urgent else ""
             st.markdown(
-                f'<span class="{css_class}"><strong>{html.escape(closing_text)}</strong></span>',
+                f'<span class="{closing_class}"><strong>'
+                f'{html.escape(closing_text)}</strong></span>',
                 unsafe_allow_html=True,
             )
         with title_column:
             st.markdown(f'**{html.escape(str(tender["title"]))}**')
-            st.caption(tender_id)
+            if tender["title"] != tender_id:
+                st.caption(tender_id)
         with verdict_column:
             verdict_class = "estimator-fail" if verdict == "no_bid" else ""
             st.markdown(
@@ -351,18 +371,22 @@ def _render_tender_card(tender: dict, analyzed: bool = True) -> None:
                 unsafe_allow_html=True,
             )
 
-        line_two = f"{_bid_security_text(tender)} · {_submission_text(tender)}"
+        line_two_fragments = [
+            fragment
+            for fragment in (_bid_security_text(tender), _submission_text(tender))
+            if fragment
+        ]
         blocker: dict = {}
         if analyzed and verdict == "no_bid":
             blocker_ids = decision.get("blockers", [])
             blocker = requirements_by_id.get(str(blocker_ids[0]), {}) if blocker_ids else {}
-            line_two += (
-                " · Blocked — "
+            line_two_fragments.append(
+                "Blocked — "
                 f'{blocker.get("requirement_text", "blocking requirement unavailable")} '
                 f'(p.{blocker.get("page_number", "?")}, '
                 f'{blocker.get("source_file", "source unavailable")})'
             )
-        st.write(line_two)
+        st.write(" · ".join(line_two_fragments))
         if blocker.get("verbatim_quote"):
             st.caption(
                 f'"{blocker["verbatim_quote"]}" — p.{blocker.get("page_number", "?")}, '
@@ -516,15 +540,25 @@ def _render_requirement_groups(
 def _render_tender_cover(tender: dict) -> None:
     closing_text, _ = _closing_text(tender.get("closing_date"))
     st.title(tender["title"])
+    cover_rows = []
+    if tender["title"] != tender["tender_id"]:
+        cover_rows.append(("Solicitation number", tender["tender_id"]))
+    cover_rows.extend(
+        [
+            ("Closing", closing_text),
+            (
+                "Submission method",
+                _submission_text(tender).removeprefix("Submission: "),
+            ),
+        ]
+    )
     cover = st.columns([1, 3])
     with cover[0]:
-        st.markdown("**Solicitation number**")
-        st.markdown("**Closing**")
-        st.markdown("**Submission method**")
+        for label, _ in cover_rows:
+            st.markdown(f"**{label}**")
     with cover[1]:
-        st.write(tender["tender_id"])
-        st.write(closing_text)
-        st.write(_submission_text(tender).removeprefix("Submission: "))
+        for _, value in cover_rows:
+            st.write(value)
 
 
 def _render_checklist(tender: dict | None) -> None:

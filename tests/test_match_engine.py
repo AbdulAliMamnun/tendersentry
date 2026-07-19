@@ -65,6 +65,72 @@ class MatchEngineTests(unittest.TestCase):
 
         self.assertEqual(outcome["outcome"], "pass")
 
+    def test_submission_email_address_is_canonicalized(self) -> None:
+        requirement = {
+            "id": "T-R001",
+            "machine_checkable": True,
+            "check_field": "submission_method",
+            "check_operator": "==",
+            "check_value": "bids@example.ca",
+            "requirement_text": "Submit offers by email to bids@example.ca.",
+        }
+
+        outcome = evaluate_rule(
+            requirement, {"submission_capabilities": ["email", "portal"]}
+        )
+
+        self.assertEqual(outcome["outcome"], "pass")
+        self.assertIn("email", outcome["detail"])
+
+    def test_submission_portal_name_is_canonicalized(self) -> None:
+        requirement = {
+            "id": "T-R001",
+            "machine_checkable": True,
+            "check_field": "submission_method",
+            "check_operator": "==",
+            "check_value": "CanadaBuys SAP Ariba",
+            "requirement_text": "Submit through CanadaBuys.",
+        }
+
+        outcome = evaluate_rule(
+            requirement, {"submission_capabilities": ["portal"]}
+        )
+
+        self.assertEqual(outcome["outcome"], "pass")
+
+    def test_unrecognized_submission_value_falls_through(self) -> None:
+        requirement = {
+            "id": "T-R001",
+            "machine_checkable": True,
+            "check_field": "submission_method",
+            "check_operator": "==",
+            "check_value": "AcmeDrop",
+            "requirement_text": "Submit using AcmeDrop.",
+        }
+
+        outcome = evaluate_rule(
+            requirement, {"submission_capabilities": ["email", "portal"]}
+        )
+
+        self.assertEqual(outcome["outcome"], "unknown")
+
+    def test_fax_number_is_inferred_from_requirement_text(self) -> None:
+        requirement = {
+            "id": "T-R001",
+            "machine_checkable": True,
+            "check_field": "submission_method",
+            "check_operator": "==",
+            "check_value": "1-877-558-2349",
+            "requirement_text": "Submit offers by fax to 1-877-558-2349.",
+        }
+
+        outcome = evaluate_rule(
+            requirement, {"submission_capabilities": ["email", "portal"]}
+        )
+
+        self.assertEqual(outcome["outcome"], "fail")
+        self.assertIn("fax", outcome["detail"])
+
     def test_rule_failure_takes_precedence_over_unknown(self) -> None:
         requirements = [
             {"id": "T-R001", "requirement_text": "failed requirement"},
