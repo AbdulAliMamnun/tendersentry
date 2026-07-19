@@ -25,38 +25,11 @@ TENDERS_DIR = REPO_ROOT / config.DATA_DIR
 PROFILE_PATH = REPO_ROOT / "data" / "profile.json"
 NOTICES_PATH = Path(config.NOTICES_PATH)
 
-CATEGORY_ORDER = [
-    "submission",
-    "bid_security",
-    "certification",
-    "insurance",
-    "eligibility",
-    "evaluation",
-    "other_mandatory",
-]
-
-CATEGORY_LABELS = {
-    "submission": "Submission",
-    "bid_security": "Bid security",
-    "certification": "Certification",
-    "insurance": "Insurance",
-    "eligibility": "Eligibility",
-    "evaluation": "Evaluation",
-    "other_mandatory": "Other mandatory",
-}
-
 VERDICT_LABELS = {
-    "bid": "Bid",
-    "review": "Review",
-    "no_bid": "Don't bid",
-    "not_analyzed": "Not yet analyzed",
-}
-
-VERDICT_COLORS = {
-    "bid": ("#166534", "#dcfce7"),
-    "review": ("#92400e", "#fef3c7"),
-    "no_bid": ("#991b1b", "#fee2e2"),
-    "not_analyzed": ("#475569", "#e2e8f0"),
+    "bid": "BID",
+    "review": "REVIEW",
+    "no_bid": "DON'T BID",
+    "not_analyzed": "NOT ANALYZED",
 }
 
 
@@ -170,22 +143,90 @@ def _closing_text(value: Any) -> tuple[str, int | None]:
     return text, days
 
 
-def _badge(verdict: str) -> str:
-    foreground, background = VERDICT_COLORS[verdict]
-    label = VERDICT_LABELS[verdict]
-    return (
-        f'<span style="display:inline-block;padding:0.2rem 0.55rem;border-radius:999px;'
-        f'font-weight:600;color:{foreground};background:{background};">{label}</span>'
+def _render_styles() -> None:
+    st.markdown(
+        """
+<style>
+html, body, [class*="st-"] { font-size: 14px; }
+.block-container { max-width: 1180px; padding-top: 1rem; padding-bottom: 2rem; }
+[data-testid="stVerticalBlock"] { gap: 0.55rem; }
+[data-testid="stCaptionContainer"], [data-testid="stMetricLabel"] { font-size: 14px; }
+.stButton button, [data-testid="stPopover"] button {
+  color: #111827; border-color: #64748b; background: #fff;
+}
+div[class*="st-key-tender-"] { border-radius: 0; padding: 0.65rem 0.8rem; }
+div[class*="st-key-tender-bid-"] { border-left: 5px solid #3f6212 !important; }
+div[class*="st-key-tender-review-"] { border-left: 5px solid #a16207 !important; }
+div[class*="st-key-tender-no_bid-"] { border-left: 5px solid #b91c1c !important; }
+div[class*="st-key-tender-not_analyzed-"] { border-left: 5px solid #64748b !important; }
+div[class*="st-key-requirement-"] {
+  border: 0; border-top: 1px solid #d1d5db; border-radius: 0; padding: 0.45rem 0;
+}
+.estimator-status {
+  display: inline-block; min-width: 5ch;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700;
+}
+.estimator-fail, .estimator-urgent { color: #b91c1c; font-weight: 700; }
+.estimator-letterhead {
+  border-bottom: 1px solid #111827; padding-bottom: 0.35rem; margin-bottom: 0.7rem;
+}
+.estimator-firm { text-align: right; white-space: nowrap; }
+.estimator-product { font-size: 14px; }
+@media print {
+  [data-testid="stSidebar"], [data-testid="stHeader"], [data-testid="stToolbar"],
+  [class*="st-key-no-print"], button { display: none !important; }
+  html, body, [class*="st-"] { color: #000 !important; background: #fff !important; }
+  .block-container { max-width: none; padding: 0.25in 0.35in; }
+  div[class*="st-key-requirement-"] { break-inside: avoid; page-break-inside: avoid; }
+  details > summary { display: none !important; }
+  details:not([open]) > :not(summary) { display: block !important; }
+  details [data-testid="stExpanderDetails"] { display: block !important; }
+  .estimator-letterhead { margin-bottom: 0.15in; }
+}
+</style>
+""",
+        unsafe_allow_html=True,
     )
 
 
-def _status_icon(judgment: dict | None) -> str:
+def _render_letterhead(profile: dict) -> None:
+    certifications = " · ".join(str(item) for item in profile.get("certifications", []))
+    bonding = profile.get("bonding_capacity_cad")
+    bonding_text = (
+        f"Bonding ${bonding:,.0f}"
+        if isinstance(bonding, (int, float))
+        else "Bonding unavailable"
+    )
+    regions = " · ".join(str(item) for item in profile.get("regions", []))
+    firm_parts = [
+        str(profile.get("firm_name") or "Firm profile unavailable"),
+        certifications,
+        bonding_text,
+        regions,
+    ]
+    firm_line = " — " + " · ".join(part for part in firm_parts[1:] if part)
+    with st.container(key="letterhead"):
+        left, right = st.columns([1, 4])
+        with left:
+            st.markdown(
+                f'<span class="estimator-product">{html.escape(config.PRODUCT_NAME)}</span>',
+                unsafe_allow_html=True,
+            )
+        with right:
+            st.markdown(
+                f'<div class="estimator-firm">{html.escape(firm_parts[0] + firm_line)}</div>',
+                unsafe_allow_html=True,
+            )
+        st.markdown('<div class="estimator-letterhead"></div>', unsafe_allow_html=True)
+
+
+def _status_text(judgment: dict | None) -> tuple[str, str]:
     verdict = str((judgment or {}).get("verdict", "uncertain"))
     if verdict == "satisfied":
-        return '<span style="color:#15803d;font-weight:700;">✓</span>'
+        return "PASS", ""
     if verdict == "not_satisfied":
-        return '<span style="color:#b91c1c;font-weight:700;">✗</span>'
-    return '<span style="color:#b45309;font-weight:700;">?</span>'
+        return "FAIL", " estimator-fail"
+    return "CHECK", ""
 
 
 def _requirements_by_id(tender: dict) -> dict[str, dict]:
@@ -197,28 +238,68 @@ def _requirements_by_id(tender: dict) -> dict[str, dict]:
 
 
 def _truncate(text: str, limit: int = 90) -> str:
-    return text if len(text) <= limit else text[: limit - 1].rstrip() + "…"
+    return text if len(text) <= limit else text[: limit - 3].rstrip() + "..."
 
 
-def _render_closing(value: Any) -> None:
-    text, days = _closing_text(value)
-    if days is not None and 0 <= days < 5:
-        st.markdown(f'<span style="color:#b91c1c;">{html.escape(text)}</span>', unsafe_allow_html=True)
-    else:
-        st.caption(text)
+def _closing_board_text(value: Any) -> tuple[str, bool]:
+    closing = _parse_closing(value)
+    if closing is None:
+        return "Closing unavailable", False
+    days = (closing.date() - date.today()).days
+    day_text = f"{days} day{'s' if days != 1 else ''}" if days >= 0 else "closed"
+    return f"Closes {closing.strftime('%a %b %-d')} — {day_text}", 0 <= days < 5
 
 
-def _render_counts(decision: dict) -> None:
+def _counts_text(decision: dict) -> str:
     counts = decision.get("counts", {}) if isinstance(decision, dict) else {}
-    columns = st.columns(4)
-    for column, label, key in zip(
-        columns,
-        ("Mandatory", "Passed", "Failed", "Uncertain"),
-        ("mandatory", "passed", "failed", "uncertain"),
-    ):
-        with column:
-            st.caption(label)
-            st.write(str(counts.get(key, 0)))
+    return (
+        f'Mandatory items: {counts.get("mandatory", 0)} · '
+        f'Pass {counts.get("passed", 0)} · Fail {counts.get("failed", 0)} · '
+        f'Unresolved {counts.get("uncertain", 0)}'
+    )
+
+
+def _bid_security_text(tender: dict) -> str:
+    requirement = next(
+        (
+            item
+            for item in tender.get("requirements", [])
+            if isinstance(item, dict)
+            and item.get("phase") == "bid_phase_mandatory"
+            and item.get("category") == "bid_security"
+        ),
+        None,
+    )
+    if requirement is None:
+        return "Bid security: not identified"
+    return "Bid security: " + _truncate(
+        str(requirement.get("requirement_text") or "requirement identified"), 85
+    )
+
+
+def _submission_text(tender: dict) -> str:
+    requirements = [
+        item
+        for item in tender.get("requirements", [])
+        if isinstance(item, dict)
+        and item.get("phase") == "bid_phase_mandatory"
+        and item.get("category") == "submission"
+    ]
+    methods: list[str] = []
+    for requirement in requirements:
+        if requirement.get("check_field") != "submission_method":
+            continue
+        value = str(requirement.get("check_value") or "").strip()
+        if value and value not in methods:
+            methods.append(value)
+    if methods:
+        return "Submission: " + " / ".join(methods)
+    if requirements:
+        return "Submission: " + _truncate(
+            str(requirements[0].get("requirement_text") or "see tender documents"),
+            80,
+        )
+    return "Submission: not identified"
 
 
 def _render_decision_items(
@@ -237,11 +318,11 @@ def _render_decision_items(
 
 def _select_tender(tender_id: str) -> None:
     st.session_state.selected_tender_id = tender_id
-    st.session_state.view = "Compliance checklist"
+    st.session_state.view = "Bid checklist"
 
 
 def _back_to_feed() -> None:
-    st.session_state.view = "Triage feed"
+    st.session_state.view = "Bid board"
 
 
 def _render_tender_card(tender: dict, analyzed: bool = True) -> None:
@@ -250,79 +331,96 @@ def _render_tender_card(tender: dict, analyzed: bool = True) -> None:
     verdict = _valid_verdict(tender)
     requirements_by_id = _requirements_by_id(tender)
 
-    with st.container(border=True):
-        title_column, badge_column = st.columns([5, 1])
+    safe_id = tender_id.replace(".", "-")
+    with st.container(border=True, key=f"tender-{verdict}-{safe_id}"):
+        closing_column, title_column, verdict_column = st.columns([2.1, 5.9, 1.35])
+        closing_text, urgent = _closing_board_text(tender.get("closing_date"))
+        with closing_column:
+            css_class = "estimator-urgent" if urgent else ""
+            st.markdown(
+                f'<span class="{css_class}"><strong>{html.escape(closing_text)}</strong></span>',
+                unsafe_allow_html=True,
+            )
         with title_column:
-            st.subheader(tender["title"])
+            st.markdown(f'**{html.escape(str(tender["title"]))}**')
             st.caption(tender_id)
-            _render_closing(tender.get("closing_date"))
-        with badge_column:
-            st.markdown(_badge(verdict), unsafe_allow_html=True)
+        with verdict_column:
+            verdict_class = "estimator-fail" if verdict == "no_bid" else ""
+            st.markdown(
+                f'<span class="{verdict_class}"><strong>{VERDICT_LABELS[verdict]}</strong></span>',
+                unsafe_allow_html=True,
+            )
 
-        if analyzed:
-            if verdict == "no_bid":
-                blocker_ids = decision.get("blockers", [])
-                blocker = requirements_by_id.get(
-                    str(blocker_ids[0]), {}
-                ) if blocker_ids else {}
-                st.write(
-                    "Blocked: "
-                    f'{blocker.get("requirement_text", "Blocking requirement unavailable")} '
-                    f'— p.{blocker.get("page_number", "?")}, '
-                    f'{blocker.get("source_file", "source unavailable")}'
-                )
-                if blocker.get("verbatim_quote"):
-                    st.caption(
-                        f'{blocker["verbatim_quote"]} — '
-                        f'p.{blocker.get("page_number", "?")}, '
-                        f'{blocker.get("source_file", "source unavailable")}'
+        line_two = f"{_bid_security_text(tender)} · {_submission_text(tender)}"
+        blocker: dict = {}
+        if analyzed and verdict == "no_bid":
+            blocker_ids = decision.get("blockers", [])
+            blocker = requirements_by_id.get(str(blocker_ids[0]), {}) if blocker_ids else {}
+            line_two += (
+                " · Blocked — "
+                f'{blocker.get("requirement_text", "blocking requirement unavailable")} '
+                f'(p.{blocker.get("page_number", "?")}, '
+                f'{blocker.get("source_file", "source unavailable")})'
+            )
+        st.write(line_two)
+        if blocker.get("verbatim_quote"):
+            st.caption(
+                f'"{blocker["verbatim_quote"]}" — p.{blocker.get("page_number", "?")}, '
+                f'{blocker.get("source_file", "source unavailable")}'
+            )
+
+        count_column, why_column, checklist_column = st.columns([7.5, 0.8, 1.15])
+        with count_column:
+            st.write(_counts_text(decision) if analyzed else "Mandatory items: not analyzed")
+        with why_column:
+            with st.popover("Why"):
+                if analyzed:
+                    st.write(decision.get("rationale") or "No decision note available.")
+                    _render_decision_items(
+                        "Blockers", decision.get("blockers", []), requirements_by_id
                     )
-            elif verdict == "review":
-                open_ids = decision.get("open_questions", [])
-                first = requirements_by_id.get(str(open_ids[0]), {}) if open_ids else {}
-                st.write(
-                    f'{len(open_ids)} open questions — top: '
-                    f'{_truncate(str(first.get("requirement_text", "Unavailable")))}'
-                )
-            elif verdict == "bid":
-                mandatory = decision.get("counts", {}).get("mandatory", 0)
-                st.write(f"All {mandatory} mandatory requirements pass")
-
-            _render_counts(decision)
-            with st.expander("Why?"):
-                st.write(decision.get("rationale") or "No rationale available.")
-                _render_decision_items(
-                    "Blockers", decision.get("blockers", []), requirements_by_id
-                )
-                _render_decision_items(
-                    "Open questions",
-                    decision.get("open_questions", []),
-                    requirements_by_id,
-                )
-        else:
-            st.write("Not yet analyzed")
-
-        st.button(
-            "Full compliance checklist",
-            key=f"checklist-{tender_id}",
-            on_click=_select_tender,
-            args=(tender_id,),
-        )
+                    _render_decision_items(
+                        "Items to check",
+                        decision.get("open_questions", []),
+                        requirements_by_id,
+                    )
+                else:
+                    st.write("This tender has not been analyzed.")
+        with checklist_column:
+            st.button(
+                "Checklist",
+                key=f"checklist-{tender_id}",
+                on_click=_select_tender,
+                args=(tender_id,),
+            )
 
 
 def _render_feed(tenders: list[dict]) -> None:
-    st.title("Tender triage")
+    st.title("Bid board")
+    closing_within_seven = 0
+    for tender in tenders:
+        closing = _parse_closing(tender.get("closing_date"))
+        if closing is not None and 0 <= (closing.date() - date.today()).days <= 7:
+            closing_within_seven += 1
+    metric_columns = st.columns(3)
+    metric_columns[0].metric("Closing within 7 days", closing_within_seven)
+    metric_columns[1].metric(
+        "Ready to bid", sum(_valid_verdict(tender) == "bid" for tender in tenders)
+    )
+    metric_columns[2].metric(
+        "Blocked", sum(_valid_verdict(tender) == "no_bid" for tender in tenders)
+    )
     groups = [
-        ("bid", "Bid"),
-        ("review", "Review"),
-        ("no_bid", "Don't bid"),
+        ("bid", "Recommended to bid"),
+        ("review", "Review before deciding"),
+        ("no_bid", "Do not bid"),
     ]
     for verdict, label in groups:
         grouped = sorted(
             [tender for tender in tenders if _valid_verdict(tender) == verdict],
             key=_closing_sort_key,
         )
-        st.header(f"{label} ({len(grouped)})")
+        st.subheader(f"{label} ({len(grouped)})")
         for tender in grouped:
             _render_tender_card(tender)
 
@@ -334,19 +432,9 @@ def _render_feed(tenders: list[dict]) -> None:
         ],
         key=_closing_sort_key,
     )
-    with st.expander(f"Not yet analyzed ({len(not_analyzed)})", expanded=False):
+    with st.expander(f"Not analyzed ({len(not_analyzed)})", expanded=False):
         for tender in not_analyzed:
             _render_tender_card(tender, analyzed=False)
-
-
-def _ordered_categories(requirements: list[dict]) -> list[str]:
-    present = {
-        str(requirement.get("category", "other_mandatory"))
-        for requirement in requirements
-    }
-    return [item for item in CATEGORY_ORDER if item in present] + sorted(
-        present - set(CATEGORY_ORDER)
-    )
 
 
 def _render_requirement(
@@ -354,11 +442,16 @@ def _render_requirement(
     judgment: dict | None,
     show_status: bool,
 ) -> None:
-    with st.container(border=True):
+    requirement_id = str(requirement.get("id", "unknown")).replace(".", "-")
+    with st.container(key=f"requirement-{requirement_id}"):
         if show_status:
-            icon_column, content_column = st.columns([1, 24])
-            with icon_column:
-                st.markdown(_status_icon(judgment), unsafe_allow_html=True)
+            status_column, content_column = st.columns([1, 11])
+            status, status_class = _status_text(judgment)
+            with status_column:
+                st.markdown(
+                    f'<span class="estimator-status{status_class}">{status}</span>',
+                    unsafe_allow_html=True,
+                )
         else:
             content_column = st.container()
         with content_column:
@@ -366,18 +459,20 @@ def _render_requirement(
             quote = requirement.get("verbatim_quote")
             if quote:
                 st.caption(
-                    f'{quote} — p.{requirement.get("page_number", "?")}, '
+                    f'"{quote}" — p.{requirement.get("page_number", "?")}, '
                     f'{requirement.get("source_file", "source unavailable")}'
                 )
             if requirement.get("verification_status") == "page_repaired":
-                st.markdown(
-                    '<span style="font-size:0.75rem;color:#475569;background:#e2e8f0;'
-                    'padding:0.1rem 0.4rem;border-radius:999px;">page corrected</span>',
-                    unsafe_allow_html=True,
+                original_page = requirement.get("original_page_number")
+                correction = (
+                    f"[page corrected from {original_page}]"
+                    if original_page is not None
+                    else "[page corrected]"
                 )
+                st.caption(correction)
             if requirement.get("machine_checkable") is True:
                 st.caption(
-                    "auto-checked: "
+                    "Rule check: "
                     f'{requirement.get("check_field")} '
                     f'{requirement.get("check_operator")} '
                     f'{requirement.get("check_value")}'
@@ -387,30 +482,68 @@ def _render_requirement(
 def _render_requirement_groups(
     requirements: list[dict], judgments_by_id: dict[str, dict], show_status: bool
 ) -> None:
-    for category in _ordered_categories(requirements):
-        st.markdown(f"### {CATEGORY_LABELS.get(category, category.replace('_', ' ').title())}")
-        for requirement in requirements:
-            if str(requirement.get("category", "other_mandatory")) != category:
-                continue
+    sections = [
+        ("Submission rules", {"submission"}),
+        ("Bid security", {"bid_security"}),
+        ("Certifications", {"certification"}),
+        ("Insurance", {"insurance"}),
+        ("Eligibility", {"eligibility"}),
+        ("Other", {"evaluation", "other_mandatory"}),
+    ]
+    known_categories = set().union(*(categories for _, categories in sections))
+    for heading, categories in sections:
+        section_items = [
+            requirement
+            for requirement in requirements
+            if str(requirement.get("category", "other_mandatory")) in categories
+            or (
+                heading == "Other"
+                and str(requirement.get("category", "other_mandatory"))
+                not in known_categories
+            )
+        ]
+        if not section_items:
+            if show_status:
+                st.markdown(f"### {heading}")
+                st.caption("None identified in the bid documents.")
+            continue
+        st.markdown(f"### {heading}")
+        for requirement in section_items:
             judgment = judgments_by_id.get(str(requirement.get("id", "")))
             _render_requirement(requirement, judgment, show_status)
 
 
+def _render_tender_cover(tender: dict) -> None:
+    closing_text, _ = _closing_text(tender.get("closing_date"))
+    st.title(tender["title"])
+    cover = st.columns([1, 3])
+    with cover[0]:
+        st.markdown("**Solicitation number**")
+        st.markdown("**Closing**")
+        st.markdown("**Submission method**")
+    with cover[1]:
+        st.write(tender["tender_id"])
+        st.write(closing_text)
+        st.write(_submission_text(tender).removeprefix("Submission: "))
+
+
 def _render_checklist(tender: dict | None) -> None:
     if tender is None:
-        st.title("Compliance checklist")
-        st.info("Select a tender from the triage feed to view its checklist.")
+        st.title("Bid checklist")
+        st.info("Select a tender from the bid board to view its checklist.")
         return
 
-    st.button("← Back to triage", on_click=_back_to_feed)
+    with st.container(key="no-print-back"):
+        st.button("Back to bid board", on_click=_back_to_feed)
     decision = tender.get("decision", {})
     verdict = _valid_verdict(tender)
-    title_column, badge_column = st.columns([5, 1])
-    with title_column:
-        st.title(tender["title"])
-        _render_closing(tender.get("closing_date"))
-    with badge_column:
-        st.markdown(_badge(verdict), unsafe_allow_html=True)
+    _render_tender_cover(tender)
+    verdict_class = "estimator-fail" if verdict == "no_bid" else ""
+    st.markdown(
+        f'<span class="{verdict_class}"><strong>'
+        f'Bid decision: {VERDICT_LABELS[verdict]}</strong></span>',
+        unsafe_allow_html=True,
+    )
 
     requirements = [
         item for item in tender.get("requirements", []) if isinstance(item, dict)
@@ -427,11 +560,11 @@ def _render_checklist(tender: dict | None) -> None:
         if isinstance(item, dict)
     }
 
-    st.header(f"Bid submission requirements ({len(bid_phase)})")
+    st.header(f"Bid checklist ({len(bid_phase)} mandatory items)")
     _render_requirement_groups(bid_phase, judgments_by_id, show_status=True)
 
     with st.expander(
-        f"Contract conditions if awarded ({len(contract_conditions)})",
+        f"Conditions after award ({len(contract_conditions)})",
         expanded=False,
     ):
         _render_requirement_groups(
@@ -441,9 +574,8 @@ def _render_checklist(tender: dict | None) -> None:
     dropped_count = len(tender.get("dropped", []))
     st.markdown("---")
     st.write(
-        "Every requirement above carries a verbatim quote verified to exist at "
-        f"the cited page. {dropped_count} unverifiable extraction(s) were dropped "
-        "and are not shown."
+        "All quotes above were machine-verified to exist at the cited page of the "
+        f"source document. {dropped_count} unverifiable extractions were discarded."
     )
 
 
@@ -455,44 +587,30 @@ def _render_roadmap() -> None:
 - **All-portal coverage** — MERX, bids&tenders, and provincial procurement portals.
 - **One-click document capture extension** — save tender packages directly into the workflow.
 - **Addenda conflict detection** — flag requirement changes and contradictions automatically.
-- **Exportable checklist PDF** — share a portable compliance checklist with the bid team.
+- **Exportable checklist PDF** — share a portable bid checklist with the estimating team.
 """
     )
 
 
 def _render_sidebar(profile: dict, tenders: list[dict]) -> None:
-    st.sidebar.title(config.PRODUCT_NAME)
-    with st.sidebar.container(border=True):
-        st.subheader(str(profile.get("firm_name") or "Firm profile unavailable"))
-        certifications = profile.get("certifications", [])
-        st.caption(
-            "Certifications: "
-            + (", ".join(str(item) for item in certifications) or "None listed")
-        )
-        bonding = profile.get("bonding_capacity_cad")
-        bonding_text = f"${bonding:,.0f}" if isinstance(bonding, (int, float)) else "Unavailable"
-        st.caption(f"Bonding capacity: {bonding_text}")
-        regions = profile.get("regions", [])
-        st.caption(
-            "Regions: " + (", ".join(str(item) for item in regions) or "None listed")
-        )
+    del profile
     st.sidebar.caption("Sources: CanadaBuys open data + uploaded packages")
 
     counts = {
         verdict: sum(_valid_verdict(tender) == verdict for tender in tenders)
         for verdict in ("bid", "review", "no_bid", "not_analyzed")
     }
-    st.sidebar.markdown("**Tender count**")
+    st.sidebar.markdown("**Bid board count**")
     st.sidebar.caption(
-        f'Bid {counts["bid"]} · Review {counts["review"]} · '
-        f'Don\'t bid {counts["no_bid"]} · Not yet analyzed {counts["not_analyzed"]}'
+        f'Ready {counts["bid"]} · Review {counts["review"]} · '
+        f'Blocked {counts["no_bid"]} · Not analyzed {counts["not_analyzed"]}'
     )
 
     if "view" not in st.session_state:
-        st.session_state.view = "Triage feed"
+        st.session_state.view = "Bid board"
     st.sidebar.radio(
         "Navigate",
-        ["Triage feed", "Compliance checklist", "Roadmap"],
+        ["Bid board", "Bid checklist", "Roadmap"],
         key="view",
     )
 
@@ -501,15 +619,17 @@ def main() -> None:
     """Render the read-only TenderSentry demo application."""
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
     st.set_page_config(page_title=config.PRODUCT_NAME, layout="wide")
+    _render_styles()
     data = load_all_data(_data_snapshot())
     tenders = data["tenders"]
     _render_sidebar(data["profile"], tenders)
+    _render_letterhead(data["profile"])
 
     view = st.session_state.view
     if view == "Roadmap":
         _render_roadmap()
         return
-    if view == "Compliance checklist":
+    if view == "Bid checklist":
         selected_id = st.session_state.get("selected_tender_id")
         selected = next(
             (tender for tender in tenders if tender["tender_id"] == selected_id),
