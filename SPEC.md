@@ -74,6 +74,7 @@ data/
   "requirement_text": "str, plain-language restatement",
   "verbatim_quote": "str, exact text from the source PDF",
   "page_number": "int, true page after repair",
+  "original_page_number": "int | null, originally claimed page; present when page_repaired",
   "source_file": "str, filename within raw/",
   "section_ref": "str | null",
   "is_mandatory": "bool",

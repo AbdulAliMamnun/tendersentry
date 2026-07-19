@@ -271,6 +271,7 @@ def verify_requirements(
             verified_count += 1
         else:
             checked["source_file"] = true_file
+            checked["original_page_number"] = claimed_page
             checked["page_number"] = true_page
             checked["verification_status"] = "page_repaired"
             repaired_count += 1
