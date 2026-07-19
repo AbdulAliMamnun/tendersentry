@@ -16,6 +16,7 @@ from extract.env import require_openai_api_key
 
 
 LOGGER = logging.getLogger(__name__)
+MAX_JUDGMENT_BATCH = 10
 
 JUDGMENT_SYSTEM_PROMPT = """You are a bid qualification analyst.
 
@@ -25,7 +26,10 @@ return uncertain; never assume unstated capabilities.
 
 Every judgment must contain requirement_id, verdict (satisfied, not_satisfied, or uncertain),
 and a one-sentence rationale referring to the substance of that requirement. Judge only the
-provided requirement ids. Return one JSON object shaped as {"judgments": [...]}.
+provided requirement ids. A rule_context field may explain why deterministic evaluation was
+inconclusive; make the best judgment possible from the profile and requirement, while remaining
+uncertain when the profile lacks the needed facts. Return one JSON object shaped as
+{"judgments": [...]} and include every supplied requirement exactly once.
 """
 
 
@@ -48,6 +52,20 @@ def numeric(value: Any) -> float | None:
     elif suffix in {"k", "thousand"}:
         number *= 1_000
     return number
+
+
+def _submission_methods(value: Any) -> set[str]:
+    """Normalize a submission-method value into comparable method names."""
+    text = str(value or "").strip().casefold().replace("in person", "in-person")
+    methods = {
+        item.strip()
+        for item in re.split(r"\s*(?:,|/|\bor\b)\s*", text)
+        if item.strip()
+    }
+    if "physical" in methods:
+        methods.remove("physical")
+        methods.update({"in-person", "courier"})
+    return methods
 
 
 def evaluate_rule(requirement: dict, profile: dict) -> dict:
@@ -121,20 +139,25 @@ def evaluate_rule(requirement: dict, profile: dict) -> dict:
         )
 
     if field == "submission_method":
-        required = str(check_value or "").strip().casefold()
+        required = _submission_methods(check_value)
         operator = str(requirement.get("check_operator") or "").strip()
-        available = {
-            str(item).strip().casefold()
-            for item in profile.get("submission_capabilities", [])
-        }
-        if not required or operator not in {"", "==", "in"}:
+        available: set[str] = set()
+        for item in profile.get("submission_capabilities", []):
+            available.update(_submission_methods(item))
+        if not required or operator not in {"==", "!=", "in"}:
             return result(
                 "unknown",
                 "submission restriction cannot be inferred from profile capabilities",
             )
+        if operator == "!=":
+            allowed = available - required
+            return result(
+                "pass" if allowed else "fail",
+                f"prohibits {sorted(required)}; profile can use {sorted(allowed)}",
+            )
         return result(
-            "pass" if required in available else "fail",
-            f"requires {required}; profile supports {sorted(available)}",
+            "pass" if required & available else "fail",
+            f"requires one of {sorted(required)}; profile supports {sorted(available)}",
         )
 
     LOGGER.warning(
@@ -144,17 +167,69 @@ def evaluate_rule(requirement: dict, profile: dict) -> dict:
 
 
 def judge_fuzzy(requirements: list[dict], profile: dict, client: Any) -> list[dict]:
-    """Judge all fuzzy mandatory requirements in one guarded API call."""
+    """Judge requirements in batches of ten, retry omissions, and track provenance."""
     if not requirements:
+        LOGGER.info(
+            "Fuzzy judgment tally: sent 0, returned 0, accepted 0, "
+            "coerced 0, defaulted 0"
+        )
         return []
     allowed = {str(item.get("id", "")): item for item in requirements}
+    accepted: dict[str, dict] = {}
+    stats = {"returned": 0, "accepted": 0, "coerced": 0, "defaulted": 0}
+    requirement_ids = list(allowed)
+
+    for start in range(0, len(requirement_ids), MAX_JUDGMENT_BATCH):
+        batch_ids = requirement_ids[start : start + MAX_JUDGMENT_BATCH]
+        batch = [allowed[requirement_id] for requirement_id in batch_ids]
+        proposed = _request_fuzzy_batch(batch, profile, client)
+        _accept_fuzzy_judgments(proposed, set(batch_ids), accepted, stats)
+
+        missing_ids = [item_id for item_id in batch_ids if item_id not in accepted]
+        if missing_ids:
+            LOGGER.warning(
+                "Fuzzy batch omitted %d ids; retrying them once: %s",
+                len(missing_ids),
+                ", ".join(missing_ids),
+            )
+            retry_batch = [allowed[requirement_id] for requirement_id in missing_ids]
+            proposed = _request_fuzzy_batch(retry_batch, profile, client)
+            _accept_fuzzy_judgments(proposed, set(missing_ids), accepted, stats)
+
+        for requirement_id in batch_ids:
+            if requirement_id in accepted:
+                continue
+            accepted[requirement_id] = {
+                "requirement_id": requirement_id,
+                "verdict": "uncertain",
+                "rationale": "No valid judgment was returned after one retry.",
+                "source": "defaulted",
+            }
+            stats["defaulted"] += 1
+
+    LOGGER.info(
+        "Fuzzy judgment tally: sent %d, returned %d, accepted %d, "
+        "coerced %d, defaulted %d",
+        len(allowed),
+        stats["returned"],
+        stats["accepted"],
+        stats["coerced"],
+        stats["defaulted"],
+    )
+    return [accepted[requirement_id] for requirement_id in requirement_ids]
+
+
+def _request_fuzzy_batch(
+    requirements: list[dict], profile: dict, client: Any
+) -> list[Any]:
     prompt_requirements = [
         {
-            "requirement_id": requirement_id,
+            "requirement_id": str(requirement.get("id", "")),
             "requirement_text": requirement.get("requirement_text", ""),
             "verbatim_quote": requirement.get("verbatim_quote", ""),
+            "rule_context": requirement.get("rule_context"),
         }
-        for requirement_id, requirement in allowed.items()
+        for requirement in requirements
     ]
     try:
         response = client.chat.completions.create(
@@ -178,41 +253,44 @@ def judge_fuzzy(requirements: list[dict], profile: dict, client: Any) -> list[di
         proposed = payload.get("judgments", [])
         if not isinstance(proposed, list):
             raise ValueError("API response field 'judgments' is not a list")
+        return proposed
     except Exception as exc:
-        LOGGER.error("Fuzzy qualification failed; defaulting to uncertain: %s", exc)
-        proposed = []
+        LOGGER.error("Fuzzy qualification batch failed: %s", exc)
+        return []
 
-    accepted: dict[str, dict] = {}
+
+def _accept_fuzzy_judgments(
+    proposed: list[Any],
+    requested_ids: set[str],
+    accepted: dict[str, dict],
+    stats: dict[str, int],
+) -> None:
+    stats["returned"] += len(proposed)
     for item in proposed:
         if not isinstance(item, dict):
             continue
         requirement_id = str(item.get("requirement_id", ""))
-        if requirement_id not in allowed:
+        if requirement_id not in requested_ids:
             LOGGER.warning("Discarding judgment for unknown id %r", requirement_id)
             continue
+        if requirement_id in accepted:
+            LOGGER.warning("Discarding duplicate judgment for %s", requirement_id)
+            continue
         verdict = str(item.get("verdict", "uncertain")).strip().casefold()
+        source = "explicit"
         if verdict not in {"satisfied", "not_satisfied", "uncertain"}:
             verdict = "uncertain"
+            source = "coerced"
+            stats["coerced"] += 1
+        else:
+            stats["accepted"] += 1
         accepted[requirement_id] = {
             "requirement_id": requirement_id,
             "verdict": verdict,
             "rationale": str(item.get("rationale", "")).strip()
             or "The model did not provide a rationale.",
+            "source": source,
         }
-
-    judgments: list[dict] = []
-    for requirement_id in allowed:
-        judgments.append(
-            accepted.get(
-                requirement_id,
-                {
-                    "requirement_id": requirement_id,
-                    "verdict": "uncertain",
-                    "rationale": "No valid judgment was returned for this requirement.",
-                },
-            )
-        )
-    return judgments
 
 
 def decide(
@@ -241,16 +319,29 @@ def decide(
         LOGGER.info("OpenAI usage for %s: 0 prompt tokens, 0 completion tokens", safe_tender_id)
         return decision
 
-    results = [
-        evaluate_rule(requirement, profile)
-        for requirement in mandatory
-        if requirement.get("machine_checkable") is True
-    ]
-    fuzzy_requirements = [
-        requirement
-        for requirement in mandatory
-        if requirement.get("machine_checkable") is not True
-    ]
+    results: list[dict] = []
+    judgment_provenance: dict[str, dict] = {}
+    fuzzy_requirements: list[dict] = []
+    for requirement in mandatory:
+        requirement_id = str(requirement.get("id", ""))
+        if requirement.get("machine_checkable") is not True:
+            fuzzy_requirements.append(requirement)
+            continue
+        rule_result = evaluate_rule(requirement, profile)
+        if rule_result["outcome"] == "unknown":
+            fuzzy_requirements.append(
+                {**requirement, "rule_context": rule_result["detail"]}
+            )
+            continue
+        results.append(rule_result)
+        judgment_provenance[requirement_id] = {
+            "id": requirement_id,
+            "verdict": {
+                "pass": "satisfied",
+                "fail": "not_satisfied",
+            }[rule_result["outcome"]],
+            "source": "rule",
+        }
 
     usage_client: _UsageTrackingClient | None = None
     if fuzzy_requirements:
@@ -271,15 +362,29 @@ def decide(
                     "detail": judgment["rationale"],
                 }
             )
+            judgment_provenance[judgment["requirement_id"]] = {
+                "id": judgment["requirement_id"],
+                "verdict": judgment["verdict"],
+                "source": judgment["source"],
+            }
+
+    ordered_provenance = [
+        judgment_provenance[str(requirement.get("id", ""))]
+        for requirement in mandatory
+    ]
 
     decision = _assemble_decision(
         safe_tender_id,
         mandatory,
         results,
         fuzzy_used=bool(fuzzy_requirements),
+        judgments=ordered_provenance,
     )
     allowed_ids = {str(item.get("id", "")) for item in requirements}
     assert set(decision["blockers"] + decision["open_questions"]) <= allowed_ids
+    assert {item["id"] for item in decision["judgments"]} == {
+        str(item.get("id", "")) for item in mandatory
+    }
     tender_dir.mkdir(parents=True, exist_ok=True)
     _write_json(decision_path, decision)
     LOGGER.info(
@@ -296,6 +401,7 @@ def _assemble_decision(
     requirements: list[dict],
     results: list[dict],
     fuzzy_used: bool,
+    judgments: list[dict] | None = None,
 ) -> dict:
     by_id = {str(item.get("id", "")): item for item in requirements}
     outcomes = {
@@ -337,6 +443,7 @@ def _assemble_decision(
         "open_questions": open_questions,
         "rationale": rationale,
         "confidence": confidence,
+        "judgments": judgments or [],
         "counts": {
             "mandatory": len(requirements),
             "passed": sum(outcome == "pass" for outcome in outcomes.values()),

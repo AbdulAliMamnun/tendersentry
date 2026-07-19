@@ -34,6 +34,26 @@ PHASES = {
     "not_a_requirement",
 }
 
+CHECK_FIELDS = {
+    "certification",
+    "bonding_capacity",
+    "insurance_cgl",
+    "insurance_auto",
+    "region",
+    "submission_method",
+}
+
+CHECK_OPERATORS = {">=", "<=", "==", "!=", "in"}
+
+CHECK_FIELD_OPERATORS = {
+    "certification": {"==", "in"},
+    "bonding_capacity": {">="},
+    "insurance_cgl": {">="},
+    "insurance_auto": {">="},
+    "region": {"==", "in"},
+    "submission_method": {"==", "!=", "in"},
+}
+
 SYSTEM_PROMPT = """You are a compliance analyst extracting MANDATORY requirements from a Canadian public tender.
 
 Extract only items a bidder MUST do, have, or provide: eligibility conditions; certifications; bid security including type, form, and amount; insurance types and limits; submission method, format, and deadline rules; signatures; addenda acknowledgment; mandatory site meetings; and evaluation criteria that are pass/fail.
@@ -48,7 +68,14 @@ For every requirement return:
 - section_ref: the visible section reference, or null
 - is_mandatory: a boolean
 - machine_checkable: true ONLY for crisp numeric or boolean checks such as bonding >= an amount, a certification being held, or a required region; false for fuzzy checks
-- check_field, check_operator, check_value: the structured check when machine_checkable, otherwise null
+- check_field: when machine_checkable, EXACTLY one of certification, bonding_capacity, insurance_cgl, insurance_auto, region, submission_method; otherwise null
+- check_operator: when machine_checkable, EXACTLY one of >=, <=, ==, !=, in; otherwise null
+- check_value: the structured value when machine_checkable, otherwise null
+
+If a requirement cannot be represented using those closed check_field and check_operator lists,
+set machine_checkable=false and all three check fields to null. Never invent a check_field.
+Use >= for bonding and insurance minimums; == or in for certifications and regions; and ==, !=,
+or in for submission methods. Other field/operator pairings are not expressible.
 
 Quotes are machine-verified against the source. Any quote that cannot be located exactly is discarded. Never paraphrase, repair, combine, or invent verbatim_quote text.
 
@@ -456,6 +483,30 @@ def _canonical_requirement(proposed: dict) -> dict:
         check_value, bool
     ):
         check_value = None
+    machine_checkable = _as_bool(proposed.get("machine_checkable"))
+    check_field = _nullable_string(proposed.get("check_field"))
+    check_operator = _nullable_string(proposed.get("check_operator"))
+    if check_field is not None:
+        check_field = check_field.casefold()
+    if check_operator is not None:
+        check_operator = check_operator.casefold()
+    if machine_checkable and (
+        check_field not in CHECK_FIELDS
+        or check_operator not in CHECK_OPERATORS
+        or check_operator not in CHECK_FIELD_OPERATORS.get(check_field, set())
+        or check_value is None
+    ):
+        LOGGER.warning(
+            "Downgrading unsupported machine check field=%r operator=%r value=%r",
+            check_field,
+            check_operator,
+            check_value,
+        )
+        machine_checkable = False
+    if not machine_checkable:
+        check_field = None
+        check_operator = None
+        check_value = None
     return {
         "id": "",
         "tender_id": str(proposed.get("tender_id", "")),
@@ -467,9 +518,9 @@ def _canonical_requirement(proposed: dict) -> dict:
         "source_file": str(proposed.get("source_file", "")),
         "section_ref": _nullable_string(proposed.get("section_ref")),
         "is_mandatory": _as_bool(proposed.get("is_mandatory")),
-        "machine_checkable": _as_bool(proposed.get("machine_checkable")),
-        "check_field": _nullable_string(proposed.get("check_field")),
-        "check_operator": _nullable_string(proposed.get("check_operator")),
+        "machine_checkable": machine_checkable,
+        "check_field": check_field,
+        "check_operator": check_operator,
         "check_value": check_value,
     }
 

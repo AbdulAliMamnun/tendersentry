@@ -93,8 +93,13 @@ data/
   "tender_id": "str",
   "verdict": "bid | no_bid | review",
   "blockers": ["requirement id", "..."],
+  "open_questions": ["requirement id", "..."],
   "rationale": "str",
-  "confidence": "high | medium | low"
+  "confidence": "high | medium | low",
+  "judgments": [
+    {"id": "requirement id", "verdict": "satisfied | not_satisfied | uncertain", "source": "explicit | coerced | defaulted | rule"}
+  ],
+  "counts": {"mandatory": 0, "passed": 0, "failed": 0, "uncertain": 0}
 }
 ```
 

@@ -2,7 +2,7 @@ import json
 import unittest
 from types import SimpleNamespace
 
-from extract.pipeline import classify_requirement_phases
+from extract.pipeline import _canonical_requirement, classify_requirement_phases
 
 
 class _FakeCompletions:
@@ -20,6 +20,36 @@ class _FakeCompletions:
 
 
 class PhaseClassificationTests(unittest.TestCase):
+    def test_canonical_requirement_downgrades_invented_check_field(self) -> None:
+        with self.assertLogs("extract.pipeline", "WARNING"):
+            requirement = _canonical_requirement(
+                {
+                    "machine_checkable": True,
+                    "check_field": "crane_age",
+                    "check_operator": "<=",
+                    "check_value": 15,
+                }
+            )
+
+        self.assertFalse(requirement["machine_checkable"])
+        self.assertIsNone(requirement["check_field"])
+        self.assertIsNone(requirement["check_operator"])
+        self.assertIsNone(requirement["check_value"])
+
+    def test_canonical_requirement_downgrades_incompatible_operator(self) -> None:
+        with self.assertLogs("extract.pipeline", "WARNING"):
+            requirement = _canonical_requirement(
+                {
+                    "machine_checkable": True,
+                    "check_field": "submission_method",
+                    "check_operator": "<=",
+                    "check_value": 15,
+                }
+            )
+
+        self.assertFalse(requirement["machine_checkable"])
+        self.assertIsNone(requirement["check_field"])
+
     def test_one_call_guards_ids_and_defaults_missing_judgments(self) -> None:
         completions = _FakeCompletions(
             {

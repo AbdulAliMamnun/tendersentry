@@ -75,8 +75,12 @@ One OpenAI chat call per chunk (model from `config.OPENAI_MODEL`, temperature 0,
   that quotes will be machine-verified against the source and unverifiable quotes are discarded),
   page_number (int, from the [PAGE N] markers), section_ref if visible, is_mandatory (bool),
   and the machine_checkable fields per SPEC.md (machine_checkable, check_field, check_operator,
-  check_value) — machine_checkable=true ONLY for crisp numeric/boolean checks (bonding >= X,
-  certification held, region); everything fuzzy is false.
+  check_value) — machine_checkable=true ONLY for crisp numeric/boolean checks. `check_field` is
+  closed to `certification | bonding_capacity | insurance_cgl | insurance_auto | region |
+  submission_method`; `check_operator` is closed to `>= | <= | == | != | in`. Anything that
+  cannot be represented using those enums must set machine_checkable=false and all check fields
+  to null. Enforce compatible pairs: bonding/insurance use `>=`; certification/region use
+  `== | in`; submission_method uses `== | != | in`.
 - Return `{"requirements": [...]}`. On API error: one retry, then log and return [] for that
   chunk (never crash the run).
 
