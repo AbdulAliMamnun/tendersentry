@@ -17,6 +17,23 @@ Under Canada's Contract A framework, one missed mandatory clause voids an otherw
 5. **Qualify** — hybrid engine: deterministic checks against a firm profile (certifications, bonding, insurance, regions, submission methods) plus a batched fuzzy LLM judge with judgment provenance
 6. **Present** — a bid board sorted by closing date; red is reserved exclusively for bid-voiding blockers; every blocker card shows the disqualifying clause and its page
 
+```mermaid
+flowchart LR
+    A[Tender PDF] --> B[Page-tagged<br/>provenance store]
+    B --> C[Map-reduce extraction<br/>GPT-4o, temperature 0]
+    C --> D{Hallucination guard<br/>exact-substring check}
+    D -->|quote verified| E[Phase classifier]
+    D -->|not found| X[Dropped<br/>never displayed]
+    E --> F[Qualification engine<br/>rules + LLM judge]
+    F --> G[Bid board<br/>quote + page on every card]
+```
+
+## How Codex and OpenAI models were used
+
+The entire codebase was built through Codex working against written specs across the Build Week window. That spec-first workflow produced the extraction pipeline, hallucination guard, phase classifier, qualification engine, Streamlit UI, and accompanying test suite.
+
+The configured OpenAI model is `gpt-4o`. It is used for map-reduce requirement extraction, phase classification, and the fuzzy qualification judge. All three call sites use temperature 0 and JSON-object response mode. Extracted requirements then pass through the hallucination guard: each verbatim quote is normalized and checked against its cited source page, cross-page repair is attempted when necessary, and any quote that still cannot be verified is dropped before classification, qualification, or display.
+
 ## Real results (demo set: 4 real Ontario/federal tenders, 34–93 pages)
 
 | Tender | Pages | Extracted | Verified | Dropped by guard | Verdict |
