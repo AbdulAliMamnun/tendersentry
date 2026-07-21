@@ -28,5 +28,5 @@
     }
   ],
   "staff_designations": ["P.Eng on staff"],
-  "submission_capabilities": ["email", "portal", "physical"]
+  "submission_capabilities": ["email", "portal"]
 }

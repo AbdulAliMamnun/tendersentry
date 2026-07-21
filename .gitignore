@@ -3,3 +3,4 @@
 data/tenders/
 .env
 *.pyc
+.env
