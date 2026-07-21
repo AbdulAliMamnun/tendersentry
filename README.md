@@ -2,7 +2,7 @@
 
 **Citation-verified compliance intelligence for Canadian public tenders.**
 
-Under Canada's Contract A framework, one missed mandatory clause voids an otherwise winning bid. Estimators read 30–90+ page tender packages under deadline pressure, and the clauses that disqualify them are often buried deep — page 75 of a 93-page RFT. TenderSentry extracts every mandatory requirement, proves each one with a verbatim quote and true page number, and tells a contractor whether they can even submit.
+Under Canada's Contract A framework, one missed mandatory clause voids an otherwise winning bid. Estimators read 34–93-page tender packages under deadline pressure, and the clauses that disqualify them are often buried deep — page 75 of a 93-page RFT. TenderSentry extracts every mandatory requirement, proves each one with a verbatim quote and true page number, and tells a contractor whether they can even submit.
 
 ## The core invariant
 
@@ -21,12 +21,12 @@ Under Canada's Contract A framework, one missed mandatory clause voids an otherw
 
 | Tender | Pages | Extracted | Verified | Dropped by guard | Verdict |
 |---|---|---|---|---|---|
-| Federal crane rental RFSO | 76 | 92 | 86 | 6 | No bid (fax submission required) |
+| Federal crane rental RFSO | 55 | 98 | 92 | 6 | No bid (fax submission required) |
 | Muskoka Lakes T-2026-31 | 34 | 33 | 31 | 2 | No bid (physical delivery required) |
-| Augusta PW-2026-04 | 65 | [X] | [X] | [X] | No bid (physical delivery to clerk's office) |
+| Augusta PW-2026-04 | 65 | 88 | 87 | 1 | No bid (physical delivery to clerk's office) |
 | Kincardine CS-2025-01 | 93 | 79 | 76 | 3 | Review (33 items for human judgment) |
 
-**11 fabricated or unverifiable requirements were caught and dropped by the guard before any human saw them.**
+**12 fabricated or unverifiable requirements were caught and dropped by the guard before any human saw them.**
 
 Buried clauses it surfaced, with citations:
 - **Kincardine, page 75 of 93**: electronic bids must still hand-deliver the original bid security to the municipal office within 3 working days of the deadline
@@ -38,8 +38,8 @@ Buried clauses it surfaced, with citations:
 pip install -r requirements.txt
 cp .env.example .env   # add your OPENAI_API_KEY
 python3 -m extract.pipeline <tender_id> --force   # extraction + verification
-.venv/bin/python -m match.engine <tender_id> --force   # qualification
-streamlit run app.py
+python3 -m match.engine <tender_id> --force       # qualification
+streamlit run ui/app.py
 ```
 
 Tender PDFs live in `data/tenders/<tender_id>/raw/`. The firm profile is `data/profile.json`.
