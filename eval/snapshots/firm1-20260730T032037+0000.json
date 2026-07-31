@@ -1,0 +1,1096 @@
+{
+  "snapshot_version": 1,
+  "taken_at": "2026-07-30T03:20:37+00:00",
+  "git_revision": "a7e77db",
+  "weights_version": "2026-07-30.1",
+  "mapping_version": "2026-07-30.3",
+  "firm": {
+    "id": 1,
+    "name": "Georgian Bay Civil Ltd.",
+    "trades": [
+      "bridge_structural",
+      "marine_shoreline",
+      "water_wastewater"
+    ],
+    "regions": [
+      "ontario_any"
+    ]
+  },
+  "top": 20,
+  "candidate_count": 138,
+  "excluded_count": 48606,
+  "label_values": [
+    "relevant",
+    "marginal",
+    "irrelevant"
+  ],
+  "labelled": false,
+  "results": [
+    {
+      "rank": 1,
+      "tender_id": 177,
+      "source": "canadabuys",
+      "source_id": "cb-286-18568046",
+      "title": "Stage 1 - Replacement of Esson Lake Dam, Ontario Waterways",
+      "buyer_name": "Parks Canada Agency (PC)",
+      "buyer_type": "federal",
+      "region": "ON",
+      "closing_date_utc": "2026-08-06T18:00:00+00:00",
+      "estimated_value": null,
+      "notice_url": null,
+      "trade_slugs": [
+        "water_wastewater",
+        "bridge_structural",
+        "sitework"
+      ],
+      "mapping_status": "mapped",
+      "base_score": 89.5,
+      "value_modifier": 0.0,
+      "final_score": 89.5,
+      "components": {
+        "trade_match": {
+          "score": 0.9,
+          "weight": 45.0,
+          "points": 40.5,
+          "detail": "firm trade match on water_wastewater, bridge_structural (+0.10 for 2 overlapping trades)"
+        },
+        "region_match": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "notice province matches"
+        },
+        "buyer_type_preference": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "federal is a preferred buyer"
+        },
+        "recency_urgency": {
+          "score": 0.6,
+          "weight": 15.0,
+          "points": 9.0,
+          "detail": "7.6 days of runway"
+        }
+      },
+      "value_detail": "no published value",
+      "flags": [
+        "value_unknown"
+      ],
+      "label": null,
+      "label_note": null
+    },
+    {
+      "rank": 2,
+      "tender_id": 818,
+      "source": "canadabuys",
+      "source_id": "WS5176878164-Doc5803119702",
+      "title": "Retender EQ754-251469 Burlington Lift Bridge Security Gate and Fence Installation",
+      "buyer_name": "Department of Public Works and Government Services (PSPC)",
+      "buyer_type": "federal",
+      "region": "ON",
+      "closing_date_utc": "2026-08-10T20:00:00+00:00",
+      "estimated_value": null,
+      "notice_url": "https://portal.us.bn.cloud.ariba.com/dashboard/public/appext/comsapsbncdiscoveryui#/RfxEvent/preview/1110019712?anId=ANONYMOUS",
+      "trade_slugs": [
+        "bridge_structural",
+        "fencing_guiderail"
+      ],
+      "mapping_status": "mapped",
+      "base_score": 88.75,
+      "value_modifier": 0.0,
+      "final_score": 88.75,
+      "components": {
+        "trade_match": {
+          "score": 0.8,
+          "weight": 45.0,
+          "points": 36.0,
+          "detail": "firm trade match on bridge_structural"
+        },
+        "region_match": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "notice province matches"
+        },
+        "buyer_type_preference": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "federal is a preferred buyer"
+        },
+        "recency_urgency": {
+          "score": 0.85,
+          "weight": 15.0,
+          "points": 12.75,
+          "detail": "11.7 days of runway"
+        }
+      },
+      "value_detail": "no published value",
+      "flags": [
+        "value_unknown"
+      ],
+      "label": null,
+      "label_note": null
+    },
+    {
+      "rank": 3,
+      "tender_id": 202,
+      "source": "canadabuys",
+      "source_id": "cb-259-69669283",
+      "title": "ANALYSIS OF WASTEWATER, SLUDGE/BIOSOLIDS, LEACHATE, AND OTHER ENVIRONMENTAL MATRICES FOR PER- AND POLYFLUORINATED ALKYL SUBSTANCES (PFAS)",
+      "buyer_name": "Department of the Environment (ECCC )",
+      "buyer_type": "federal",
+      "region": "ON",
+      "closing_date_utc": "2026-08-04T18:00:00+00:00",
+      "estimated_value": null,
+      "notice_url": null,
+      "trade_slugs": [
+        "water_wastewater"
+      ],
+      "mapping_status": "mapped",
+      "base_score": 85.0,
+      "value_modifier": 0.0,
+      "final_score": 85.0,
+      "components": {
+        "trade_match": {
+          "score": 0.8,
+          "weight": 45.0,
+          "points": 36.0,
+          "detail": "firm trade match on water_wastewater"
+        },
+        "region_match": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "notice province matches"
+        },
+        "buyer_type_preference": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "federal is a preferred buyer"
+        },
+        "recency_urgency": {
+          "score": 0.6,
+          "weight": 15.0,
+          "points": 9.0,
+          "detail": "5.6 days of runway"
+        }
+      },
+      "value_detail": "no published value",
+      "flags": [
+        "value_unknown"
+      ],
+      "label": null,
+      "label_note": null
+    },
+    {
+      "rank": 4,
+      "tender_id": 180,
+      "source": "canadabuys",
+      "source_id": "cb-316-23690666",
+      "title": "South Campus Watermain Replacement",
+      "buyer_name": "National Research Council of Canada (NRC)",
+      "buyer_type": "federal",
+      "region": "CA",
+      "closing_date_utc": "2026-08-25T18:00:00+00:00",
+      "estimated_value": null,
+      "notice_url": null,
+      "trade_slugs": [
+        "water_wastewater"
+      ],
+      "mapping_status": "mapped",
+      "base_score": 81.0,
+      "value_modifier": 0.0,
+      "final_score": 81.0,
+      "components": {
+        "trade_match": {
+          "score": 0.8,
+          "weight": 45.0,
+          "points": 36.0,
+          "detail": "firm trade match on water_wastewater"
+        },
+        "region_match": {
+          "score": 0.5,
+          "weight": 20.0,
+          "points": 10.0,
+          "detail": "multi-province or nationwide notice; county-level fit unknown"
+        },
+        "buyer_type_preference": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "federal is a preferred buyer"
+        },
+        "recency_urgency": {
+          "score": 1.0,
+          "weight": 15.0,
+          "points": 15.0,
+          "detail": "26.6 days of runway"
+        }
+      },
+      "value_detail": "no published value",
+      "flags": [
+        "value_unknown"
+      ],
+      "label": null,
+      "label_note": null
+    },
+    {
+      "rank": 5,
+      "tender_id": 750,
+      "source": "canadabuys",
+      "source_id": "WS5801057266-Doc5802914568",
+      "title": "EP168-270160 - Solicitation of Offers (RFP) - Alexandra Bridge - Comprehensive Detailed Inspection and Underwater Inspection",
+      "buyer_name": "Department of Public Works and Government Services (PSPC)",
+      "buyer_type": "federal",
+      "region": "CA",
+      "closing_date_utc": "2026-09-01T18:00:00+00:00",
+      "estimated_value": null,
+      "notice_url": "https://portal.us.bn.cloud.ariba.com/dashboard/public/appext/comsapsbncdiscoveryui#/RfxEvent/preview/1110019557?anId=ANONYMOUS",
+      "trade_slugs": [
+        "bridge_structural",
+        "engineering_survey"
+      ],
+      "mapping_status": "mapped",
+      "base_score": 81.0,
+      "value_modifier": 0.0,
+      "final_score": 81.0,
+      "components": {
+        "trade_match": {
+          "score": 0.8,
+          "weight": 45.0,
+          "points": 36.0,
+          "detail": "firm trade match on bridge_structural"
+        },
+        "region_match": {
+          "score": 0.5,
+          "weight": 20.0,
+          "points": 10.0,
+          "detail": "multi-province or nationwide notice; county-level fit unknown"
+        },
+        "buyer_type_preference": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "federal is a preferred buyer"
+        },
+        "recency_urgency": {
+          "score": 1.0,
+          "weight": 15.0,
+          "points": 15.0,
+          "detail": "33.6 days of runway"
+        }
+      },
+      "value_detail": "no published value",
+      "flags": [
+        "value_unknown"
+      ],
+      "label": null,
+      "label_note": null
+    },
+    {
+      "rank": 6,
+      "tender_id": 618,
+      "source": "canadabuys",
+      "source_id": "MX-444102076909",
+      "title": "Replacement Heating Systems at 7 Long-Range Radar Sites",
+      "buyer_name": "Defence Construction Canada / Construction de Défense Canada",
+      "buyer_type": "federal",
+      "region": "ON",
+      "closing_date_utc": "2026-09-01T18:00:00+00:00",
+      "estimated_value": null,
+      "notice_url": "https://www.merx.com/public/solicitations/4005406623/abstract?language=EN",
+      "trade_slugs": [
+        "mechanical_hvac",
+        "bridge_structural",
+        "demolition_abatement",
+        "electrical",
+        "engineering_survey"
+      ],
+      "mapping_status": "mapped",
+      "base_score": 80.2,
+      "value_modifier": 0.0,
+      "final_score": 80.2,
+      "components": {
+        "trade_match": {
+          "score": 0.56,
+          "weight": 45.0,
+          "points": 25.2,
+          "detail": "firm trade match on bridge_structural — discounted to 0.7x: the matching trade appears only in the description, not the title or category"
+        },
+        "region_match": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "notice province matches"
+        },
+        "buyer_type_preference": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "federal is a preferred buyer"
+        },
+        "recency_urgency": {
+          "score": 1.0,
+          "weight": 15.0,
+          "points": 15.0,
+          "detail": "33.6 days of runway"
+        }
+      },
+      "value_detail": "no published value",
+      "flags": [
+        "value_unknown"
+      ],
+      "label": null,
+      "label_note": null
+    },
+    {
+      "rank": 7,
+      "tender_id": 574,
+      "source": "canadabuys",
+      "source_id": "cb-478-16839306",
+      "title": "Fl Dock Headblock Reconstruction Flower's Cove - Newfoundland",
+      "buyer_name": "Department of Fisheries and Oceans (DFO)",
+      "buyer_type": "federal",
+      "region": "ON",
+      "closing_date_utc": "2026-07-31T18:00:00+00:00",
+      "estimated_value": null,
+      "notice_url": null,
+      "trade_slugs": [
+        "marine_shoreline",
+        "demolition_abatement"
+      ],
+      "mapping_status": "mapped",
+      "base_score": 79.75,
+      "value_modifier": 0.0,
+      "final_score": 79.75,
+      "components": {
+        "trade_match": {
+          "score": 0.8,
+          "weight": 45.0,
+          "points": 36.0,
+          "detail": "firm trade match on marine_shoreline"
+        },
+        "region_match": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "notice province matches"
+        },
+        "buyer_type_preference": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "federal is a preferred buyer"
+        },
+        "recency_urgency": {
+          "score": 0.25,
+          "weight": 15.0,
+          "points": 3.75,
+          "detail": "1.6 days of runway (short-runway penalty)"
+        }
+      },
+      "value_detail": "no published value",
+      "flags": [
+        "value_unknown"
+      ],
+      "label": null,
+      "label_note": null
+    },
+    {
+      "rank": 8,
+      "tender_id": 602,
+      "source": "canadabuys",
+      "source_id": "WS5795689234-Doc5795834595",
+      "title": "EQ754-270479 - REQUEST FOR INFORMATION - BLB Main Cable Replacement Project",
+      "buyer_name": "Department of Public Works and Government Services (PSPC)",
+      "buyer_type": "federal",
+      "region": "ON",
+      "closing_date_utc": "2026-08-14T18:00:00+00:00",
+      "estimated_value": null,
+      "notice_url": "https://portal.us.bn.cloud.ariba.com/dashboard/public/appext/comsapsbncdiscoveryui#/RfxEvent/preview/1110019071?anId=ANONYMOUS",
+      "trade_slugs": [
+        "bridge_structural"
+      ],
+      "mapping_status": "mapped",
+      "base_score": 77.95,
+      "value_modifier": 0.0,
+      "final_score": 77.95,
+      "components": {
+        "trade_match": {
+          "score": 0.56,
+          "weight": 45.0,
+          "points": 25.2,
+          "detail": "firm trade match on bridge_structural — discounted to 0.7x: the matching trade appears only in the description, not the title or category"
+        },
+        "region_match": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "notice province matches"
+        },
+        "buyer_type_preference": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "federal is a preferred buyer"
+        },
+        "recency_urgency": {
+          "score": 0.85,
+          "weight": 15.0,
+          "points": 12.75,
+          "detail": "15.6 days of runway"
+        }
+      },
+      "value_detail": "no published value",
+      "flags": [
+        "value_unknown"
+      ],
+      "label": null,
+      "label_note": null
+    },
+    {
+      "rank": 9,
+      "tender_id": 473,
+      "source": "canadabuys",
+      "source_id": "MX-443950941970",
+      "title": "APN - RP OPS and CFHA Base Program , Nunavut",
+      "buyer_name": "Defence Construction Canada - National Capital Region",
+      "buyer_type": "federal",
+      "region": "ON",
+      "closing_date_utc": "2029-03-31T18:00:00+00:00",
+      "estimated_value": null,
+      "notice_url": "https://www.merx.com/public/solicitations/3898555151/abstract?language=EN",
+      "trade_slugs": [
+        "bridge_structural",
+        "building_general",
+        "facility_maintenance"
+      ],
+      "mapping_status": "mapped",
+      "base_score": 75.7,
+      "value_modifier": 0.0,
+      "final_score": 75.7,
+      "components": {
+        "trade_match": {
+          "score": 0.56,
+          "weight": 45.0,
+          "points": 25.2,
+          "detail": "firm trade match on bridge_structural — discounted to 0.7x: the matching trade appears only in the description, not the title or category"
+        },
+        "region_match": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "notice province matches"
+        },
+        "buyer_type_preference": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "federal is a preferred buyer"
+        },
+        "recency_urgency": {
+          "score": 0.7,
+          "weight": 15.0,
+          "points": 10.5,
+          "detail": "975.6 days of runway (beyond the 90-day cap: not an actionable deadline)"
+        }
+      },
+      "value_detail": "no published value",
+      "flags": [
+        "long_horizon",
+        "value_unknown"
+      ],
+      "label": null,
+      "label_note": null
+    },
+    {
+      "rank": 10,
+      "tender_id": 719,
+      "source": "canadabuys",
+      "source_id": "WS5799028446-Doc5802879921",
+      "title": "EQ754-270127 Building Demolition, 98 Manitoba Street, Bracebridge, Ontario",
+      "buyer_name": "Department of Public Works and Government Services (PSPC)",
+      "buyer_type": "federal",
+      "region": "ON",
+      "closing_date_utc": "2026-08-18T18:00:00+00:00",
+      "estimated_value": null,
+      "notice_url": "https://portal.us.bn.cloud.ariba.com/dashboard/public/appext/comsapsbncdiscoveryui#/RfxEvent/preview/1110019700?anId=ANONYMOUS",
+      "trade_slugs": [
+        "demolition_abatement",
+        "sitework",
+        "environmental_remediation"
+      ],
+      "mapping_status": "mapped",
+      "base_score": 68.5,
+      "value_modifier": 0.0,
+      "final_score": 68.5,
+      "components": {
+        "trade_match": {
+          "score": 0.35,
+          "weight": 45.0,
+          "points": 15.75,
+          "detail": "same trade family as firm work: sitework, environmental_remediation (+0.10 for 2 overlapping trades) — discounted to 0.7x: the matching trade appears only in the description, not the title or category"
+        },
+        "region_match": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "notice province matches"
+        },
+        "buyer_type_preference": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "federal is a preferred buyer"
+        },
+        "recency_urgency": {
+          "score": 0.85,
+          "weight": 15.0,
+          "points": 12.75,
+          "detail": "19.6 days of runway"
+        }
+      },
+      "value_detail": "no published value",
+      "flags": [
+        "trade_family_only",
+        "value_unknown"
+      ],
+      "label": null,
+      "label_note": null
+    },
+    {
+      "rank": 11,
+      "tender_id": 44,
+      "source": "canadabuys",
+      "source_id": "MX-444095238973",
+      "title": "APN - New Swing Space Buildings (MDB Project), CFB Kingston, ON",
+      "buyer_name": "Defence Construction Canada - Ontario Region",
+      "buyer_type": "federal",
+      "region": "ON",
+      "closing_date_utc": "2026-08-23T18:00:00+00:00",
+      "estimated_value": null,
+      "notice_url": "https://www.merx.com/public/solicitations/4027858275/abstract?language=EN",
+      "trade_slugs": [],
+      "mapping_status": "unmapped",
+      "base_score": 68.5,
+      "value_modifier": 0.0,
+      "final_score": 68.5,
+      "components": {
+        "trade_match": {
+          "score": 0.3,
+          "weight": 45.0,
+          "points": 13.5,
+          "detail": "work type could not be classified from the notice text"
+        },
+        "region_match": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "notice province matches"
+        },
+        "buyer_type_preference": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "federal is a preferred buyer"
+        },
+        "recency_urgency": {
+          "score": 1.0,
+          "weight": 15.0,
+          "points": 15.0,
+          "detail": "24.6 days of runway"
+        }
+      },
+      "value_detail": "no published value",
+      "flags": [
+        "trade_unmapped",
+        "value_unknown"
+      ],
+      "label": null,
+      "label_note": null
+    },
+    {
+      "rank": 12,
+      "tender_id": 729,
+      "source": "canadabuys",
+      "source_id": "MX-444105829171",
+      "title": "Step 2 for 2 Service Battalion HQ Administration Company Building",
+      "buyer_name": "Defence Construction Canada / Construction de Défense Canada",
+      "buyer_type": "federal",
+      "region": "ON",
+      "closing_date_utc": "2026-09-10T18:00:00+00:00",
+      "estimated_value": null,
+      "notice_url": "https://www.merx.com/public/solicitations/4034875572/abstract?language=EN",
+      "trade_slugs": [],
+      "mapping_status": "unmapped",
+      "base_score": 68.5,
+      "value_modifier": 0.0,
+      "final_score": 68.5,
+      "components": {
+        "trade_match": {
+          "score": 0.3,
+          "weight": 45.0,
+          "points": 13.5,
+          "detail": "work type could not be classified from the notice text"
+        },
+        "region_match": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "notice province matches"
+        },
+        "buyer_type_preference": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "federal is a preferred buyer"
+        },
+        "recency_urgency": {
+          "score": 1.0,
+          "weight": 15.0,
+          "points": 15.0,
+          "detail": "42.6 days of runway"
+        }
+      },
+      "value_detail": "no published value",
+      "flags": [
+        "trade_unmapped",
+        "value_unknown"
+      ],
+      "label": null,
+      "label_note": null
+    },
+    {
+      "rank": 13,
+      "tender_id": 758,
+      "source": "canadabuys",
+      "source_id": "WS5802570604-Doc5802603484",
+      "title": "EP916-270049 Emergency Storm Drainage System Reconstruction - Stage 2",
+      "buyer_name": "Department of Public Works and Government Services (PSPC)",
+      "buyer_type": "federal",
+      "region": "CA",
+      "closing_date_utc": "2026-08-14T18:00:00+00:00",
+      "estimated_value": null,
+      "notice_url": "https://portal.us.bn.cloud.ariba.com/dashboard/public/appext/comsapsbncdiscoveryui#/RfxEvent/preview/1110019702?anId=ANONYMOUS",
+      "trade_slugs": [
+        "bridge_structural"
+      ],
+      "mapping_status": "mapped",
+      "base_score": 67.95,
+      "value_modifier": 0.0,
+      "final_score": 67.95,
+      "components": {
+        "trade_match": {
+          "score": 0.56,
+          "weight": 45.0,
+          "points": 25.2,
+          "detail": "firm trade match on bridge_structural — discounted to 0.7x: the matching trade appears only in the description, not the title or category"
+        },
+        "region_match": {
+          "score": 0.5,
+          "weight": 20.0,
+          "points": 10.0,
+          "detail": "multi-province or nationwide notice; county-level fit unknown"
+        },
+        "buyer_type_preference": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "federal is a preferred buyer"
+        },
+        "recency_urgency": {
+          "score": 0.85,
+          "weight": 15.0,
+          "points": 12.75,
+          "detail": "15.6 days of runway"
+        }
+      },
+      "value_detail": "no published value",
+      "flags": [
+        "value_unknown"
+      ],
+      "label": null,
+      "label_note": null
+    },
+    {
+      "rank": 14,
+      "tender_id": 454,
+      "source": "canadabuys",
+      "source_id": "MX-443984018270",
+      "title": "APN - NORAD Northern Basing Infrastructure (NNBI), Nunavut",
+      "buyer_name": "Defence Construction Canada - National Capital Region",
+      "buyer_type": "federal",
+      "region": "ON",
+      "closing_date_utc": "2026-08-31T18:00:00+00:00",
+      "estimated_value": null,
+      "notice_url": "https://www.merx.com/public/solicitations/3913977453/abstract?language=EN",
+      "trade_slugs": [
+        "roadwork",
+        "building_general"
+      ],
+      "mapping_status": "mapped",
+      "base_score": 67.6,
+      "value_modifier": 0.0,
+      "final_score": 67.6,
+      "components": {
+        "trade_match": {
+          "score": 0.28,
+          "weight": 45.0,
+          "points": 12.6,
+          "detail": "same trade family as firm work: roadwork — discounted to 0.7x: the matching trade appears only in the description, not the title or category"
+        },
+        "region_match": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "notice province matches"
+        },
+        "buyer_type_preference": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "federal is a preferred buyer"
+        },
+        "recency_urgency": {
+          "score": 1.0,
+          "weight": 15.0,
+          "points": 15.0,
+          "detail": "32.6 days of runway"
+        }
+      },
+      "value_detail": "no published value",
+      "flags": [
+        "trade_family_only",
+        "value_unknown"
+      ],
+      "label": null,
+      "label_note": null
+    },
+    {
+      "rank": 15,
+      "tender_id": 470,
+      "source": "canadabuys",
+      "source_id": "MX-443898971274",
+      "title": "APN - Facilities Maintenance and Support Services Northern Canada",
+      "buyer_name": "Defence Construction Canada - National Capital Region",
+      "buyer_type": "federal",
+      "region": "ON",
+      "closing_date_utc": "2026-09-04T18:00:00+00:00",
+      "estimated_value": null,
+      "notice_url": "https://www.merx.com/public/solicitations/3850211029/abstract?language=EN",
+      "trade_slugs": [
+        "facility_maintenance",
+        "concrete_flatwork",
+        "building_envelope",
+        "electrical",
+        "mechanical_hvac",
+        "landscaping",
+        "building_general"
+      ],
+      "mapping_status": "mapped",
+      "base_score": 67.6,
+      "value_modifier": 0.0,
+      "final_score": 67.6,
+      "components": {
+        "trade_match": {
+          "score": 0.28,
+          "weight": 45.0,
+          "points": 12.6,
+          "detail": "same trade family as firm work: concrete_flatwork — discounted to 0.7x: the matching trade appears only in the description, not the title or category"
+        },
+        "region_match": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "notice province matches"
+        },
+        "buyer_type_preference": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "federal is a preferred buyer"
+        },
+        "recency_urgency": {
+          "score": 1.0,
+          "weight": 15.0,
+          "points": 15.0,
+          "detail": "36.6 days of runway"
+        }
+      },
+      "value_detail": "no published value",
+      "flags": [
+        "trade_family_only",
+        "value_unknown"
+      ],
+      "label": null,
+      "label_note": null
+    },
+    {
+      "rank": 16,
+      "tender_id": 481,
+      "source": "canadabuys",
+      "source_id": "MX-443848623107",
+      "title": "APN - NORAD Northern Basing Infrastructure (NNBI), NWT",
+      "buyer_name": "Defence Construction Canada - National Capital Region",
+      "buyer_type": "federal",
+      "region": "ON",
+      "closing_date_utc": "2026-09-30T18:00:00+00:00",
+      "estimated_value": null,
+      "notice_url": "https://www.merx.com/public/solicitations/3791906002/abstract?language=EN",
+      "trade_slugs": [
+        "roadwork",
+        "building_general"
+      ],
+      "mapping_status": "mapped",
+      "base_score": 67.6,
+      "value_modifier": 0.0,
+      "final_score": 67.6,
+      "components": {
+        "trade_match": {
+          "score": 0.28,
+          "weight": 45.0,
+          "points": 12.6,
+          "detail": "same trade family as firm work: roadwork — discounted to 0.7x: the matching trade appears only in the description, not the title or category"
+        },
+        "region_match": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "notice province matches"
+        },
+        "buyer_type_preference": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "federal is a preferred buyer"
+        },
+        "recency_urgency": {
+          "score": 1.0,
+          "weight": 15.0,
+          "points": 15.0,
+          "detail": "62.6 days of runway"
+        }
+      },
+      "value_detail": "no published value",
+      "flags": [
+        "trade_family_only",
+        "value_unknown"
+      ],
+      "label": null,
+      "label_note": null
+    },
+    {
+      "rank": 17,
+      "tender_id": 641,
+      "source": "canadabuys",
+      "source_id": "MX-444056197471",
+      "title": "CM - Wainwright Range and Training Area Program",
+      "buyer_name": "Defence Construction Canada / Construction de Défense Canada",
+      "buyer_type": "federal",
+      "region": "ON",
+      "closing_date_utc": "2026-08-11T18:00:00+00:00",
+      "estimated_value": null,
+      "notice_url": "https://www.merx.com/public/solicitations/3952147604/abstract?language=EN",
+      "trade_slugs": [],
+      "mapping_status": "unmapped",
+      "base_score": 66.25,
+      "value_modifier": 0.0,
+      "final_score": 66.25,
+      "components": {
+        "trade_match": {
+          "score": 0.3,
+          "weight": 45.0,
+          "points": 13.5,
+          "detail": "work type could not be classified from the notice text"
+        },
+        "region_match": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "notice province matches"
+        },
+        "buyer_type_preference": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "federal is a preferred buyer"
+        },
+        "recency_urgency": {
+          "score": 0.85,
+          "weight": 15.0,
+          "points": 12.75,
+          "detail": "12.6 days of runway"
+        }
+      },
+      "value_detail": "no published value",
+      "flags": [
+        "trade_unmapped",
+        "value_unknown"
+      ],
+      "label": null,
+      "label_note": null
+    },
+    {
+      "rank": 18,
+      "tender_id": 382,
+      "source": "canadabuys",
+      "source_id": "cb-6365-49996412",
+      "title": "Community Residential Facilities",
+      "buyer_name": "Correctional Service of Canada (CSC)",
+      "buyer_type": "federal",
+      "region": "CA",
+      "closing_date_utc": "2026-12-31T19:00:00+00:00",
+      "estimated_value": null,
+      "notice_url": null,
+      "trade_slugs": [
+        "bridge_structural"
+      ],
+      "mapping_status": "mapped",
+      "base_score": 65.7,
+      "value_modifier": 0.0,
+      "final_score": 65.7,
+      "components": {
+        "trade_match": {
+          "score": 0.56,
+          "weight": 45.0,
+          "points": 25.2,
+          "detail": "firm trade match on bridge_structural — discounted to 0.7x: the matching trade appears only in the description, not the title or category"
+        },
+        "region_match": {
+          "score": 0.5,
+          "weight": 20.0,
+          "points": 10.0,
+          "detail": "multi-province or nationwide notice; county-level fit unknown"
+        },
+        "buyer_type_preference": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "federal is a preferred buyer"
+        },
+        "recency_urgency": {
+          "score": 0.7,
+          "weight": 15.0,
+          "points": 10.5,
+          "detail": "154.7 days of runway (beyond the 90-day cap: not an actionable deadline)"
+        }
+      },
+      "value_detail": "no published value",
+      "flags": [
+        "value_unknown"
+      ],
+      "label": null,
+      "label_note": null
+    },
+    {
+      "rank": 19,
+      "tender_id": 161,
+      "source": "canadabuys",
+      "source_id": "cb-11-57907639",
+      "title": "To drill core wells in the Lower Grand River watershed, southern Ontario",
+      "buyer_name": "Department of Natural Resources (NRCan)",
+      "buyer_type": "federal",
+      "region": "ON",
+      "closing_date_utc": "2026-08-10T18:00:00+00:00",
+      "estimated_value": null,
+      "notice_url": null,
+      "trade_slugs": [
+        "environmental_remediation",
+        "engineering_survey"
+      ],
+      "mapping_status": "mapped",
+      "base_score": 65.35,
+      "value_modifier": 0.0,
+      "final_score": 65.35,
+      "components": {
+        "trade_match": {
+          "score": 0.28,
+          "weight": 45.0,
+          "points": 12.6,
+          "detail": "same trade family as firm work: environmental_remediation — discounted to 0.7x: the matching trade appears only in the description, not the title or category"
+        },
+        "region_match": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "notice province matches"
+        },
+        "buyer_type_preference": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "federal is a preferred buyer"
+        },
+        "recency_urgency": {
+          "score": 0.85,
+          "weight": 15.0,
+          "points": 12.75,
+          "detail": "11.6 days of runway"
+        }
+      },
+      "value_detail": "no published value",
+      "flags": [
+        "trade_family_only",
+        "value_unknown"
+      ],
+      "label": null,
+      "label_note": null
+    },
+    {
+      "rank": 20,
+      "tender_id": 681,
+      "source": "canadabuys",
+      "source_id": "WS5799436016-Doc5800738925",
+      "title": "Vehicle Scanning Facility and South Drive – Asphalt Repair",
+      "buyer_name": "Department of Public Works and Government Services (PSPC)",
+      "buyer_type": "federal",
+      "region": "CA",
+      "closing_date_utc": "2026-08-20T18:00:00+00:00",
+      "estimated_value": null,
+      "notice_url": null,
+      "trade_slugs": [
+        "roadwork"
+      ],
+      "mapping_status": "mapped",
+      "base_score": 63.0,
+      "value_modifier": 0.0,
+      "final_score": 63.0,
+      "components": {
+        "trade_match": {
+          "score": 0.4,
+          "weight": 45.0,
+          "points": 18.0,
+          "detail": "same trade family as firm work: roadwork"
+        },
+        "region_match": {
+          "score": 0.5,
+          "weight": 20.0,
+          "points": 10.0,
+          "detail": "multi-province or nationwide notice; county-level fit unknown"
+        },
+        "buyer_type_preference": {
+          "score": 1.0,
+          "weight": 20.0,
+          "points": 20.0,
+          "detail": "federal is a preferred buyer"
+        },
+        "recency_urgency": {
+          "score": 1.0,
+          "weight": 15.0,
+          "points": 15.0,
+          "detail": "21.6 days of runway"
+        }
+      },
+      "value_detail": "no published value",
+      "flags": [
+        "trade_family_only",
+        "value_unknown"
+      ],
+      "label": null,
+      "label_note": null
+    }
+  ]
+}
