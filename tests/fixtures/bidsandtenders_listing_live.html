@@ -1,0 +1,432 @@
+
+<html lang="en" xml:lang="en">
+<head>
+    <meta name="viewport" content="width=device-width" />
+        <title visible="false">Bids and Tenders - Kincardine</title>
+
+
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta title="Kincardine - Bids and Tenders" />
+    <meta name="description" content="Find opportunities, register an account, and bid on upcoming procurement projects with Kincardine." />
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <meta http-equiv="Content-Script-Type" content="text/javascript" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=yes" />
+
+    <link rel="stylesheet" id="bootstrap-css-css" href='/Resources/content/StandardTemplate/resources/bootstrap.css' type="text/css" media="all" />
+    <link rel="stylesheet" id="theme-css-css" href='/Resources/content/StandardTemplate/resources/display.css' type="text/css" media="all" />
+    <link rel="stylesheet" id="impression-css-css" href='/Resources/content/StandardTemplate/resources/print.css' type="text/css" media="print" />
+
+    <link rel="apple-touch-icon" sizes="180x180" href='/Resources/content/StandardTemplate/favicons/apple-touch-icon.png' />
+    <link rel="icon" type="image/png" sizes="32x32" href='/Resources/content/StandardTemplate/favicons/favicon-32x32.png' />
+    <link rel="icon" type="image/png" sizes="16x16" href='/Resources/content/StandardTemplate/favicons/favicon-16x16.png' />
+    <link rel="manifest" href='/Resources/content/StandardTemplate/favicons/manifest.json' />
+    <meta name="theme-color" content="#ffffff" />
+
+    <link rel="stylesheet" type="text/css" href='/Module/Tenders/Resources/css/datagrid.css' />
+    <link rel="stylesheet" type="text/css" href='/Module/Tenders/Resources/css/Tender.css' />
+    <link rel="stylesheet" type="text/css" href='/Module/Tenders/Resources/css/NoMoreTables.css' />
+    <link rel="stylesheet" type="text/css" href='/Module/Tenders/Resources/css/jstree/style.min.css' />
+    <link rel="stylesheet" type="text/css" href='/Module/Tenders/Resources/css/bootstrap-datetimepicker.min.css' />
+    <link rel="stylesheet" type="text/css" href='/Module/Tenders/Resources/css/datepicker.css' />
+    <link rel="stylesheet" type="text/css" href='/Module/Tenders/Resources/css/VendorSearch.css' />
+
+    <link type="text/css" href="/Module/Tenders/Resources/css/fuelux.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href='/Module/Tenders/Resources/css/Accessibility.css' />
+
+    <!-- tiers CSS, figure out how to package later -->
+    
+
+    <!-- Inter (Google Fonts) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href='/Module/Tenders/Resources/css/subscription_tiers/base.css' type="text/css" media="all" />
+    <link rel="stylesheet" href='/Module/Tenders/Resources/css/subscription_tiers/utilities.css' type="text/css" media="all" />
+    <link rel="stylesheet" href='/Module/Tenders/Resources/css/subscription_tiers/patterns/alerts.css' type="text/css" media="all" />
+    <link rel="stylesheet" href='/Module/Tenders/Resources/css/subscription_tiers/patterns/buttons.css' type="text/css" media="all" />
+    <link rel="stylesheet" href='/Module/Tenders/Resources/css/subscription_tiers/patterns/coupon.css' type="text/css" media="all" />
+    <link rel="stylesheet" href='/Module/Tenders/Resources/css/subscription_tiers/patterns/coverage-cards.css' type="text/css" media="all" />
+    <link rel="stylesheet" href='/Module/Tenders/Resources/css/subscription_tiers/patterns/payments-table.css' type="text/css" media="all" />
+    <link rel="stylesheet" href='/Module/Tenders/Resources/css/subscription_tiers/patterns/pills.css' type="text/css" media="all" />
+    <link rel="stylesheet" href='/Module/Tenders/Resources/css/subscription_tiers/patterns/pricing-cards.css' type="text/css" media="all" />
+    <link rel="stylesheet" href='/Module/Tenders/Resources/css/subscription_tiers/patterns/status-cards.css' type="text/css" media="all" />
+
+    <script type="text/javascript" src="/Module/Tenders/Resources/scripts/subscription/alerts.js"></script>
+
+    <script type="text/javascript" src='/Resources/content/StandardTemplate/resources/jquery.min.js'></script>
+    <script type="text/javascript" src='/Resources/content/StandardTemplate/resources/jquery-migrate.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"
+            integrity="sha512-q+4liFwdPC/bNdhUpZx6aXDx/h77yEQtn4I1slHydcbZK34nLaR3cAeYSJshoxIOq3mjEf7xJE8YWIUHMn+oCQ=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+
+        <script type="text/javascript" src='/Module/Tenders/Resources/Scripts/googgle-analytics-secure-site.js'></script>
+
+
+
+
+
+    <script type="text/javascript" src='/Resources/content/StandardTemplate/resources/bootstrap.js'></script>
+
+    <script type="text/javascript" src="/Module/Tenders/Resources/scripts/fuelux.min.js"></script>
+    <script type="text/javascript" src="/Module/Tenders/Resources/scripts/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="/Module/Tenders/Resources/scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script type="text/javascript" src="/Module/Tenders/Resources/scripts/unobtrusive.update-validation.js"></script>
+    <script type="text/javascript" src="/Module/Tenders/Resources/scripts/unobtrusive.custom-validation.js"></script>
+    <script type="text/javascript" src="/Resources/scripts/ext/functions.js"></script>
+
+
+
+
+    <script type="text/javascript" src='/Module/Tenders/Resources/scriptsV2/common/util.js'></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.7.3/tinymce.min.js" integrity="sha256-UOjbuc0vE5SxsRByxMjWiSKEEeHqJJXjLfTJOdHn/MU=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.7.3/themes/modern/theme.min.js" integrity="sha256-6O0CoxruRgTBxUXBzfjUuHqacLwMo1enRcrKclq2Wmo=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src='/Module/Tenders/Resources/scripts/jstree/jstree.min.js'></script>
+    <script type="text/javascript" src='/Module/Tenders/Resources/scriptsV2/common/bootstrap-datepicker.js'></script>
+    <script type="text/javascript" src="/Module/Tenders/Resources/scriptsV2/common/bootstrap-maxlength.js"></script>
+
+
+
+    
+    <link type="text/css" href="/Module/Tenders/Resources/css/bootstrap.min.css" rel="stylesheet" />
+
+    <script type="text/javascript">
+
+        function PrintReport() {
+            document.location.href = '/PDFConvert.ashx?URL=' + encodeURIComponent(jQuery('#reportUrl').val())
+                + '&SaveAs=' + encodeURIComponent(jQuery('#reportSaveAs').val()) +
+                '&Orientation=' + encodeURIComponent(jQuery('#reportOrientation').val());
+        }
+
+        jQuery(document).ajaxSend(function () {
+            jQuery("#ajax_loader").show();
+        });
+        jQuery(document).ajaxComplete(function () {
+            jQuery("#ajax_loader").hide();
+        });
+
+        jQuery().ready(function () {
+            if (document.documentMode < 9) {
+                alert('This web page requires a minimum of Internet Explorer 9 and Document Mode 9 in order to operate correctly. Please consider upgrading or using an alternative browser.');
+            }
+        });
+    </script>
+
+    
+	<script type="text/javascript" src='/Module/Tenders/Resources/scriptsV2/home/index.js'></script>
+	<script type="text/javascript" src='/Module/Tenders/Resources/scriptsV2/vendor/vendor.js'></script>
+	<script type="text/javascript" src='/Module/Tenders/Resources/scriptsV2/common/util.js'></script>
+
+
+    <style>
+        .bootstrap a:not(.btn) {
+            text-decoration: underline;
+            color: #2A6499 !important;
+        }
+    </style>
+
+</head>
+<body>
+    <div id="skipnav" role="complementary"><a href="#MainSection">Skip to Content (Press Enter)</a></div>
+    <div id="contenu" class="container">
+            <header id="header">
+                <div class="row">
+
+                    <div class="banner_home">
+                        <div id="brand" class="col-xs-12">
+                            <div class="col-sm-6">
+                                <div id="logo"><a href="https://www.kincardine.ca/en/index.aspx" title="Open Municipality of Kincardine site in a new window" target="_blank"><img src='/Resources/content/StandardTemplate/resources/Logo/Kincardind-122022.JPG' alt="Municipality of Kincardine Logo" /></a></div>
+                            </div>
+                            <div class="col-sm-offset-11">
+                                <a id="changeLanguage" href="/">Fran&#231;ais</a>
+                            </div>
+                            <div class="col-sm-6">
+                                <div id="brandLinks">
+                                    <div id="bidsAndTendersLogo">
+                                        <a href="https://www.bidsandtenders.ca/" title="Open Bids and Tenders site in a new window" target="_blank"><img src='/Resources/content/StandardTemplate/resources/Logo/bids_and_tenders_logo-long-tm.svg' alt="Bids and Tenders Logo"></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+        <div class="content" role="main">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div id="printAreaContent">
+                        <div class="fuelux MainContent" id="MainPageContent">
+                            <form action="/Module/Tenders/en/Logout" method="post" id="frmMasterLogout">
+                                <div id="masterAntiForgery">
+                                    <input name="__RequestVerificationToken" type="hidden" value="9fJrFIpFpQNPs_UrtTOCjgiC4VI4DXzOK_FjB0w4nym5ST3gOkj7MehArxmt8pXwI1k_PNjBiSSAsyISJAPGPzA2NAc1" />
+                                </div>
+                            </form>
+                            <div>
+                                
+
+
+                                <input type="hidden" id="Home" value='/Module/Tenders/en' />
+                                <input type="hidden" id="NodeId" value="e0e78536-df43-45f3-a7c7-fba12690ae6f" />
+
+
+                                <!-- section for generic text to be passed to scripts so that they don't need to be included in multiple pages -->
+                                <input id="GenericTextYes" name="GenericTextYes" type="hidden" value="Yes" />
+                                <input id="GenericTextNo" name="GenericTextNo" type="hidden" value="No" />
+                                <input id="GenericTextCancel" name="GenericTextCancel" type="hidden" value="Cancel" />
+                                <input id="GenericTextSuccess" name="GenericTextSuccess" type="hidden" value="Success" />
+                                <input id="GenericTextSave" name="GenericTextSave" type="hidden" value="Save" />
+                                <input id="GenericTextError" name="GenericTextError" type="hidden" value="Error" />
+                                <input id="GenericTextInfo" name="GenericTextInfo" type="hidden" value="Info" />
+                                <input id="GenericTextOk" name="GenericTextOk" type="hidden" value="OK" />
+                                <input id="GenericTextSubmit" name="GenericTextSubmit" type="hidden" value="Submit" />
+                                <input id="GenericTextSaveSuccess" name="GenericTextSaveSuccess" type="hidden" value="Successfully Saved" />
+                                <input id="GenericTextDeleteSuccess" name="GenericTextDeleteSuccess" type="hidden" value="Successfully Deleted" />
+                                <input id="GenericTextSaveFail" name="GenericTextSaveFail" type="hidden" value="An error occurred while trying to save. Please contact the system administrator." />
+                                <input id="GenericTextConfirmDelete" name="GenericTextConfirmDelete" type="hidden" value="Confirm Delete" />
+                                <input id="GenericTextConfirmDeleteRow" name="GenericTextConfirmDeleteRow" type="hidden" value="Are you sure you want to delete?" />
+                                <input id="GenericTextRobotValidationError" name="GenericTextRobotValidationError" type="hidden" value="Please check the &quot;I&#39;m not a Robot&quot; checkbox to validate your humanity." />
+
+                                <div class="bootstrap">
+                                    <div role="navigation" style="float: right;">
+<a aria-label="Bids Homepage" class="eBidSimulationRestrict" href="/Module/Tenders/en/Home/BidsHomepage">Bids Homepage</a>&nbsp;&nbsp;                                            <a href="https://www.bidsandtenders.com/bid-opportunities/" aria-label="Find More Bids" class="eBidSimulationRestrict">Find more bids</a>
+&nbsp;&nbsp;<a aria-label="Create Account" href="/Module/Tenders/en/Vendor/Create/e0e78536-df43-45f3-a7c7-fba12690ae6f">Create Account</a>&nbsp;&nbsp;<a aria-label="Login" href="/Module/Tenders/en/Login/Index/e0e78536-df43-45f3-a7c7-fba12690ae6f">Login</a>
+                                    </div>
+                                    <div id="MainSection"></div>
+                                    <h3>Welcome to the Municipality of Kincardine Bid Opportunities Website</h3><p>This site allows potential Bidders to create a Bidding System Vendor account.&nbsp; Bidders select commodity codes for goods and services and the Bidding System will notify the Vendor by email of Bid opportunities matching their commodity code selection.</p><p>Public tenders, bids and request for proposals are posted on this website. &nbsp;</p><p>Bidders are solely responsible for ensuring their Vendor account information is kept current.</p><p>For step by step instructions on how to create an Account please refer to the&nbsp;<a href="https://supplierguides.bidsandtenders.ca">Vendor Guide</a><br>&nbsp;</p><h4><span style="color:windowtext;"><strong>The Canadian Free Trade Agreement Notice of Participation</strong></span></h4><p>This annual Notice of Participation is to advise potential suppliers that the Municipality of Kincardine plans to conduct a procurement process as described below.</p><p>Period: January 1 – December 31, 2026</p><p>Group Purchasing Participation: &nbsp; &nbsp;&nbsp;</p><ul style="list-style-type:disc;"><li>Local Authority Services (LAS)&nbsp;<a href="http://www.las.on.ca"><span style="color:#0563C1;">www.las.on.ca</span></a></li><li>The County of Bruce&nbsp;<a href="https://www.brucecounty.on.ca/">https://www.brucecounty.on.ca/</a><span style="color:windowtext;">.</span></li><li>Ministry of&nbsp;<span style="color:windowtext;">Public Business and Service Delivery Vendor of Record (VOR) Program&nbsp;</span><a href="https://www.doingbusiness.mgs.gov.on.ca/mbs/psb/psb.nsf/vorsearch">https://www.doingbusiness.mgs.gov.on.ca/mbs/psb/psb.nsf/vorsearch</a><span style="color:windowtext;">&nbsp;</span></li><li><span style="color:windowtext;">Ontario Education Collaborative Marketplace (OECM)&nbsp;</span><a href="https://oecm.ca/">https://oecm.ca/</a></li><li><span style="color:windowtext;">Kinetic GPO&nbsp;</span><a href="https://www.kineticgpo.ca/">https://www.kineticgpo.ca/</a><span style="color:windowtext;">&nbsp;</span></li><li><span style="color:windowtext;">Canoe Procurement Group of Canada&nbsp;</span><a href="https://canoeprocurement.ca/">https://canoeprocurement.ca/</a><span style="color:windowtext;">&nbsp;</span></li><li><span style="color:windowtext;">Canadian Collaborative Procurement Initiative </span><a href="https://www.canada.ca/en/public-services-procurement/services/acquisitions/collaborative-procurement-opportunities-governments-other-eligible-organizations.html"><span style="color:windowtext;">https://www.canada.ca/en/public-services-procurement/services/acquisitions/collaborative-procurement-opportunities-governments-other-eligible-organizations.html</span></a><span style="color:windowtext;">&nbsp;</span><br>&nbsp;</li></ul><p><a href="https://www.kincardine.ca/media/iwxnlonm/po-terms-and-conditions.pdf"><strong>Click here to access PO Terms and Conditions</strong></a><br><br><br><a href="https://www.kincardine.ca/media/fqon25si/25-068-procurement-policy-by-law.pdf"><strong>Click here to access the Purchasing and Procurement Policy</strong></a></p><p><br><strong>Purchasing Support:</strong><br>If you have questions about a specific bid opportunity please direct your inquiry to the contact person listed in the bid document.</p><p><strong>Technical Support:</strong><br>If you encounter technical issues, please contact&nbsp;<a href="mailto:support@bidsandtenders.ca?subject=Support Request from [Municipality of Kincardine]">support@bidsandtenders.ca</a></p><p>The following is a list of our current online bid opportunities. Please refer to the Status column in the list to determine if the bid is open, closed or awarded.</p>
+
+	<a role="button" class="btn btn-default btn-lg" href='/Module/Tenders/en/Login/Index/e0e78536-df43-45f3-a7c7-fba12690ae6f' aria-label="Vendor Login Link">
+		<span class="glyphicon glyphicon-user" aria-hidden="true"></span>Login
+	</a>
+&nbsp;&nbsp;	<a role="button" class="btn btn-default btn-lg" href='/Module/Tenders/en/Vendor/Create/e0e78536-df43-45f3-a7c7-fba12690ae6f' aria-label="Create Vendor Link">
+		<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>Create Account
+	</a>
+	<br />
+	<br />
+
+<input id="BidNameColHeader" name="BidNameColHeader" type="hidden" value="Bid Name" />
+<input id="BidStatusColHeader" name="BidStatusColHeader" type="hidden" value="Bid Status" />
+<input id="BidClosingDateColHeader" name="BidClosingDateColHeader" type="hidden" value="Bid Closing Date" />
+<input id="EstimatedBidPublishDateColHeader" name="EstimatedBidPublishDateColHeader" type="hidden" value="Estimated Date for Project Availability" />
+<input id="DaysLeftColHeader" name="DaysLeftColHeader" type="hidden" value="Days Left" />
+<input id="StartSubmission" name="StartSubmission" type="hidden" value="Start Submission" />
+<input id="ViewMySubmission" name="ViewMySubmission" type="hidden" value="View My Submission" />
+<input id="ManageMySubmissions" name="ManageMySubmissions" type="hidden" value="Manage my Submissions" />
+<input id="RegisterForThisBid" name="RegisterForThisBid" type="hidden" value="Register for this Bid" />
+<input id="BidDetails" name="BidDetails" type="hidden" value="Bid Details" />
+<input id="Advertisements" name="Advertisements" type="hidden" value="Advertisements" />
+<input id="DownloadDocuments" name="DownloadDocuments" type="hidden" value="Download Documents" />
+<input id="PlanTakers" name="PlanTakers" type="hidden" value="Plan Takers" />
+<input id="BidsSubmitted" name="BidsSubmitted" type="hidden" value="Bids Submitted" />
+<input id="Awarded" name="Awarded" type="hidden" value="Awarded" />
+<input id="SubmitQuestion" name="SubmitQuestion" type="hidden" value="Submit a Question" />
+<input id="RegisteredPlanTakerOnlyTitle" name="RegisteredPlanTakerOnlyTitle" type="hidden" value="Registered Plan Takers Only" />
+<input id="RegisteredPlanTakerOnlyQuestionText" name="RegisteredPlanTakerOnlyQuestionText" type="hidden" value="You must be a registered plan taker to submit a question for this bid." />
+<input id="NoBidsAvailable" name="NoBidsAvailable" type="hidden" value="There are currently no open bid opportunities available." />
+<div id="bidDetailAntiForgery">
+	<input name="__RequestVerificationToken" type="hidden" value="gx-JbxQzsXUlfTuC7-a0r3ODZNDwT_CKJnu02_sw82HpOXVSlLxjx-2MU0mQgFW2ZDWLwGlwbkYfwtEwCtIh2CRrxC41" />
+</div>
+<div class="repeater" id="myRepeater">
+	<div class="repeater-header">
+		<div class="repeater-header-left">
+			<div class="repeater-search">
+				<div class="input-group search">
+					<input type="search" id="txtSearchKeywords" class="form-control input-lg" placeholder="Search" aria-label="Search">
+					<span class="input-group-btn">
+						<button class="btn btn-default input-lg" type="button" id="btnsearch">
+							<span class="glyphicon glyphicon-search"></span>
+							<span class="sr-only">Search</span>
+						</button>
+					</span>
+				</div>
+			</div>
+            <div class="search-advance">
+                <a href="#" class="reset-link">Reset</a>
+                <a href="#" class="advanced-link">Advanced Search</a>
+            </div>
+		</div>
+		<div class="repeater-header-right">
+			<div class="btn-group selectlist repeater-filters" id="searchfilter">
+				<button type="button" class="btn btn-default dropdown-toggle input-lg" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<span class="selected-label"></span>
+					<span class="caret"></span>
+					<span class="sr-only">Toggle Filters</span>
+				</button>
+				<ul class="dropdown-menu pull-right" role="menu" aria-expanded="false">
+					<li data-value="" data-property="all"><a href="#" aria-label="all">All</a></li>
+                    <li data-value="Planned"  data-property="Planned"><a href="#" aria-label="Planned">Planned</a></li>
+					<li data-value="Open" data-selected="true" data-property="Open"><a href="#" aria-label="Open">Open</a></li>
+					<li data-value="Closed" data-property="Closed"><a href="#" aria-label="Closed">Closed</a></li>
+					<li data-value="Unofficial" data-property="Unofficial Results"><a href="#" aria-label="Unofficial Results">Unofficial Results</a></li>
+					<li data-value="Awarded" data-property="Awarded"><a href="#" aria-label="Awarded">Awarded</a></li>
+					<li data-value="Cancelled" data-property="Cancelled"><a href="#" aria-label="Cancelled">Cancelled</a></li>
+                    <li data-value="Terminated" data-property="Terminated"><a href="#" aria-label="Terminated">Terminated</a></li>
+					<li data-value="Archived" data-property="Archived"><a href="#" aria-label="Archived">Archived</a></li>
+				</ul>
+				<input class="hidden hidden-field" id="hdnBidStatus" name="filterSelection" readonly="readonly" aria-hidden="true" type="text" aria-label="Bid Status">
+			</div>
+		</div>
+	</div>
+    <div class="repeater-header search-container-advanced">
+        <div class="repeater-search">
+            <div class="input-group search">
+                <input type="search" id="DateFrom" class="form-control input-lg" placeholder="From (mm/dd/yyyy)" aria-label="Search Date From (mm/dd/yyyy)">
+                <input type="search" id="DateTo" class="form-control input-lg" placeholder="To (mm/dd/yyyy)" aria-label="Search Date To (mm/dd/yyyy)">
+            </div>
+        </div>
+    </div>
+	<div class="repeater-viewport">
+		<div class="repeater-canvas borderless-grid"></div>
+		<div class="loader repeater-loader"></div>
+	</div>
+	<div class="repeater-footer">
+		<div class="repeater-footer-left">
+			<div class="repeater-pagination">
+				<button type="button" class="btn btn-default repeater-prev" aria-label="previous page">
+					<span class="glyphicon glyphicon-chevron-left"></span>
+					<span class="sr-only">Previous Page</span>
+				</button>
+				<label class="page-label" id="myPageLabel" for="myPageLabel">Page</label>
+				<div class="repeater-primaryPaging active">
+					<div class="input-group input-append dropdown combobox dropup">
+						<input type="text" class="form-control input-sm" aria-labelledby="myPageLabel">
+						<div class="input-group-btn">
+							<button type="button" class="btn btn-default dropdown-toggle input-sm" data-toggle="dropdown">
+								<span class="caret"></span>
+								<span class="sr-only">Toggle Drop Down</span>
+							</button>
+							<ul class="dropdown-menu dropdown-menu-right"></ul>
+						</div>
+					</div>
+				</div>
+				<input type="text" class="form-control repeater-secondaryPaging" aria-labelledby="myPageLabel">
+				<span>of <span class="repeater-pages"></span></span>
+				<button type="button" class="btn btn-default repeater-next" aria-label="next page">
+					<span class="glyphicon glyphicon-chevron-right"></span>
+					<span class="sr-only">Next Page</span>
+				</button>
+			</div>
+		</div>
+		<div class="repeater-footer-right">
+			<div class="repeater-itemization">
+				<label for="limit-results-btn">Limit Results:</label>
+				<div class="btn-group selectlist dropup" data-resize="auto">
+					<button id="limit-results-btn" type="button" class="btn btn-default dropdown-toggle input-sm" data-toggle="dropdown">
+						<span class="selected-label"></span>
+						<span class="caret"></span>
+						<span class="sr-only">Toggle Drop Down</span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<li data-value="10"><a href="#">15</a></li>
+						<li data-value="25" data-selected="true"><a href="#">25</a></li>
+						<li data-value="50"><a href="#">50</a></li>
+						<li data-value="100"><a href="#">100</a></li>
+					</ul>
+					<input class="hidden hidden-field" id="drpItemsPerPage" name="itemsPerPage" readonly="readonly" aria-hidden="true" type="text" aria-label="Drop down for Items Per Page">
+				</div>
+                <div class="dataTables_info pull-right" id="example_info" role="status" aria-live="polite"> 
+                    <div aria-label="Page Items"><span>Showing <span class="repeater-start"></span> - <span class="repeater-end"> </span> of <span class="repeater-count"></span> items</span></div>
+                </div>
+				
+			</div>
+
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+
+                                </div>
+
+                                <div class="clear"></div>
+                                <div class="bootstrap" role="complementary">
+                                    <div id='ajax_loader' style="position: fixed; left: 50%; top: 50%; display: none; z-index: 999999;">
+                                        <img src='/Module/Tenders/Resources/images/ajax-loader.gif' alt="loading spinner" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bootstrap" role="navigation">
+                                <div class="container-fluid">
+                                    <div class="modal large" id="reportModal" tabindex="-1" role="dialog" aria-label="Report Dialog" aria-hidden="true" style="z-index: 999998;">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                    <a role="button" class="btn btn-default pull-right" href='#' aria-label="Print" onclick="event.preventDefault();PrintReport();">
+                                                        <span class="glyphicon glyphicon-print" aria-hidden="true"></span>&nbsp;Print to PDF
+                                                    </a>&nbsp;&nbsp;&nbsp;
+                                                    <h2 class="modal-title pull-left" id="reportModalLabel">Modal title</h2>
+                                                    <input type="hidden" id="reportUrl" />
+                                                    <input type="hidden" id="reportSaveAs" value="portrait" />
+                                                    <input type="hidden" id="reportOrientation" value="document" />
+                                                </div>
+                                                <div class="modal-body" id="reportModalContent">
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="container-fluid">
+                                    <div class="modal" id="modal" tabindex="-1" role="dialog" aria-label="Small Information Dialog" aria-hidden="true" style="z-index: 65001;">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                    <h2 class="modal-title" id="modalLabel">Modal title</h2>
+                                                </div>
+                                                <div class="modal-body" id="modalContent">
+
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default" id="modalDismissBtn" aria-label="Close Modal" data-dismiss="modal">Close</button>
+                                                    <button type="button" class="btn btn-primary" id="modalSaveBtn" aria-label="Save Info">Save</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="container-fluid">
+                                    <div class="modal large" id="modalLarge" tabindex="-1" role="dialog" aria-label="Large Information Dialog" aria-hidden="true" style="z-index: 65000;">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                    <h2 class="modal-title" id="modalLargeLabel">Modal title</h2>
+                                                </div>
+                                                <div class="modal-body" id="modalLargeContent">
+
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default" id="modalLargeDismissBtn" aria-label="Close Modal" data-dismiss="modal">Close</button>
+                                                    <button type="button" class="btn btn-primary" id="modalLargeSaveBtn" aria-label="Save Info">Save</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="bodyFooter" class="bootstrap">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+</body>
+</html>
