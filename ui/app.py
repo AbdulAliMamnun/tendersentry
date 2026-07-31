@@ -27,11 +27,13 @@ PROFILE_PATH = REPO_ROOT / "data" / "profile.json"
 NOTICES_PATH = Path(config.NOTICES_PATH)
 
 VERDICT_LABELS = {
-    "bid": "BID",
-    "review": "REVIEW",
-    "no_bid": "DON'T BID",
-    "not_analyzed": "NOT ANALYZED",
+    "bid": "Bid",
+    "review": "Review",
+    "no_bid": "Don't bid",
+    "not_analyzed": "Not analyzed",
 }
+
+VERDICT_ICONS = {"bid": "✓", "review": "⌕", "no_bid": "×", "not_analyzed": "·"}
 
 
 def _read_json(path: Path, default: Any) -> Any:
@@ -162,36 +164,70 @@ def _render_styles() -> None:
     st.markdown(
         """
 <style>
-html, body, [class*="st-"] { font-size: 14px; }
-.block-container { max-width: 1180px; padding-top: 1rem; padding-bottom: 2rem; }
-[data-testid="stVerticalBlock"] { gap: 0.55rem; }
-[data-testid="stCaptionContainer"], [data-testid="stMetricLabel"] { font-size: 14px; }
+html, body, [class*="st-"], .stApp { color: #57534e; }
+html, body, .stApp, [data-testid="stAppViewContainer"] { background: #faf9f7; }
+#MainMenu, footer, [data-testid="stHeader"], [data-testid="stToolbar"],
+[data-testid="stDecoration"], [data-testid="stStatusWidget"] { display: none !important; }
+.block-container { max-width: 1000px; padding-top: 1.75rem; padding-bottom: 3rem; }
+[data-testid="stVerticalBlock"] { gap: 1rem; }
+h1, h2, h3, h4, h5, h6, strong { color: #292524; }
+h1 { font-size: 1.8rem; letter-spacing: -0.025em; }
+h2 { font-size: 1.25rem; }
+h3 { font-size: 1rem; }
+p, li, label, [data-testid="stMarkdownContainer"] { color: #57534e; }
+[data-testid="stCaptionContainer"], [data-testid="stMetricLabel"] { color: #a8a29e; font-size: 12px; }
+[data-testid="stMetricValue"] { color: #292524; }
 .stButton button, [data-testid="stPopover"] button {
-  color: #111827; border-color: #64748b; background: #fff;
+  color: #57534e; border: 1px solid #e7e3da; background: #fff;
+  border-radius: 10px; box-shadow: none; min-width: max-content;
+  white-space: nowrap;
 }
-div[class*="st-key-tender-"] { border-radius: 0; padding: 0.65rem 0.8rem; }
-div[class*="st-key-tender-bid-"] { border-left: 5px solid #3f6212 !important; }
-div[class*="st-key-tender-review-"] { border-left: 5px solid #a16207 !important; }
-div[class*="st-key-tender-no_bid-"] { border-left: 5px solid #b91c1c !important; }
-div[class*="st-key-tender-not_analyzed-"] { border-left: 5px solid #64748b !important; }
+.stButton button p, [data-testid="stPopover"] button p { white-space: nowrap; }
+div[class*="st-key-tender-"] {
+  background: #fff; border: 1px solid #f0ede6 !important;
+  border-radius: 16px; padding: 20px; box-shadow: none;
+}
+.estimator-card-header { display: flex; align-items: center; gap: 12px; }
+.estimator-icon {
+  align-items: center; display: inline-flex; justify-content: center;
+  width: 34px; height: 34px; border-radius: 10px; flex: 0 0 34px;
+  font-size: 20px; line-height: 1; font-weight: 600;
+}
+.estimator-icon-no_bid { color: #9f3838; background: #FCEBEB; }
+.estimator-icon-review { color: #92651b; background: #fdf3dc; }
+.estimator-icon-bid { color: #477054; background: #eaf5ed; }
+.estimator-icon-not_analyzed { color: #78716c; background: #f5f5f4; }
+.estimator-card-title { color: #292524; font-size: 16px; font-weight: 600; line-height: 1.3; }
+.estimator-card-meta { color: #a8a29e; font-size: 12px; margin-top: 2px; }
+.estimator-verdict { font-size: 13px; font-weight: 600; white-space: nowrap; }
+.estimator-verdict-no_bid, .estimator-blocker { color: #9f3838; }
+.estimator-verdict-review { color: #92651b; }
+.estimator-verdict-bid { color: #477054; }
+.estimator-plain-verdict { color: #9f3838; font-size: 13px; font-weight: 600; margin: 2px 0; }
+.estimator-quote {
+  background: #fafaf9; border-radius: 10px; color: #57534e;
+  font-size: 13px; font-style: italic; line-height: 1.55; padding: 12px 14px;
+}
+.estimator-quote-page { color: #a8a29e; font-style: normal; white-space: nowrap; }
 div[class*="st-key-requirement-"] {
-  border: 0; border-top: 1px solid #d1d5db; border-radius: 0; padding: 0.45rem 0;
+  border: 0; border-top: 1px solid #f0ede6; border-radius: 0; padding: 0.6rem 0;
 }
 .estimator-status {
   display: inline-block; min-width: 5ch;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700;
 }
-.estimator-fail, .estimator-urgent { color: #b91c1c; font-weight: 700; }
-.estimator-closed { color: #64748b; }
+.estimator-fail { color: #9f3838; font-weight: 700; }
+.estimator-urgent { color: #92651b; font-weight: 600; }
+.estimator-closed { color: #a8a29e; }
 .estimator-letterhead {
-  border-bottom: 1px solid #111827; padding-bottom: 0.35rem; margin-bottom: 0.7rem;
+  border-bottom: 1px solid #f0ede6; padding-bottom: 0.35rem; margin-bottom: 0.7rem;
 }
 .estimator-firm { text-align: right; white-space: nowrap; }
 .estimator-product { font-size: 14px; }
 @media print {
   [data-testid="stSidebar"], [data-testid="stHeader"], [data-testid="stToolbar"],
   [class*="st-key-no-print"], button { display: none !important; }
-  html, body, [class*="st-"] { color: #000 !important; background: #fff !important; }
+  html, body, [class*="st-"] { background: #fff !important; }
   .block-container { max-width: none; padding: 0.25in 0.35in; }
   div[class*="st-key-requirement-"] { break-inside: avoid; page-break-inside: avoid; }
   details > summary { display: none !important; }
@@ -255,6 +291,76 @@ def _requirements_by_id(tender: dict) -> dict[str, dict]:
 
 def _truncate(text: str, limit: int = 90) -> str:
     return text if len(text) <= limit else text[: limit - 3].rstrip() + "..."
+
+
+def _display_title(tender: dict) -> str:
+    """Prefer a stored human title, with a readable slug fallback."""
+    tender_id = str(tender.get("tender_id") or "Tender")
+    candidates = [tender.get("title")]
+    decision = tender.get("decision", {})
+    if isinstance(decision, dict):
+        candidates.extend(decision.get(key) for key in ("title", "tender_title", "project_title"))
+    for requirement in tender.get("requirements", []):
+        if isinstance(requirement, dict):
+            candidates.extend(
+                requirement.get(key) for key in ("title", "tender_title", "project_title")
+            )
+    for candidate in candidates:
+        value = str(candidate or "").strip()
+        if value and value.casefold() != tender_id.casefold():
+            return value
+
+    words = re.split(r"[-_]+", tender_id)
+    return " ".join(
+        word.upper() if word.isalpha() and len(word) <= 3 else word.capitalize()
+        for word in words
+        if word
+    )
+
+
+def _render_quote(quote: Any, page_number: Any) -> None:
+    """Render a prominent, safely escaped source quote and its page citation."""
+    if not quote:
+        return
+    st.markdown(
+        '<div class="estimator-quote">“'
+        f'{html.escape(str(quote))}” '
+        f'<span class="estimator-quote-page">· p.{html.escape(str(page_number or "?"))}</span>'
+        "</div>",
+        unsafe_allow_html=True,
+    )
+
+
+def _plain_english_blocker(reason: str, blocker: dict, profile: dict) -> str:
+    """Translate the engine's compact blocker reason for an estimator."""
+    required_match = re.search(r"requires one of \[([^\]]+)\]", reason, re.I)
+    supported_match = re.search(r"profile supports \[([^\]]+)\]", reason, re.I)
+
+    def values(match: re.Match[str] | None) -> list[str]:
+        if not match:
+            return []
+        return [value.strip(" '\"") for value in match.group(1).split(",") if value.strip()]
+
+    required = values(required_match)
+    supported = values(supported_match)
+    if not required and blocker.get("check_field") == "submission_method":
+        required = [str(blocker.get("check_value") or "").strip()]
+    if not supported:
+        supported = [str(value) for value in profile.get("submission_capabilities", [])]
+
+    labels = {"physical": "physical delivery", "fax": "fax submission", "email": "email", "portal": "portal"}
+    if required:
+        requirement_text = str(blocker.get("requirement_text") or "").lower()
+        if "fax" in requirement_text or "facsimile" in requirement_text:
+            required = ["fax"]
+        requirement = " or ".join(labels.get(value.lower(), value) for value in required)
+        capability = " and ".join(labels.get(value.lower(), value) for value in supported)
+        if {value.lower() for value in supported}.issubset({"email", "portal"}):
+            return f"Requires {requirement} — this firm submits electronically only."
+        if capability:
+            return f"Requires {requirement} — this firm submits by {capability} only."
+        return f"Requires {requirement} — this firm does not support that submission method."
+    return _truncate(str(blocker.get("requirement_text") or "A mandatory requirement is not met."), 150)
 
 
 def _closing_board_text(value: Any) -> tuple[str, str]:
@@ -332,7 +438,7 @@ def _render_decision_items(
         st.write(requirement.get("requirement_text") or str(requirement_id))
         quote = requirement.get("verbatim_quote")
         if quote:
-            st.caption(f'{quote} — p.{requirement.get("page_number", "?")}')
+            _render_quote(quote, requirement.get("page_number"))
 
 
 def _select_tender(tender_id: str) -> None:
@@ -344,30 +450,31 @@ def _back_to_feed() -> None:
     st.session_state.view = "Bid board"
 
 
-def _render_tender_card(tender: dict, analyzed: bool = True) -> None:
+def _render_tender_card(tender: dict, profile: dict, analyzed: bool = True) -> None:
     tender_id = tender["tender_id"]
     decision = tender.get("decision", {})
     verdict = _valid_verdict(tender)
     requirements_by_id = _requirements_by_id(tender)
+    display_title = _display_title(tender)
 
     safe_id = tender_id.replace(".", "-")
     with st.container(border=True, key=f"tender-{verdict}-{safe_id}"):
-        closing_column, title_column, verdict_column = st.columns([2.1, 5.9, 1.35])
         closing_text, closing_class = _closing_board_text(tender.get("closing_date"))
-        with closing_column:
+        header_column, verdict_column = st.columns([8.3, 1.7], vertical_alignment="center")
+        with header_column:
             st.markdown(
-                f'<span class="{closing_class}"><strong>'
-                f'{html.escape(closing_text)}</strong></span>',
+                '<div class="estimator-card-header">'
+                f'<span class="estimator-icon estimator-icon-{verdict}">{VERDICT_ICONS[verdict]}</span>'
+                '<div>'
+                f'<div class="estimator-card-title">{html.escape(display_title)}</div>'
+                f'<div class="estimator-card-meta {closing_class}">{html.escape(closing_text)}'
+                f' · {html.escape(tender_id)}</div>'
+                "</div></div>",
                 unsafe_allow_html=True,
             )
-        with title_column:
-            st.markdown(f'**{html.escape(str(tender["title"]))}**')
-            if tender["title"] != tender_id:
-                st.caption(tender_id)
         with verdict_column:
-            verdict_class = "estimator-fail" if verdict == "no_bid" else ""
             st.markdown(
-                f'<span class="{verdict_class}"><strong>{VERDICT_LABELS[verdict]}</strong></span>',
+                f'<div class="estimator-verdict estimator-verdict-{verdict}">{VERDICT_LABELS[verdict]}</div>',
                 unsafe_allow_html=True,
             )
 
@@ -380,20 +487,20 @@ def _render_tender_card(tender: dict, analyzed: bool = True) -> None:
         if analyzed and verdict == "no_bid":
             blocker_ids = decision.get("blockers", [])
             blocker = requirements_by_id.get(str(blocker_ids[0]), {}) if blocker_ids else {}
-            line_two_fragments.append(
-                "Blocked — "
-                f'{blocker.get("requirement_text", "blocking requirement unavailable")} '
-                f'(p.{blocker.get("page_number", "?")}, '
-                f'{blocker.get("source_file", "source unavailable")})'
+            judgment = next(
+                (item for item in decision.get("judgments", []) if str(item.get("id")) == str(blocker_ids[0])),
+                {},
+            )
+            reason = str(judgment.get("reason") or judgment.get("match_reason") or blocker.get("reason") or "")
+            st.markdown(
+                f'<div class="estimator-plain-verdict">{html.escape(_plain_english_blocker(reason, blocker, profile))}</div>',
+                unsafe_allow_html=True,
             )
         st.write(" · ".join(line_two_fragments))
         if blocker.get("verbatim_quote"):
-            st.caption(
-                f'"{blocker["verbatim_quote"]}" — p.{blocker.get("page_number", "?")}, '
-                f'{blocker.get("source_file", "source unavailable")}'
-            )
+            _render_quote(blocker["verbatim_quote"], blocker.get("page_number"))
 
-        count_column, why_column, checklist_column = st.columns([7.5, 0.8, 1.15])
+        count_column, why_column, checklist_column = st.columns([7.1, 1.15, 1.35])
         with count_column:
             st.write(_counts_text(decision) if analyzed else "Mandatory items: not analyzed")
         with why_column:
@@ -419,7 +526,7 @@ def _render_tender_card(tender: dict, analyzed: bool = True) -> None:
             )
 
 
-def _render_feed(tenders: list[dict]) -> None:
+def _render_feed(tenders: list[dict], profile: dict) -> None:
     st.title("Bid board")
     closing_within_seven = 0
     for tender in tenders:
@@ -434,19 +541,13 @@ def _render_feed(tenders: list[dict]) -> None:
     metric_columns[2].metric(
         "Blocked", sum(_valid_verdict(tender) == "no_bid" for tender in tenders)
     )
-    groups = [
-        ("bid", "Recommended to bid"),
-        ("review", "Review before deciding"),
-        ("no_bid", "Do not bid"),
-    ]
-    for verdict, label in groups:
-        grouped = sorted(
-            [tender for tender in tenders if _valid_verdict(tender) == verdict],
-            key=_closing_sort_key,
-        )
-        st.subheader(f"{label} ({len(grouped)})")
-        for tender in grouped:
-            _render_tender_card(tender)
+    analyzed = sorted(
+        [tender for tender in tenders if _valid_verdict(tender) != "not_analyzed"],
+        key=_closing_sort_key,
+    )
+    st.subheader(f"Opportunities ({len(analyzed)})")
+    for tender in analyzed:
+        _render_tender_card(tender, profile)
 
     not_analyzed = sorted(
         [
@@ -458,7 +559,7 @@ def _render_feed(tenders: list[dict]) -> None:
     )
     with st.expander(f"Not analyzed ({len(not_analyzed)})", expanded=False):
         for tender in not_analyzed:
-            _render_tender_card(tender, analyzed=False)
+            _render_tender_card(tender, profile, analyzed=False)
 
 
 def _render_requirement(
@@ -482,10 +583,7 @@ def _render_requirement(
             st.write(requirement.get("requirement_text") or "Requirement text unavailable")
             quote = requirement.get("verbatim_quote")
             if quote:
-                st.caption(
-                    f'"{quote}" — p.{requirement.get("page_number", "?")}, '
-                    f'{requirement.get("source_file", "source unavailable")}'
-                )
+                _render_quote(quote, requirement.get("page_number"))
             if requirement.get("verification_status") == "page_repaired":
                 original_page = requirement.get("original_page_number")
                 correction = (
@@ -539,9 +637,10 @@ def _render_requirement_groups(
 
 def _render_tender_cover(tender: dict) -> None:
     closing_text, _ = _closing_text(tender.get("closing_date"))
-    st.title(tender["title"])
+    display_title = _display_title(tender)
+    st.title(display_title)
     cover_rows = []
-    if tender["title"] != tender["tender_id"]:
+    if display_title != tender["tender_id"]:
         cover_rows.append(("Solicitation number", tender["tender_id"]))
     cover_rows.extend(
         [
@@ -671,7 +770,7 @@ def main() -> None:
         )
         _render_checklist(selected)
         return
-    _render_feed(tenders)
+    _render_feed(tenders, data["profile"])
 
 
 if __name__ == "__main__":
