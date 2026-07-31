@@ -1,6 +1,10 @@
 .venv/
 **pycache**/
 data/tenders/
+data/tendersentry.db
+data/seao/
 .env
 *.pyc
 .env
+data/rankings/
+data/census/

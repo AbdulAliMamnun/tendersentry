@@ -1,0 +1,286 @@
+{
+  "uri": "https://www.donneesquebec.ca/recherche/dataset/d23b2e02-085d-43e5-9e6e-e1d558ebfdd5/resource/9426fa51-ba06-4ae3-833a-18339254f454/download/hebdo_20260720_20260726.json",
+  "version": "1.1",
+  "publishedDate": "2026-07-27T01:18:26-04:00",
+  "publisher": {
+    "name": "Secrétariat du Conseil du trésor"
+  },
+  "license": "https://www.donneesquebec.ca/fr/licence/#cc-by",
+  "publicationPolicy": "https://www.donneesquebec.ca/recherche/dataset/systeme-electronique-dappel-doffres-seao#fiche_descriptive",
+  "releases": [
+    {
+      "ocid": "ocds-ec9k95-20004970",
+      "id": "20260720134538",
+      "date": "2026-07-20T09:45:38-04:00",
+      "tag": [
+        "tender"
+      ],
+      "initiationType": "tender",
+      "parties": [
+        {
+          "name": "Municipalité de Saint-Majorique",
+          "id": "OP-91624",
+          "roles": [
+            "buyer"
+          ],
+          "details": {
+            "municipal": "1"
+          }
+        }
+      ],
+      "buyer": {
+        "name": "Municipalité de Saint-Majorique",
+        "id": "OP-91624"
+      },
+      "tender": {
+        "id": "25107",
+        "title": "Rénovation intérieure salle municipale",
+        "status": "active",
+        "procuringEntity": {
+          "name": "Municipalité de Saint-Majorique",
+          "id": "OP-91624"
+        },
+        "items": [
+          {
+            "id": "C01",
+            "description": "C01 - Bâtiments",
+            "classification": {
+              "scheme": "UNSPSC",
+              "id": "72000000",
+              "description": "Construction et maintenance de bâtiments ou d’installations"
+            }
+          }
+        ],
+        "procurementMethod": "open",
+        "procurementMethodDetails": "Avis d’appel d’offres",
+        "mainProcurementCategory": "works",
+        "additionalProcurementCategories": [
+          "Travaux de construction"
+        ],
+        "tenderPeriod": {
+          "startDate": "2026-07-20T09:45:38-04:00",
+          "endDate": "2026-08-27T11:00:00-04:00",
+          "durationInDay": 38
+        },
+        "documents": [
+          {
+            "url": "https://seao.gouv.qc.ca/avis-resultat-recherche/consulter?ItemId=abba4c4f-c880-4f02-9594-46d3782aed35"
+          }
+        ]
+      },
+      "language": "fr"
+    },
+    {
+      "ocid": "ocds-ec9k95-20160595",
+      "id": "20260721185045",
+      "date": "2026-07-21T14:50:45-04:00",
+      "tag": [
+        "tender"
+      ],
+      "initiationType": "tender",
+      "parties": [
+        {
+          "name": "Université McGill",
+          "id": "OP-24914",
+          "address": {
+            "streetAddress": "1010 rue Sherbrooke ouest 7e étage,Suite 700",
+            "locality": "Montréal",
+            "region": "QC",
+            "postalCode": "H3A2R7",
+            "countryName": "CAN"
+          },
+          "roles": [
+            "buyer"
+          ],
+          "details": {
+            "municipal": "0"
+          }
+        }
+      ],
+      "buyer": {
+        "name": "Université McGill",
+        "id": "OP-24914"
+      },
+      "tender": {
+        "id": "C0004823",
+        "title": "Services d'isolation mécanique",
+        "status": "active",
+        "procuringEntity": {
+          "name": "Université McGill",
+          "id": "OP-24914"
+        },
+        "items": [
+          {
+            "id": "C01",
+            "description": "C01 - Bâtiments",
+            "classification": {
+              "scheme": "UNSPSC",
+              "id": "72100000",
+              "description": "Services de construction, de réparation et d’entretien d’immeubles"
+            }
+          }
+        ],
+        "value": {
+          "amount": 653199
+        },
+        "minValue": {
+          "amount": 368000
+        },
+        "procurementMethod": "open",
+        "procurementMethodDetails": "Avis d’appel d’offres",
+        "mainProcurementCategory": "works",
+        "additionalProcurementCategories": [
+          "Travaux de construction"
+        ],
+        "tenderPeriod": {
+          "startDate": "2026-07-21T14:50:45-04:00",
+          "endDate": "2026-09-02T10:00:00-04:00",
+          "durationInDay": 42
+        },
+        "documents": [
+          {
+            "url": "https://seao.gouv.qc.ca/avis-resultat-recherche/consulter?ItemId=f1da11d7-25da-4c80-a155-fd11cb350dd1"
+          }
+        ]
+      },
+      "language": "fr"
+    },
+    {
+      "ocid": "ocds-ec9k95-20085214",
+      "id": "20260720183939",
+      "date": "2026-07-20T14:39:39-04:00",
+      "tag": [
+        "contract"
+      ],
+      "initiationType": "tender",
+      "parties": [
+        {
+          "name": "Santé Québec Chaudière-Appalaches",
+          "id": "OP-81496",
+          "address": {
+            "streetAddress": "1637 rue Notre-Dame Est,",
+            "locality": "Thetford Mines",
+            "region": "QC",
+            "postalCode": "G6G2V3",
+            "countryName": "CAN"
+          },
+          "roles": [
+            "buyer"
+          ],
+          "details": {
+            "municipal": "0"
+          }
+        },
+        {
+          "name": "Spectrum Dynamics Medical, Inc",
+          "id": "FO-1179303756",
+          "address": {
+            "streetAddress": "301 N. Cattlemen Rd.,Suite 109",
+            "postalCode": "34232",
+            "countryName": "USA"
+          },
+          "roles": [
+            "supplier"
+          ],
+          "details": {
+            "neq": "1179303756"
+          }
+        }
+      ],
+      "buyer": {
+        "name": "Santé Québec Chaudière-Appalaches",
+        "id": "OP-81496"
+      },
+      "tender": {
+        "id": "2025APP116",
+        "title": "SPECT/CT (tomographie par émission monophotonique avec tomodensitométrie) 3D avec 12 détecteurs CZT (Tellurure de Cadmium-Zinc)\t\t\t",
+        "status": "complete",
+        "procuringEntity": {
+          "name": "Santé Québec Chaudière-Appalaches",
+          "id": "OP-81496"
+        },
+        "items": [
+          {
+            "id": "G21",
+            "description": "G21 - Fourniture et équipement médicaux et produits pharmaceutiques",
+            "classification": {
+              "scheme": "UNSPSC",
+              "id": "42201850",
+              "description": "Systèmes de tomographie nucléaire"
+            },
+            "additionalClassifications": [
+              {
+                "scheme": "UNSPSC",
+                "id": "42201813",
+                "description": "Unités de tomographie"
+              }
+            ]
+          }
+        ],
+        "procurementMethod": "direct",
+        "procurementMethodDetails": "Contrat de gré à gré",
+        "procurementMethodRationale": "Article13 - Paragraphe 4°: Possibilité de démontrer qu’un appel d’offres public ne servirait pas l’intérêt public;",
+        "mainProcurementCategory": "goods",
+        "additionalProcurementCategories": [
+          "Approvisionnement (biens)"
+        ],
+        "tenderPeriod": {
+          "startDate": "2026-07-20T14:39:39-04:00"
+        },
+        "numberOfTenderers": 1,
+        "tenderers": [
+          {
+            "id": "FO-1179303756",
+            "name": "Spectrum Dynamics Medical, Inc"
+          }
+        ],
+        "documents": [
+          {
+            "url": "https://seao.gouv.qc.ca/avis-resultat-recherche/consulter?ItemId=93deb16f-4882-4a6a-8e0c-ce6e818e593e"
+          }
+        ]
+      },
+      "awards": [
+        {
+          "id": "20156129",
+          "status": "active",
+          "date": "2026-07-20T00:00:00-04:00",
+          "value": {
+            "amount": 2950388.0,
+            "currency": "CAD"
+          },
+          "suppliers": [
+            {
+              "name": "Spectrum Dynamics Medical, Inc",
+              "id": "FO-1179303756"
+            }
+          ]
+        }
+      ],
+      "contracts": [
+        {
+          "id": "20156129",
+          "awardID": "20156129",
+          "status": "active",
+          "value": {
+            "amount": 2950388.0,
+            "currency": "CAD"
+          },
+          "dateSigned": "2026-07-20T00:00:00-04:00"
+        }
+      ],
+      "language": "fr",
+      "relatedProcesses": [
+        {
+          "id": "20085212",
+          "relationship": [
+            "prior"
+          ],
+          "title": "SPECT/CT (tomographie par émission monophotonique avec tomodensitométrie) 3D avec 12 détecteurs CZT (Tellurure de Cadmium-Zinc)\t\t\t\t \t\t\t\t",
+          "scheme": "preProcurement",
+          "identifier": "20085212-2025APP116 - A.I."
+        }
+      ]
+    }
+  ]
+}
