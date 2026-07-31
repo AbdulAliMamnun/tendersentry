@@ -21,6 +21,11 @@ LOGGER = logging.getLogger(__name__)
 REASON_CLOSED = "closed"
 REASON_CLOSING_SOON = "closing_within_24h"
 REASON_NO_CLOSING_DATE = "closing_date_missing"
+#: The source published no closing date, so whether the notice is live is unknown.
+#: Still excluded — an undated notice is never recommended — but not reported as
+#: "closed", which claimed knowledge we do not have and hid the real cause of the
+#: municipal ingest yielding zero candidates.
+REASON_CLOSING_DATE_UNKNOWN = "closing_date_unknown"
 REASON_NON_CONSTRUCTION = "non_construction"
 REASON_TRADE_MISMATCH = "trade_mismatch"
 REASON_REGION_MISMATCH = "region_mismatch"
@@ -69,9 +74,12 @@ def evaluate(
 
     hours = timeutil.hours_until(notice.get("closing_date_utc"), reference)
     status = str(notice.get("status") or "").strip().casefold()
-    if status != "open":
+    if status in {"", "unknown"}:
+        reasons.append(REASON_CLOSING_DATE_UNKNOWN)
+        details.append("the source published no closing date, so liveness is unknown")
+    elif status != "open":
         reasons.append(REASON_CLOSED)
-        details.append(f"status={status or 'unknown'}")
+        details.append(f"status={status}")
     if hours is None:
         reasons.append(REASON_NO_CLOSING_DATE)
         details.append("closing_date_utc is null")

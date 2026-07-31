@@ -6,6 +6,15 @@ as during the census: public pages only, robots respected, at least five seconds
 between requests to a host, and never a platform-hosted URL even when a municipal
 page links to one.
 
+**Design intent: this is a monitor, not a harvester.** The first full run proved these
+pages are archives — 90 notices parsed, none of them open. A municipality of a few
+thousand people runs a handful of tenders a year, so the value is not in the backlog
+already on the page but in noticing the day a new one appears. The ingester is
+therefore built for repeated, cheap, idempotent runs whose output is the *diff*:
+a daily pass over the ~126 own-site municipalities surfacing notices that were not
+there yesterday. Municipal inventory arrives per-notice through monitoring; it cannot
+be backfilled, because there is nothing live to backfill.
+
 These pages are heterogeneous, so parsing is by observed pattern rather than by
 municipality. A page that fits no pattern is recorded as ``parser_needed`` instead of
 receiving a fragile one-off scraper.
@@ -80,6 +89,21 @@ NOTICE_ID_PATTERN = re.compile(
 
 CLOSING_LABEL_PATTERN = re.compile(
     r"clos(?:es|ing|ed)?\s*(?:date|on)?\s*[:\-]?\s*(.{0,40})", re.IGNORECASE
+)
+
+#: Elements that can hold one notice's listing row.
+ROW_ELEMENTS = ("tr", "li", "dd", "p", "div", "article", "section")
+
+#: Status words municipalities put in a listing row beside the tender.
+ROW_STATUS_PATTERN = re.compile(
+    r"\b(?:closed|cancelled|canceled|awarded|unofficial results|open|"
+    r"accepting submissions|now accepting)\b",
+    re.IGNORECASE,
+)
+
+#: A date as municipalities write it in a listing row.
+DATE_TEXT_PATTERN = re.compile(
+    r"[A-Za-z]+ \d{1,2},? \d{4}(?: \d{1,2}:\d{2} ?[APap]\.?[Mm]\.?)?|\d{4}-\d{2}-\d{2}"
 )
 
 DATE_FORMATS = (
@@ -178,9 +202,11 @@ def parse_notice_page(html: str, page_url: str) -> dict:
     """Parse one municipal procurement page, reporting which pattern matched."""
     notices = parse_document_list(html, page_url)
     if notices:
-        closings = _closing_dates(html)
+        rows = _row_metadata(html)
         for notice in notices:
-            notice["closing_text"] = closings.get(notice["notice_id"].casefold())
+            row = rows.get(notice["notice_id"].casefold(), {})
+            notice["closing_text"] = row.get("closing_text")
+            notice["status_text"] = row.get("status_text")
         return {"pattern": "document-list", "notices": notices}
 
     return {"pattern": None, "notices": []}
@@ -197,6 +223,12 @@ def to_notice_records(
     records: list[dict] = []
     for notice in parsed["notices"]:
         closing = _parse_date(notice.get("closing_text"))
+        # A listing row that says "Closed" outranks a date we inferred: the
+        # municipality is stating the outcome, we are only reading a calendar.
+        row_status = str(notice.get("status_text") or "")
+        stated_closed = bool(
+            re.search(r"closed|cancel|awarded|unofficial results", row_status)
+        )
         records.append(
             {
                 "record": {
@@ -219,7 +251,11 @@ def to_notice_records(
                     # live opportunities with years of archive, and guessing open
                     # would push closed 2024 work into recommendations.
                     "status": (
-                        normalize_status("open", closing) if closing else "unknown"
+                        "closed"
+                        if stated_closed
+                        else normalize_status("open", closing)
+                        if closing
+                        else "unknown"
                     ),
                 },
                 "documents": notice["documents"],
@@ -420,20 +456,46 @@ def _title_from(document: dict) -> str:
     return stem[:200].title() if len(stem) > 6 else ""
 
 
-def _closing_dates(html: str) -> dict[str, str]:
-    """Map notice identifiers to any closing date text found beside them."""
+def _row_metadata(html: str) -> dict[str, dict]:
+    """Read closing dates and status words from the rows holding tender links.
+
+    The eSCRIBE family — the largest CMS group among Ontario's own-site posters —
+    lays its listings out as a table of *description | number | closing | status*,
+    so the date lives in a sibling cell rather than in the filename the document
+    parser keys on. The same shape appears in list-based layouts, where the date
+    follows the link in the same ``<li>``.
+    """
     soup = BeautifulSoup(html or "", "html.parser")
-    closings: dict[str, str] = {}
-    for element in soup.find_all(["tr", "li", "div", "p", "section"]):
+    # Rows first, but not rows only: some municipalities put the date in a div or
+    # paragraph beside the link. Candidates are visited shortest-text-first so the
+    # most specific container wins over an ancestor that happens to contain it.
+    candidates: list[tuple[int, str, str]] = []
+    for element in soup.find_all(ROW_ELEMENTS):
+        if not element.find("a", href=True):
+            continue
         text = re.sub(r"\s+", " ", element.get_text(" ", strip=True))
-        if len(text) > 400:
+        if not text or len(text) > 600:
             continue
         identifier = NOTICE_ID_PATTERN.search(text)
-        closing = CLOSING_LABEL_PATTERN.search(text)
-        if identifier and closing:
-            key = re.sub(r"[-_ ]", "-", identifier.group(1)).casefold()
-            closings.setdefault(key, closing.group(1).strip())
-    return closings
+        if identifier is None:
+            continue
+        key = re.sub(r"[-_ ]", "-", identifier.group(1)).casefold()
+        candidates.append((len(text), key, text))
+
+    metadata: dict[str, dict] = {}
+    for _, key, text in sorted(candidates):
+        entry = metadata.setdefault(key, {"closing_text": None, "status_text": None})
+        if entry["closing_text"] is None:
+            labelled = CLOSING_LABEL_PATTERN.search(text)
+            candidate = labelled.group(1) if labelled else text
+            found = DATE_TEXT_PATTERN.search(candidate)
+            if found is not None:
+                entry["closing_text"] = found.group(0).strip()
+        if entry["status_text"] is None:
+            status = ROW_STATUS_PATTERN.search(text)
+            if status is not None:
+                entry["status_text"] = status.group(0).casefold()
+    return metadata
 
 
 def _parse_date(text: Any) -> str | None:

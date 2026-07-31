@@ -61,6 +61,29 @@ class ExclusionTests(unittest.TestCase):
         self.assertIn(filters.REASON_CLOSED, verdict["reasons"])
         self.assertIn("status=awarded", verdict["detail"])
 
+    def test_an_undated_notice_is_excluded_as_unknown_not_as_closed(self) -> None:
+        # Municipal pages publish notices with no closing date. Reporting those as
+        # "closed" claimed knowledge we do not have, and hid why the municipal
+        # ingest yielded zero candidates.
+        verdict = self.evaluate(_notice(status="unknown", closing_date_utc=None))
+
+        self.assertFalse(verdict["included"])
+        self.assertIn(filters.REASON_CLOSING_DATE_UNKNOWN, verdict["reasons"])
+        self.assertNotIn(filters.REASON_CLOSED, verdict["reasons"])
+        self.assertEqual(verdict["reasons"][0], filters.REASON_CLOSING_DATE_UNKNOWN)
+
+    def test_an_empty_status_is_treated_the_same_way(self) -> None:
+        verdict = self.evaluate(_notice(status=""))
+
+        self.assertIn(filters.REASON_CLOSING_DATE_UNKNOWN, verdict["reasons"])
+        self.assertNotIn(filters.REASON_CLOSED, verdict["reasons"])
+
+    def test_an_unknown_notice_stays_excluded(self) -> None:
+        # Truthfully labelled, still never recommended.
+        verdict = self.evaluate(_notice(status="unknown"))
+
+        self.assertFalse(verdict["included"])
+
     def test_a_notice_closing_inside_24h_is_excluded(self) -> None:
         verdict = self.evaluate(_notice(closing_date_utc="2026-07-31T09:00:00+00:00"))
 
