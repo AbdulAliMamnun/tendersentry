@@ -8,3 +8,5 @@ data/seao/
 .env
 data/rankings/
 data/census/
+web/node_modules/
+web/.next/

@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #faf9f7;
+    color: #57534e;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: #292524;
+    letter-spacing: -0.02em;
+  }
+
+  ::selection {
+    background: #fcebeb;
+    color: #292524;
+  }
+}
+
+@layer components {
+  .shell {
+    @apply mx-auto w-full max-w-shell px-5 sm:px-8;
+  }
+
+  .card {
+    @apply rounded-card border border-hairline bg-card;
+  }
+
+  .eyebrow {
+    @apply text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-red;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-control bg-heading px-5 py-3
+      text-sm font-semibold text-white transition-opacity hover:opacity-90;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center rounded-control border border-hairline
+      bg-card px-5 py-3 text-sm font-semibold text-body transition-colors
+      hover:border-muted;
+  }
+
+  .btn-red {
+    @apply inline-flex items-center justify-center rounded-control bg-brand-red px-5 py-3
+      text-sm font-semibold text-white transition-opacity hover:opacity-90;
+  }
+
+  .field {
+    @apply w-full rounded-control border border-hairline bg-card px-4 py-3 text-sm
+      text-heading placeholder:text-muted focus:border-muted focus:outline-none;
+  }
+}
+
+/* The live dot on the demo board: present, not blinking for attention. */
+@keyframes softPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.live-dot {
+  animation: softPulse 2.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-dot {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}

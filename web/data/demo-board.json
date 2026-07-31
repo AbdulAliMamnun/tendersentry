@@ -1,0 +1,33 @@
+{
+  "firm": {
+    "id": 1,
+    "name": "Georgian Bay Civil Ltd."
+  },
+  "rows": [
+    {
+      "title": "Stage 1 - Replacement of Esson Lake Dam, Ontario Waterways",
+      "buyer": "Parks Canada Agency (PC)",
+      "closing_date": "2026-08-06",
+      "source": "canadabuys",
+      "score": 90
+    },
+    {
+      "title": "Retender EQ754-251469 Burlington Lift Bridge Security Gate and Fence Installation",
+      "buyer": "Department of Public Works and Government Services (PSPC)",
+      "closing_date": "2026-08-10",
+      "source": "canadabuys",
+      "score": 85
+    }
+  ],
+  "blocker": {
+    "tender_id": "cb-757-46105229",
+    "requirement_text": "Submit offers by fax to 1-877-558-2349.",
+    "quote": "The only acceptable facsimile for responses to the RFSO is 1-877-558-2349.",
+    "page": 2,
+    "check_field": "submission_method",
+    "check_value": "1-877-558-2349",
+    "title": "RFSO 5P300-26-0001",
+    "reason": "Requires fax submission — this firm submits electronically only."
+  },
+  "candidate_count": 130
+}
