@@ -91,7 +91,7 @@ export const board = boardJson as Board;
 export const stats = statsJson as Stats;
 export const census = censusJson as Census;
 
-export const GITHUB_URL = "https://github.com/aamamnun/tendersentry";
+export const GITHUB_URL = "https://github.com/AbdulAliMamnun/tendersentry";
 
 export function formatNumber(value: number): string {
   return value.toLocaleString("en-CA");

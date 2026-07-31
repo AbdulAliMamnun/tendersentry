@@ -5,8 +5,11 @@ data/tendersentry.db
 data/seao/
 .env
 *.pyc
-.env
 data/rankings/
 data/census/
 web/node_modules/
 web/.next/
+.env.*
+!.env.example
+web/.vercel/
+.vercel

@@ -61,6 +61,10 @@ export default async function CensusPage({
           <div className="mt-6">
             <DistributionBar rows={census.distribution} />
           </div>
+          <p className="mt-2 text-xs text-muted">
+            Excludes one municipality misattributed in the provincial register (0.7% of
+            population); see caveats.
+          </p>
         </section>
 
         {/* Distribution table */}
