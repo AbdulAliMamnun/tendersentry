@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
+import secrets
 import sqlite3
 from typing import Any
 
@@ -62,11 +64,42 @@ SCHEMA_STATEMENTS = (
         bids_per_month_capacity INTEGER,
         past_projects TEXT NOT NULL DEFAULT '[]',
         import_notes TEXT NOT NULL DEFAULT '[]',
+        board_token TEXT,
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL
     )
     """,
+    """
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_firms_board_token
+        ON firms (board_token) WHERE board_token IS NOT NULL
+    """,
 )
+
+#: Columns added after the table's first release.
+ADDITIVE_COLUMNS = (("board_token", "TEXT"),)
+
+
+#: Bytes of entropy behind a board token. token_urlsafe(32) yields 43 characters.
+BOARD_TOKEN_BYTES = 32
+
+
+def generate_board_token() -> str:
+    """Mint an unguessable board token.
+
+    The token *is* the access control for a firm's board — there is no login — so it
+    comes from ``secrets``, never ``random``.
+    """
+    return secrets.token_urlsafe(BOARD_TOKEN_BYTES)
+
+
+def board_token_hash(token: str) -> str:
+    """Return the lookup key a board file is stored under.
+
+    Boards are keyed by the hash rather than the token itself so the published
+    repository never contains a working credential. The token travels only in the URL
+    the firm is sent; the repository holds a value nothing can be derived from.
+    """
+    return hashlib.sha256(str(token).encode("utf-8")).hexdigest()
 
 
 def connect(db_path: Any = None) -> sqlite3.Connection:
@@ -77,8 +110,19 @@ def connect(db_path: Any = None) -> sqlite3.Connection:
 
 
 def create_schema(connection: sqlite3.Connection) -> None:
-    """Create the firms table when it does not yet exist."""
+    """Create the firms table and apply any columns added since its first release."""
+    existing = {
+        row["name"]
+        for row in connection.execute("PRAGMA table_info(firms)").fetchall()
+    }
     with connection:
+        if existing:
+            for column, definition in ADDITIVE_COLUMNS:
+                if column not in existing:
+                    connection.execute(
+                        f"ALTER TABLE firms ADD COLUMN {column} {definition}"
+                    )
+                    LOGGER.info("Added firms.%s", column)
         for statement in SCHEMA_STATEMENTS:
             connection.execute(statement)
 
@@ -142,10 +186,19 @@ def upsert_firm(
 
     with connection:
         if existing is None:
+            # A board token is minted once, at creation. Updates never touch it:
+            # rotating it would silently break a link already sent to a firm.
             cursor = connection.execute(
-                f"INSERT INTO firms ({', '.join(FIRM_COLUMNS)}, created_at, updated_at) "
-                "VALUES (" + ", ".join("?" for _ in FIRM_COLUMNS) + ", ?, ?)",
-                [*(values[column] for column in FIRM_COLUMNS), timestamp, timestamp],
+                f"INSERT INTO firms ({', '.join(FIRM_COLUMNS)}, board_token, "
+                "created_at, updated_at) VALUES ("
+                + ", ".join("?" for _ in FIRM_COLUMNS)
+                + ", ?, ?, ?)",
+                [
+                    *(values[column] for column in FIRM_COLUMNS),
+                    firm.get("board_token") or generate_board_token(),
+                    timestamp,
+                    timestamp,
+                ],
             )
             firm_id = int(cursor.lastrowid)
             LOGGER.info("Created firm %d: %s", firm_id, values["name"])

@@ -29,6 +29,58 @@ qualification engine — its quote was checked character-for-character against t
 source PDF at the page shown. If no verified blocker exists, the export refuses to
 emit a board rather than shipping an unevidenced one.
 
+## Beta boards
+
+Each firm gets a private board at `/board/{token}`. There is no login — **the
+unguessable token is the access**, the same privately-by-link model as `/check`
+uploads.
+
+### ⛔ Blocking rule: real firms' boards must not be committed to git
+
+This repository is public. Board **files** are committed today, which is acceptable
+only because firms 1 and 2 are fictional demo profiles.
+
+**Before onboarding firm 3 if it is a real customer, board JSON must move to
+Blob-backed lookup (hash-keyed paths) and out of git.** This is a precondition, not a
+suggestion. Committing a real contractor's board publishes their firm name and their
+ranked opportunity list to anyone browsing the repository.
+
+Tokens themselves are already safe: board files are named `sha256(token)`, so the
+repository holds a value nothing can be derived from. The token exists only in the
+database and in the link you send.
+
+### The flow
+
+1. **A contractor submits the beta form.** It arrives as an email with subject
+   `Board request — {firm}`, carrying their trades, regions and typical job size in
+   their own words.
+2. **You create the firm profile** in the `firms` table, mapping their description
+   onto the controlled vocabulary. A board token is minted automatically at creation.
+3. **Run the ranking and export:**
+   ```bash
+   python3 -m matchrec.rank --firm N
+   python3 -m scripts.export_firm_boards
+   ```
+4. **Deploy** — commit `web/data/boards/` and push; Vercel builds.
+5. **Send the firm its link, once.** `python3 -m profiles.tokens --show` prints every
+   firm's board path. Send it privately; it is the credential.
+6. **Weekly:** re-run the ingest, ranking and export, then push. Every board refreshes
+   together, which is what the "updated weekly" badge on the page promises.
+
+`python3 -m profiles.tokens --backfill` mints tokens for any firm missing one and is
+idempotent. `--rotate N` replaces one firm's token and **invalidates the link already
+sent** — only use it if a link leaked.
+
+### Why boards are not prerendered
+
+Static generation would require enumerating every token at build time, which means
+committing the tokens themselves. The route hashes the token from the URL and looks
+up the file instead, so tokens never enter the repository. Boards also carry
+`noindex` and `referrer: no-referrer` — the latter because a board's URL *is* its
+credential, and it would otherwise ride the `Referer` header to every tender notice a
+contractor clicks through to. Analytics is disabled on `/board` for the same reason:
+it records pathnames.
+
 ## Environment
 
 | Variable | Needed for | Notes |

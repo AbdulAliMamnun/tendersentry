@@ -11,13 +11,22 @@ import { Resend } from "resend";
  */
 
 type Payload = {
-  kind?: "check" | "beta";
+  kind?: "check" | "beta" | "board";
   email?: string;
   firm?: string | null;
   noticeUrl?: string | null;
   documentUrl?: string | null;
   documentName?: string | null;
+  trades?: string | null;
+  regions?: string | null;
+  jobSize?: string | null;
 };
+
+const SUBJECTS = {
+  check: "Tender check",
+  board: "Board request",
+  beta: "Beta signup",
+} as const;
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -41,7 +50,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Enter a valid email address." }, { status: 400 });
   }
 
-  const kind = payload.kind === "beta" ? "beta" : "check";
+  const kind =
+    payload.kind === "beta" || payload.kind === "board" ? payload.kind : "check";
   if (kind === "check" && !payload.documentUrl && !payload.noticeUrl) {
     return NextResponse.json(
       { error: "Add a tender PDF or a link to the notice." },
@@ -61,9 +71,12 @@ export async function POST(request: Request) {
   }
 
   const lines = [
-    `Type: ${kind === "beta" ? "Beta signup" : "Free tender check"}`,
+    `Type: ${SUBJECTS[kind]}`,
     `Email: ${email}`,
     payload.firm ? `Firm: ${payload.firm}` : null,
+    payload.trades ? `Trades: ${payload.trades}` : null,
+    payload.regions ? `Regions: ${payload.regions}` : null,
+    payload.jobSize ? `Typical job size: ${payload.jobSize}` : null,
     payload.noticeUrl ? `Notice URL: ${payload.noticeUrl}` : null,
     payload.documentUrl
       ? `Document: ${payload.documentName ?? "upload"} — ${payload.documentUrl}`
@@ -79,10 +92,8 @@ export async function POST(request: Request) {
       from,
       to: notify,
       replyTo: email,
-      subject:
-        kind === "beta"
-          ? `Beta signup — ${email}`
-          : `Tender check — ${payload.firm ?? email}`,
+      // Distinct per kind so board requests are filterable in the inbox.
+      subject: `${SUBJECTS[kind]} — ${payload.firm ?? email}`,
       text: lines.join("\n"),
     });
 

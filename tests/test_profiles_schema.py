@@ -45,8 +45,13 @@ class SchemaTests(unittest.TestCase):
         ]
         self.assertEqual(
             columns,
-            ["id", *schema.FIRM_COLUMNS, "created_at", "updated_at"],
+            ["id", *schema.FIRM_COLUMNS, "board_token", "created_at", "updated_at"],
         )
+
+    def test_the_board_token_is_not_a_writable_firm_column(self) -> None:
+        # FIRM_COLUMNS is what an upsert overwrites. A token in that list would be
+        # replaced every time a profile was edited, killing a link already sent.
+        self.assertNotIn("board_token", schema.FIRM_COLUMNS)
 
     def test_json_columns_round_trip_as_python_lists(self) -> None:
         firm_id = schema.upsert_firm(self.connection, _firm())

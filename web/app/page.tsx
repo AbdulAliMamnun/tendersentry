@@ -63,6 +63,13 @@ export default function HomePage() {
         {/* Demo board */}
         <section className="shell pb-16">
           <BoardCard />
+          <p className="mt-4 text-center text-sm text-muted">
+            This is a demo firm&rsquo;s board.{" "}
+            <a href="#join" className="font-medium text-brand-red hover:opacity-80">
+              Want yours? Join the beta
+            </a>{" "}
+            — free for Ontario &amp; Québec contractors.
+          </p>
         </section>
 
         {/* Stat strip */}
