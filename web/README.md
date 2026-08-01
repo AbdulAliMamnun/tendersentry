@@ -36,7 +36,7 @@ emit a board rather than shipping an unevidenced one.
 | `BLOB_READ_WRITE_TOKEN` | Tender uploads | Injected automatically once a Blob store is linked |
 | `RESEND_API_KEY` | Intake notifications | From resend.com |
 | `NOTIFY_EMAIL` | Intake notifications | Where submissions are sent |
-| `NOTIFY_FROM` | Optional | Defaults to Resend's onboarding sender |
+| `NOTIFY_FROM` | Optional | Defaults to `TenderSentry <notifications@tendersentry.com>`. **Must be an address at a domain verified in Resend** — a domain-scoped key rejects anything else, including Resend's shared `onboarding@resend.dev` |
 
 Without `RESEND_API_KEY`/`NOTIFY_EMAIL` the intake route still accepts submissions and
 logs them rather than failing the visitor.

@@ -21,6 +21,13 @@ type Payload = {
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+/**
+ * Must be an address at a domain verified in Resend. The API key is scoped to
+ * tendersentry.com, so Resend's shared `onboarding@resend.dev` sender — the previous
+ * default — was rejected outright.
+ */
+const DEFAULT_FROM = "TenderSentry <notifications@tendersentry.com>";
+
 export async function POST(request: Request) {
   let payload: Payload;
   try {
@@ -50,7 +57,7 @@ export async function POST(request: Request) {
       kind,
       email,
     });
-    return NextResponse.json({ ok: true, delivered: false });
+    return NextResponse.json({ ok: true });
   }
 
   const lines = [
@@ -64,10 +71,12 @@ export async function POST(request: Request) {
     `Received: ${new Date().toISOString()}`,
   ].filter(Boolean);
 
+  const from = process.env.NOTIFY_FROM ?? DEFAULT_FROM;
+
   try {
     const resend = new Resend(apiKey);
-    await resend.emails.send({
-      from: process.env.NOTIFY_FROM ?? "TenderSentry <onboarding@resend.dev>",
+    const { data, error } = await resend.emails.send({
+      from,
       to: notify,
       replyTo: email,
       subject:
@@ -76,13 +85,28 @@ export async function POST(request: Request) {
           : `Tender check — ${payload.firm ?? email}`,
       text: lines.join("\n"),
     });
+
+    if (error) {
+      // The SDK reports API rejections in the result rather than throwing, so a
+      // 403 from a domain-scoped key used to fall straight through to "delivered".
+      // The sender is logged because it is the usual cause.
+      console.error("Resend rejected the notification", {
+        from,
+        to: notify,
+        kind,
+        name: error.name,
+        message: error.message,
+        error,
+      });
+    } else {
+      console.info("Notification sent", { id: data?.id, kind, from });
+    }
   } catch (error) {
-    console.error("Notification failed", error);
-    return NextResponse.json(
-      { error: "We couldn't record that just now. Please try again." },
-      { status: 502 },
-    );
+    console.error("Notification failed to send", { from, to: notify, kind, error });
   }
 
-  return NextResponse.json({ ok: true, delivered: true });
+  // Always friendly: the submission itself succeeded — the document is in Blob
+  // storage and recoverable from the logs — so a notification problem is ours to
+  // chase, not something to show a contractor as a failure.
+  return NextResponse.json({ ok: true });
 }

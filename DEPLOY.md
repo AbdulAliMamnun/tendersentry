@@ -45,9 +45,11 @@ it by hand. Without it the site works but tender uploads fail.
 1. Sign up at [resend.com](https://resend.com).
 2. API Keys → Create API Key, with **Sending access**. Copy it once — it is shown a
    single time. It looks like `re_xxxxxxxx…`.
-3. Domain verification comes later, in section 6. Until then Resend can still send
-   from its shared `onboarding@resend.dev` sender, which is fine for notifications to
-   yourself.
+3. **Scope the key to `tendersentry.com`** if Resend offers it, and note that doing so
+   means the shared `onboarding@resend.dev` sender will be **rejected**. Notifications
+   therefore do not work until domain verification (section 6) is finished — that is
+   expected, not a fault. The route logs the rejection and still accepts the
+   submission, so nothing is lost in the meantime.
 
 ## 5. Set environment variables
 
@@ -58,7 +60,7 @@ Project Settings → Environment Variables. Add for **Production** and **Preview
 | `BLOB_READ_WRITE_TOKEN` | *(automatic)* | Injected by the Blob store in section 3 — do not add by hand |
 | `RESEND_API_KEY` | `re_…` | The key from section 4 |
 | `NOTIFY_EMAIL` | your address | Where submission notifications are sent |
-| `NOTIFY_FROM` | *(optional)* | Leave unset until section 6 completes, then `TenderSentry <hello@tendersentry.com>` |
+| `NOTIFY_FROM` | *(optional)* | Leave unset until section 6 completes, then `TenderSentry <notifications@tendersentry.com>` |
 
 Redeploy after adding variables — Vercel does not apply them to existing builds.
 
@@ -112,7 +114,7 @@ after you type `send`, that is correct — do not enter the full domain twice.
 hour and re-checks on its own. Both dashboards show a green state when satisfied.
 
 Once Resend reports Verified, set `NOTIFY_FROM` to
-`TenderSentry <hello@tendersentry.com>` and redeploy.
+`TenderSentry <notifications@tendersentry.com>` and redeploy.
 
 ## 8. Enable analytics
 
