@@ -19,6 +19,9 @@ export function CheckForm() {
   const [noticeUrl, setNoticeUrl] = useState("");
   const [state, setState] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [message, setMessage] = useState("");
+  // Captured at submit time: the form unmounts on success, taking the file input
+  // with it, and a submitter should be able to check they sent the right document.
+  const [submitted, setSubmitted] = useState<string | null>(null);
 
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -62,6 +65,7 @@ export function CheckForm() {
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error ?? "Something went wrong");
 
+      setSubmitted(file?.name ?? (noticeUrl.trim() || null));
       setState("done");
       setMessage("");
     } catch (error) {
@@ -75,12 +79,19 @@ export function CheckForm() {
   if (state === "done") {
     return (
       <div className="card p-7">
-        <p className="text-[15px] font-semibold text-heading">Got it.</p>
-        <p className="mt-2 text-sm leading-relaxed text-body">
-          Your compliance brief is on its way to <strong>{email}</strong> within 24
+        <p className="text-[15px] leading-relaxed text-body">
+          <strong className="font-semibold text-heading">
+            Got it — we&rsquo;ve received your tender.
+          </strong>{" "}
+          Your compliance brief will be sent to <strong>{email}</strong> within 24
           hours. If anything about the package is unclear, we&rsquo;ll reply to ask
           rather than guess.
         </p>
+        {submitted ? (
+          <p className="mt-5 truncate rounded-control border border-hairline bg-page px-4 py-3 text-sm text-body">
+            <span className="text-muted">Received:</span> {submitted}
+          </p>
+        ) : null}
       </div>
     );
   }
