@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
-import { BoardCard } from "@/components/BoardCard";
 import { CensusBand } from "@/components/CensusBand";
+import { DemoRanker } from "@/components/DemoRanker";
 import { census, formatNumber, stats } from "@/lib/data";
 
 const HOW_IT_WORKS = [
@@ -60,11 +60,11 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Demo board */}
+        {/* Live ranker — the sample board is its empty and fallback state */}
         <section className="shell pb-16">
-          <BoardCard />
+          <DemoRanker />
           <p className="mt-4 text-center text-sm text-muted">
-            This is a demo firm&rsquo;s board.{" "}
+            Rankings run against today&rsquo;s open notices.{" "}
             <a href="#join" className="font-medium text-brand-red hover:opacity-80">
               Want yours? Join the beta
             </a>{" "}
