@@ -206,11 +206,30 @@ class UpsertTests(unittest.TestCase):
             ],
         )
 
-        rows = db.sample_rows(self.connection, "canadabuys", limit=3)
+        # `now` is injected: with a real clock this assertion silently inverted the
+        # moment the wall clock passed the "soon" fixture's closing time.
+        rows = db.sample_rows(
+            self.connection, "canadabuys", limit=3, now="2026-07-01T00:00:00+00:00"
+        )
 
         self.assertEqual(
             [row["source_id"] for row in rows], ["soon", "late", "never"]
         )
+
+    def test_sample_rows_puts_closed_notices_after_upcoming_ones(self) -> None:
+        db.upsert_notices(
+            self.connection,
+            [
+                _record(source_id="closed", closing_date="2026-01-15T14:00:00"),
+                _record(source_id="upcoming", closing_date="2026-12-01T14:00:00"),
+            ],
+        )
+
+        rows = db.sample_rows(
+            self.connection, "canadabuys", limit=2, now="2026-07-01T00:00:00+00:00"
+        )
+
+        self.assertEqual([row["source_id"] for row in rows], ["upcoming", "closed"])
 
 
 if __name__ == "__main__":

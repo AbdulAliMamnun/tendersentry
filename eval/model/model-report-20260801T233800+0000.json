@@ -1,0 +1,351 @@
+{
+  "generated_at": "2026-08-01T23:38:00+00:00",
+  "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "negatives_per_firm": 200,
+  "random_seed": 20260801,
+  "corpus": {
+    "competitive_interactions": 756872,
+    "competitive_procurements": 187341
+  },
+  "splits": [
+    {
+      "split": {
+        "name": "settled",
+        "cutoff": "2025-10-01",
+        "test_end": "2026-04-01",
+        "note": "Robustness check added after the full history showed the recent edge is censored — bidder lists are published at award time, so the newest months under-report positives."
+      },
+      "stats": {
+        "train_interactions": 692984,
+        "test_interactions": 37033,
+        "train_firms_used": 10324,
+        "test_firms_evaluated": 1585,
+        "train_rows": 2389187,
+        "test_pool": 8898
+      },
+      "models": {
+        "1_deterministic": {
+          "firms": 1585,
+          "overall": {
+            "firms": 1585,
+            "median_candidates": 210.0,
+            "median_positives": 10.0,
+            "recall@10": 0.5862235808541622,
+            "recall@25": 0.8404776087303695,
+            "mrr": 0.9024514460640161
+          },
+          "cohorts": {
+            "5-19": {
+              "firms": 201,
+              "median_candidates": 207.0,
+              "median_positives": 7.0,
+              "recall@10": 0.7740187223280574,
+              "recall@25": 0.8926842443089583,
+              "mrr": 0.8957915305071037
+            },
+            "20-49": {
+              "firms": 374,
+              "median_candidates": 207.0,
+              "median_positives": 7.0,
+              "recall@10": 0.697329836167549,
+              "recall@25": 0.8883334132008358,
+              "mrr": 0.8572740524226974
+            },
+            ">=50": {
+              "firms": 1010,
+              "median_candidates": 213.0,
+              "median_positives": 13.0,
+              "recall@10": 0.5077081720190536,
+              "recall@25": 0.8123671091033886,
+              "mrr": 0.9205058898747017
+            }
+          }
+        },
+        "2_embedding_only": {
+          "firms": 1585,
+          "overall": {
+            "firms": 1585,
+            "median_candidates": 210.0,
+            "median_positives": 10.0,
+            "recall@10": 0.44667697186876276,
+            "recall@25": 0.6521483919950143,
+            "mrr": 0.8073721486695452
+          },
+          "cohorts": {
+            "5-19": {
+              "firms": 201,
+              "median_candidates": 207.0,
+              "median_positives": 7.0,
+              "recall@10": 0.5264736526592411,
+              "recall@25": 0.6923007897155165,
+              "mrr": 0.8027674730813448
+            },
+            "20-49": {
+              "firms": 374,
+              "median_candidates": 207.0,
+              "median_positives": 7.0,
+              "recall@10": 0.5502748011454658,
+              "recall@25": 0.7309740644111817,
+              "mrr": 0.7986780237696388
+            },
+            ">=50": {
+              "firms": 1010,
+              "median_candidates": 213.0,
+              "median_positives": 13.0,
+              "recall@10": 0.39243467386047265,
+              "recall@25": 0.6149687549400958,
+              "mrr": 0.8115079333287467
+            }
+          }
+        },
+        "3_compact_linear": {
+          "firms": 1585,
+          "overall": {
+            "firms": 1585,
+            "median_candidates": 210.0,
+            "median_positives": 10.0,
+            "recall@10": 0.5328226941430293,
+            "recall@25": 0.7661068804084414,
+            "mrr": 0.8989933967284681
+          },
+          "cohorts": {
+            "5-19": {
+              "firms": 201,
+              "median_candidates": 207.0,
+              "median_positives": 7.0,
+              "recall@10": 0.6097074487749127,
+              "recall@25": 0.79322141278066,
+              "mrr": 0.891353991265723
+            },
+            "20-49": {
+              "firms": 374,
+              "median_candidates": 207.0,
+              "median_positives": 7.0,
+              "recall@10": 0.6329639310947534,
+              "recall@25": 0.82071939193703,
+              "mrr": 0.870926994296861
+            },
+            ">=50": {
+              "firms": 1010,
+              "median_candidates": 213.0,
+              "median_positives": 13.0,
+              "recall@10": 0.48043986414208534,
+              "recall@25": 0.7404879692019978,
+              "mrr": 0.9109066195081046
+            }
+          }
+        },
+        "4_gbm_lambdarank": {
+          "firms": 1585,
+          "overall": {
+            "firms": 1585,
+            "median_candidates": 210.0,
+            "median_positives": 10.0,
+            "recall@10": 0.5560062475080296,
+            "recall@25": 0.7636230623047123,
+            "mrr": 0.9349174393864292
+          },
+          "cohorts": {
+            "5-19": {
+              "firms": 201,
+              "median_candidates": 207.0,
+              "median_positives": 7.0,
+              "recall@10": 0.5711988811052618,
+              "recall@25": 0.7330448429734943,
+              "mrr": 0.9027978801205636
+            },
+            "20-49": {
+              "firms": 374,
+              "median_candidates": 207.0,
+              "median_positives": 7.0,
+              "recall@10": 0.6277843063753583,
+              "recall@25": 0.7846529368643106,
+              "mrr": 0.918042784196499
+            },
+            ">=50": {
+              "firms": 1010,
+              "median_candidates": 213.0,
+              "median_positives": 13.0,
+              "recall@10": 0.5264035610036488,
+              "recall@25": 0.7619211306218262,
+              "mrr": 0.9475581843898676
+            }
+          }
+        }
+      },
+      "feature_importance": {
+        "by_feature": [
+          {
+            "feature": "cross_embedding_similarity",
+            "gain": 1432139.1762880683,
+            "group": "cross"
+          },
+          {
+            "feature": "cross_buyer_prior_bids",
+            "gain": 179142.7780390978,
+            "group": "cross"
+          },
+          {
+            "feature": "cross_category_share",
+            "gain": 32756.665895938873,
+            "group": "cross"
+          },
+          {
+            "feature": "tender_bidder_count",
+            "gain": 26557.346113681793,
+            "group": "tender"
+          },
+          {
+            "feature": "firm_interactions",
+            "gain": 19666.064802467823,
+            "group": "firm"
+          },
+          {
+            "feature": "tender_title_length",
+            "gain": 14152.38330823183,
+            "group": "tender"
+          },
+          {
+            "feature": "firm_win_rate",
+            "gain": 13658.8021427989,
+            "group": "firm"
+          },
+          {
+            "feature": "cross_buyer_seen",
+            "gain": 7435.117802917957,
+            "group": "cross"
+          },
+          {
+            "feature": "tender_is_goods",
+            "gain": 6016.79727101326,
+            "group": "tender"
+          },
+          {
+            "feature": "tender_is_services",
+            "gain": 4731.548241853714,
+            "group": "tender"
+          },
+          {
+            "feature": "firm_days_since_last",
+            "gain": 4234.756012678146,
+            "group": "firm"
+          },
+          {
+            "feature": "tender_is_works",
+            "gain": 3870.578487932682,
+            "group": "tender"
+          },
+          {
+            "feature": "firm_distinct_buyers",
+            "gain": 2386.020030081272,
+            "group": "firm"
+          },
+          {
+            "feature": "firm_median_bid",
+            "gain": 1167.3499485850334,
+            "group": "firm"
+          },
+          {
+            "feature": "firm_category_concentration",
+            "gain": 1129.2114463448524,
+            "group": "firm"
+          },
+          {
+            "feature": "firm_bids_per_month",
+            "gain": 1119.7027819156647,
+            "group": "firm"
+          },
+          {
+            "feature": "firm_bid_spread",
+            "gain": 1040.4017179012299,
+            "group": "firm"
+          },
+          {
+            "feature": "firm_active_days",
+            "gain": 725.7565896511078,
+            "group": "firm"
+          },
+          {
+            "feature": "cross_buyer_prior_wins",
+            "gain": 367.5234714746475,
+            "group": "cross"
+          },
+          {
+            "feature": "firm_wins",
+            "gain": 312.6935938000679,
+            "group": "firm"
+          },
+          {
+            "feature": "firm_distinct_categories",
+            "gain": 72.80926185846329,
+            "group": "firm"
+          },
+          {
+            "feature": "cross_category_seen",
+            "gain": 35.229470014572144,
+            "group": "cross"
+          },
+          {
+            "feature": "firm_has_amounts",
+            "gain": 23.46391999721527,
+            "group": "firm"
+          },
+          {
+            "feature": "cross_region_share",
+            "gain": 4.961779952049255,
+            "group": "cross"
+          },
+          {
+            "feature": "firm_log_median_bid",
+            "gain": 2.4229700565338135,
+            "group": "firm"
+          },
+          {
+            "feature": "firm_distinct_regions",
+            "gain": 0.0,
+            "group": "firm"
+          },
+          {
+            "feature": "tender_has_value",
+            "gain": 0.0,
+            "group": "tender"
+          },
+          {
+            "feature": "tender_log_value",
+            "gain": 0.0,
+            "group": "tender"
+          },
+          {
+            "feature": "cross_region_seen",
+            "gain": 0.0,
+            "group": "cross"
+          },
+          {
+            "feature": "cross_value_fit",
+            "gain": 0.0,
+            "group": "cross"
+          },
+          {
+            "feature": "cross_value_ratio",
+            "gain": 0.0,
+            "group": "cross"
+          }
+        ],
+        "by_group": {
+          "cross": {
+            "gain": 1651881.4527474642,
+            "share": 94.2
+          },
+          "tender": {
+            "gain": 55328.65342271328,
+            "share": 3.2
+          },
+          "firm": {
+            "gain": 45539.45521813631,
+            "share": 2.6
+          }
+        }
+      }
+    }
+  ]
+}
