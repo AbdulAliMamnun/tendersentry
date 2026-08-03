@@ -1,25 +1,35 @@
 import { board, formatClosing } from "@/lib/data";
 
 /**
- * The showpiece: a real ranked board for the demo firm.
+ * The showpiece: a real ranked board, shown as an example before the visitor ranks
+ * anything themselves.
  *
  * Both halves are real output. The green rows are the firm's top-scoring notices
  * from the recommendation engine; the red row is a blocker from the qualification
  * engine, whose quote was verified character-for-character against the source PDF
- * at the page shown.
+ * at the page shown. That blocker is the only visible compliance proof on the
+ * homepage, so it stays.
+ *
+ * The header used to read "Your board — Georgian Bay Civil Ltd." The possessive read
+ * as though the visitor were looking at their own results; it is named as an example
+ * now, with the demo firm relegated to a sub-line.
  */
 export function BoardCard() {
   const { firm, rows, blocker } = board;
 
   return (
     <div className="card overflow-hidden">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline px-5 py-4 sm:px-6">
-        <div className="flex items-center gap-2.5">
-          <span className="live-dot h-2 w-2 rounded-full bg-fit-green" aria-hidden />
-          <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-heading">
-            Your board — {firm.name}{" "}
-            <span className="font-normal text-muted">(demo)</span>
-          </span>
+      <div className="flex flex-wrap items-end justify-between gap-3 border-b border-hairline px-5 py-4 sm:px-6">
+        <div>
+          <div className="flex items-center gap-2.5">
+            <span className="live-dot h-2 w-2 rounded-full bg-fit-green" aria-hidden />
+            <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-heading">
+              Example — what a ranked board looks like
+            </span>
+          </div>
+          <p className="mt-1 pl-[18px] text-xs text-muted">
+            {firm.name}, a demo firm
+          </p>
         </div>
         <span className="text-xs text-muted">updated 6:00 AM</span>
       </div>

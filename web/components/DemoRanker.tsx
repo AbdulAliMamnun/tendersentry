@@ -59,6 +59,9 @@ export function DemoRanker() {
   const [failed, setFailed] = useState(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  // Once the visitor has asked a question, every answer belongs to them. The example
+  // board is scenery for the empty page, not a consolation prize for a failed attempt.
+  const [attempted, setAttempted] = useState(false);
 
   async function submit(text: string) {
     const value = text.trim();
@@ -75,9 +78,15 @@ export function DemoRanker() {
       });
       const payload = (await response.json()) as Response;
       if (!response.ok) {
-        // A rate limit is worth explaining; anything else falls back to the sample.
         if (response.status === 429) {
-          setMessage(payload.error ?? "Try again in a moment.");
+          // Say how long, not "in a moment" — the server already computed it.
+          const seconds = Number(response.headers.get("Retry-After"));
+          const wait = Number.isFinite(seconds) && seconds > 0 ? seconds : null;
+          setMessage(
+            `${payload.error ?? "Too many requests."}${
+              wait ? ` Try again in ${wait} second${wait === 1 ? "" : "s"}.` : ""
+            }`,
+          );
         } else {
           setFailed(true);
         }
@@ -90,13 +99,13 @@ export function DemoRanker() {
       setData(null);
     } finally {
       setBusy(false);
+      setAttempted(true);
     }
   }
 
-  // The sample board stands in whenever the live ranking has nothing to show: before
-  // a query, on an unrecognised description, on failure, and when the firm's trades
-  // have no open work behind them at all.
-  const showSample = data === null || !data.hit || data.results.length === 0;
+  // Only before the first attempt. After one, the visitor asked about their own firm,
+  // and answering with a stranger's board is noise — the explanation is the answer.
+  const showExample = !attempted;
 
   return (
     <div>
@@ -264,19 +273,19 @@ export function DemoRanker() {
         <p className="mt-5 rounded-lg border border-hairline px-5 py-4 text-sm leading-relaxed text-body">
           We couldn&rsquo;t recognise a trade in that. Naming the work directly —
           &ldquo;watermain replacement&rdquo;, &ldquo;pavage&rdquo;, &ldquo;roofing&rdquo;
-          — is what the matching keys off. Rather than show you an arbitrary list,
-          here&rsquo;s a real firm&rsquo;s board instead.
+          — is what the matching keys off. Try again and we&rsquo;ll rank the live
+          market against it.
         </p>
       )}
 
       {failed && (
         <p className="mt-5 rounded-lg border border-hairline px-5 py-4 text-sm leading-relaxed text-body">
-          Live ranking is unavailable right now. Here&rsquo;s a real firm&rsquo;s board
-          instead.
+          Live ranking is unavailable right now — nothing to do with what you typed.
+          Try again in a moment.
         </p>
       )}
 
-      {showSample && (
+      {showExample && (
         <div className="mt-5">
           <BoardCard />
         </div>

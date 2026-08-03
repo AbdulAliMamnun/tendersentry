@@ -27,10 +27,11 @@ export async function POST(request: Request) {
   if (!decision.allowed) {
     return NextResponse.json(
       {
+        // No "try again" here — the widget appends the exact wait from Retry-After.
         error:
           decision.scope === "global"
             ? "The demo has hit its daily limit. Try again tomorrow, or request a board."
-            : "That's a lot of ranking. Give it a minute and try again.",
+            : "That's a lot of ranking for one visitor.",
       },
       {
         status: 429,
