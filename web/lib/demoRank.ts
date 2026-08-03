@@ -59,6 +59,69 @@ const POOL = pool as unknown as {
 /** The recency value a firm with no observed history carries. */
 const COLD_START_DAYS_SINCE_LAST = 3650;
 
+/**
+ * Trades that describe *upkeep* rather than construction. A notice carrying one of
+ * these plus an incidental construction tag is usually a maintenance contract that
+ * the mapping brushed against — "Grounds Maintenance" tagged `roadwork` alongside
+ * `facility_maintenance`, `landscaping`, and `building_general`.
+ */
+const MAINTENANCE_SLUGS = new Set([
+  "facility_maintenance",
+  "landscaping",
+  "snow_ice_management",
+]);
+
+/**
+ * Minimum cosine for a notice to count as related to the firm's trades at all.
+ *
+ * Anchored on the cross-lingual calibration in `model/README.md`: French *égouts
+ * pluviaux* scores 0.51 against English *watermain replacement* and 0.22 against
+ * French *mobilier de bureau*. 0.35 sits between "unrelated" and "related across a
+ * language boundary", so it survives the translation penalty while still rejecting a
+ * notice with no vocabulary in common.
+ *
+ * **This floor is a backstop, not the main defence.** The pool is 65% French, so slug
+ * centroids are French-dominated and English notices carry a systematic ~0.2 cosine
+ * penalty — an English watermain job scores *below* an English janitorial contract.
+ * Within one language the floor is meaningful; across languages it cannot be, which
+ * is why eligibility is decided by trade agreement first. See the README.
+ */
+const RELEVANCE_FLOOR = 0.35;
+
+/**
+ * Absolute fit scale, replacing a min-max over the day's pool.
+ *
+ * Rescaling to the pool meant the best row always read 100, so a pool with nothing
+ * relevant in it produced confident garbage — grounds maintenance at "100 fit". This
+ * logistic is fixed: it maps a strong match (raw ≈ +1.5) to ~90 and a marginal one
+ * (raw ≈ −6) to ~20, whatever else is in the pool that day. Being monotone in the raw
+ * score, it preserves the model's ordering exactly.
+ */
+const FIT_CENTRE = -3.1;
+const FIT_SCALE = 2.09;
+
+function absoluteFit(rawScore: number): number {
+  return 100 / (1 + Math.exp(-(rawScore - FIT_CENTRE) / FIT_SCALE));
+}
+
+/**
+ * Whether a notice is genuinely in one of the firm's trades.
+ *
+ * Trade agreement, not cosine, is the primary gate: it comes from the deterministic
+ * mapping, it is regression-tested, and — unlike the embedding — it is unaffected by
+ * which language the notice was posted in.
+ */
+export function isOnTrade(tradeSlugs: string[], firmSlugs: string[]): boolean {
+  const matched = tradeSlugs.filter((slug) => firmSlugs.includes(slug));
+  if (!matched.length) return false;
+
+  // An incidental construction tag on a maintenance contract is not the firm's work.
+  // Strict minority, so a resurfacing job tagged `[roadwork, landscaping]` survives
+  // while a groundskeeping contract tagged 1-of-4 does not.
+  const upkeep = tradeSlugs.some((slug) => MAINTENANCE_SLUGS.has(slug));
+  return !(upkeep && matched.length / tradeSlugs.length < 0.5);
+}
+
 /** Bounded value adjustment, matching `matchrec.scoring.value_modifier`. */
 const VALUE_MAX_POINTS = 10;
 const VALUE_SIGMA_RATIO = 0.6;
@@ -151,6 +214,10 @@ export type RankedTender = {
   source: string;
   tradeSlugs: string[];
   fit: number;
+  /** Cosine between the firm centroid and this tender. The relevance signal. */
+  similarity: number;
+  /** Unbounded LambdaRank output. Kept for calibration; not sent to the browser. */
+  rawScore: number;
 };
 
 export type RankResult = {
@@ -165,15 +232,19 @@ export type RankResult = {
 };
 
 /**
- * Below this many on-trade notices the ranking is padding out a list rather than
- * finding work, and the widget says so. Ontario is the live case: its municipal
- * notices sit behind portals we monitor rather than harvest, so a province filter can
- * leave a genuinely thin pool.
+ * How many rows a full board shows. Doubles as the thinness test: if the firm's own
+ * trades cannot fill the board, the pool is thin and the widget says so.
+ *
+ * This is deliberately not a tuned constant. The earlier version compared against a
+ * free-standing 5 and let a query through with 7 "on-trade" notices, of which one was
+ * a groundskeeping contract and one a lab-testing contract. Anchoring the test to
+ * "could we fill the page" removes the free parameter and states something the
+ * visitor can check for themselves by counting the rows.
  */
-const THIN_POOL = 5;
+const BOARD_SIZE = 10;
 
 export function isThin(result: RankResult): boolean {
-  return result.derived.hit && result.onTrade < THIN_POOL;
+  return result.derived.hit && result.onTrade < BOARD_SIZE;
 }
 
 export type RankOptions = {
@@ -185,18 +256,16 @@ export type RankOptions = {
 /** Rank the open pool for one description. */
 export function rank(description: string, options: RankOptions = {}): RankResult {
   const today = options.today ?? new Date().toISOString().slice(0, 10);
-  const limit = options.limit ?? 10;
+  const limit = options.limit ?? BOARD_SIZE;
 
   const derived = derive(description);
   const firm = firmVector(derived.slugs);
 
   const candidates: number[] = [];
-  let onTrade = 0;
   POOL.tenders.forEach((tender, index) => {
     if (tender.closing_date && tender.closing_date < today) return;
     if (!regionAllows(tender.region, derived.regions)) return;
     candidates.push(index);
-    if (tender.trade_slugs.some((slug) => derived.slugs.includes(slug))) onTrade += 1;
   });
 
   // With no trade matched there is no firm vector, so every tender would score on its
@@ -214,29 +283,35 @@ export function rank(description: string, options: RankOptions = {}): RankResult
     };
   }
 
-  const raw = candidates.map((index) => {
-    const similarity = firm ? cosine(firm, tenderVector(index)) : 0;
+  // Eligibility is decided before scoring. A notice outside the firm's trades has no
+  // business on the board however the model happens to rank it, and gating first also
+  // means the tree walk only runs on rows that can be shown.
+  const eligible = candidates
+    .map((index) => ({
+      index,
+      similarity: firm ? cosine(firm, tenderVector(index)) : 0,
+    }))
+    .filter(
+      (entry) =>
+        isOnTrade(POOL.tenders[entry.index].trade_slugs, derived.slugs) &&
+        entry.similarity >= RELEVANCE_FLOOR,
+    );
+
+  const ranked = eligible.map(({ index, similarity }) => {
+    const tender = POOL.tenders[index];
     const values: Record<string, number> = {
       ...POOL.tender_features[index],
       firm_days_since_last: COLD_START_DAYS_SINCE_LAST,
       cross_embedding_similarity: similarity,
     };
-    return score(BOOSTER, vectorize(BOOSTER, values));
-  });
-
-  // LambdaRank emits an unbounded relevance score; only its ordering is meaningful.
-  // Rescaling to 0..100 makes the modifier comparable and gives the UI a bar to draw,
-  // but the number is relative to today's pool and is labelled as such.
-  const lowest = raw.length ? Math.min(...raw) : 0;
-  const highest = raw.length ? Math.max(...raw) : 0;
-  const span = highest - lowest;
-
-  const ranked = candidates.map((index, position) => {
-    const tender = POOL.tenders[index];
-    const normalized = span > 0 ? (100 * (raw[position] - lowest)) / span : 50;
+    const rawScore = score(BOOSTER, vectorize(BOOSTER, values));
+    // Absolute, so no row can reach 100 merely by being the best of a bad pool.
     const fit = Math.min(
       100,
-      Math.max(0, normalized + valueModifier(tender.value, derived.valueBand)),
+      Math.max(
+        0,
+        absoluteFit(rawScore) + valueModifier(tender.value, derived.valueBand),
+      ),
     );
     return {
       title: tender.title,
@@ -248,6 +323,8 @@ export function rank(description: string, options: RankOptions = {}): RankResult
       source: tender.source,
       tradeSlugs: tender.trade_slugs,
       fit: Math.round(fit * 10) / 10,
+      similarity,
+      rawScore,
     };
   });
 
@@ -259,7 +336,7 @@ export function rank(description: string, options: RankOptions = {}): RankResult
     results: ranked.slice(0, limit),
     poolSize: POOL.tenders.length,
     considered: candidates.length,
-    onTrade,
+    onTrade: ranked.length,
     generatedAt: POOL.generated_at,
   };
 }

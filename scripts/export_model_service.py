@@ -71,6 +71,14 @@ MANIFEST_NOTES = [
     "Pool coverage is uneven by province. Most Ontario municipal notices sit behind "
     "portals TenderSentry monitors rather than republishes, so an Ontario-filtered "
     "ranking can be genuinely thin. The demo says so rather than padding the list.",
+    "Slug centroids are computed from the pool, which is ~65% French SEAO notices, so "
+    "cosine against them partly measures how French a title is. English notices carry "
+    "a systematic penalty of roughly 0.2 — large enough that an English watermain "
+    "notice scores below an English janitorial one. Eligibility is therefore decided "
+    "by trade-slug agreement, which is language-independent; the cosine floor is only "
+    "a backstop. Per-language centroids would fix this and are a known follow-up.",
+    "Displayed fit is an absolute logistic on the raw score, never a min-max over the "
+    "day's pool. Pool-relative scoring let the best row of a bad pool read 100.",
 ]
 
 

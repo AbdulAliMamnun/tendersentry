@@ -79,7 +79,13 @@ export async function POST(request: Request) {
     return NextResponse.json({
       reading: result.reading,
       hit: result.derived.hit,
-      results: result.results,
+      // similarity and rawScore are calibration internals; the browser gets the
+      // display fields and the absolute fit only.
+      results: result.results.map(({ similarity, rawScore, ...row }) => {
+        void similarity;
+        void rawScore;
+        return row;
+      }),
       considered: result.considered,
       onTrade: result.onTrade,
       thin: isThin(result),

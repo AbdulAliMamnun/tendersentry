@@ -93,7 +93,10 @@ export function DemoRanker() {
     }
   }
 
-  const showSample = data === null || !data.hit;
+  // The sample board stands in whenever the live ranking has nothing to show: before
+  // a query, on an unrecognised description, on failure, and when the firm's trades
+  // have no open work behind them at all.
+  const showSample = data === null || !data.hit || data.results.length === 0;
 
   return (
     <div>
@@ -169,17 +172,29 @@ export function DemoRanker() {
               </span>
             </div>
             <span className="text-xs text-muted">
-              {data.considered.toLocaleString()} open notices ranked
+              {data.onTrade.toLocaleString()} on-trade of{" "}
+              {data.considered.toLocaleString()} open notices
             </span>
           </div>
 
           {data.thin && (
             <div className="border-b border-hairline bg-brand-redSoft px-5 py-3 sm:px-6">
               <p className="text-sm leading-relaxed text-brand-red">
-                Only {data.onTrade} open{" "}
-                {data.onTrade === 1 ? "notice matches" : "notices match"} those trades in{" "}
-                {data.regions.join(" & ") || "the pool"} right now — the ranking below is
-                thin, and it isn&rsquo;t the whole market.
+                {data.onTrade === 0 ? (
+                  <>
+                    Nothing open matches those trades in{" "}
+                    {data.regions.join(" & ") || "the pool"} right now — so there is
+                    nothing honest to rank, and we&rsquo;d rather show you that than a
+                    list of near-misses.
+                  </>
+                ) : (
+                  <>
+                    Only {data.onTrade} open{" "}
+                    {data.onTrade === 1 ? "notice matches" : "notices match"} those
+                    trades in {data.regions.join(" & ") || "the pool"} right now — every
+                    one is below, and it isn&rsquo;t the whole market.
+                  </>
+                )}
               </p>
               {/* The demo's weakest moment is also the census finding, so it links to
                   the evidence rather than apologising. */}
@@ -235,10 +250,13 @@ export function DemoRanker() {
             ))}
           </ul>
 
-          <p className="border-t border-hairline px-5 py-3 text-xs leading-relaxed text-muted sm:px-6">
-            Fit is relative to today&rsquo;s open pool — it ranks these notices against
-            each other, and is a measure of bid fit, not a chance of winning.
-          </p>
+          {data.results.length > 0 && (
+            <p className="border-t border-hairline px-5 py-3 text-xs leading-relaxed text-muted sm:px-6">
+              Fit is an absolute score, not a rank within this list — a low number means
+              a weak match, not fifth place. It measures bid fit, never a chance of
+              winning.
+            </p>
+          )}
         </div>
       )}
 

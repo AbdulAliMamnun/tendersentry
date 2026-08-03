@@ -101,6 +101,48 @@ it agrees with itself. It covers derivation, the rate limiter on an injected clo
 the end-to-end claim that a watermain description ranks water work above office
 furniture.
 
+### Eligibility is decided by trade agreement, not by cosine
+
+A notice reaches the board only if its trade slugs overlap the firm's **and** the
+overlap is not incidental — a construction tag that is a strict minority alongside
+upkeep tags (`facility_maintenance`, `landscaping`, `snow_ice_management`) does not
+count. `Grounds Maintenance`, tagged `[facility_maintenance, roadwork, landscaping,
+building_general]`, is a groundskeeping contract, not roadwork.
+
+A cosine floor of **0.35** then acts as a backstop. It is anchored on the cross-lingual
+calibration above: 0.22 for unrelated text, 0.51 across a language boundary for related
+text. It is deliberately not the primary gate — see the confound below.
+
+Displayed fit is an **absolute** logistic on the raw model score, not a min-max over
+the day's pool. Pool-relative scoring meant the best row always read 100, so a region
+with nothing relevant in it produced confident garbage. Being monotone in the raw
+score, the logistic preserves the model's ordering exactly while letting a weak match
+read as weak: an Ontario watermain job scores ~19, a Québec one ~92.
+
+### Known limit: the embedding signal is language-skewed
+
+**Slug centroids are French-dominated**, because 1,297 of the 2,003 pool notices come
+from SEAO. Cosine against them therefore partly measures how French a title is. The
+effect is larger than the relevance signal it is supposed to carry:
+
+| notice (English, Ontario query) | cosine | genuinely relevant |
+|---|---|---|
+| Grounds Maintenance | 0.614 | no |
+| Janitorial Cleaning Services | 0.583 | no |
+| Terrestrial Archaeology Services | 0.572 | no |
+| South Campus Watermain Replacement | 0.493 | **yes** |
+| Emergency Storm Drainage Reconstruction | 0.519 | **yes** |
+| *typical French watermain notice* | 0.80–0.87 | yes |
+
+Within English, the ordering is close to noise. **No absolute cosine threshold can
+separate good from bad there** — a floor high enough to cut janitorial also cuts the
+real watermain job. This is why trade agreement is the primary gate and the floor is
+only a backstop.
+
+The fix is to compute centroids per (slug, language) at export time so cosines are
+comparable across the language boundary. That is a follow-up, not a patch: it changes
+the relevance signal and needs its own before/after on both languages.
+
 ### Known limit: pool coverage is uneven by province
 
 Most Ontario municipal notices sit behind portals TenderSentry monitors rather than

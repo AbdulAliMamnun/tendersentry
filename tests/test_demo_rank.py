@@ -104,7 +104,7 @@ class RankingTests(unittest.TestCase):
             raise unittest.SkipTest("Node or sucrase unavailable")
         cls.results = ts_harness.run(
             """
-import { rank, isThin, valueModifier } from './demoRank.mjs';
+import { rank, isThin, valueModifier, isOnTrade } from './demoRank.mjs';
 const out = {};
 for (const [key, text] of Object.entries(input.cases)) {
   const r = rank(text, { today: input.today, limit: 10 });
@@ -114,6 +114,17 @@ for (const [key, text] of Object.entries(input.cases)) {
     results: r.results,
   };
 }
+out.__onTrade = {
+  // Tagged roadwork, but 1 of 4 tags and the rest are upkeep.
+  grounds_maintenance: isOnTrade(
+    ['facility_maintenance', 'roadwork', 'landscaping', 'building_general'],
+    ['water_wastewater', 'roadwork']),
+  no_overlap: isOnTrade(['engineering_survey'], ['water_wastewater', 'roadwork']),
+  resurfacing_with_landscaping: isOnTrade(['roadwork', 'landscaping'], ['roadwork']),
+  clean_match: isOnTrade(['water_wastewater'], ['water_wastewater']),
+  dam_replacement: isOnTrade(
+    ['water_wastewater', 'bridge_structural', 'sitework'], ['water_wastewater']),
+};
 out.__modifier = {
   match: valueModifier(1_000_000, 1_000_000),
   mismatch: valueModifier(50_000_000, 100_000),
@@ -132,6 +143,17 @@ process.stdout.write(JSON.stringify(out));
                     "furniture": "we supply office furniture and desks",
                     "gibberish": "purple monkey dishwasher",
                     "quebec": "pavage et travaux routiers au Québec",
+                    # Both from live testing. Barrie is the launch blocker: an Ontario
+                    # civil contractor whose pool is nearly empty. Laval is the
+                    # known-good counterweight — the fix must not thin it out.
+                    "barrie": (
+                        "civil contractor near Barrie, watermain and sewer, storm "
+                        "drainage, road reconstruction, $300K-$1.5M"
+                    ),
+                    "laval": (
+                        "Entrepreneur en pavage et travaux routiers, Laval et "
+                        "Montérégie, contrats de 500 000 $ à 2 M$"
+                    ),
                 },
             },
         )
@@ -208,6 +230,95 @@ process.stdout.write(JSON.stringify(out));
         # An unknown on either side must not move the ranking in either direction.
         self.assertEqual(0, modifier["unknownTender"])
         self.assertEqual(0, modifier["unknownFirm"])
+
+    def test_an_ontario_civil_contractor_is_never_shown_janitorial_work(self) -> None:
+        """The launch blocker.
+
+        Scoring relative to the pool meant the best row always read 100 fit, so a
+        region with nothing relevant in it produced confident garbage: grounds
+        maintenance at 100, janitorial at 87, archaeology at 86. Eligibility now
+        requires trade agreement, so none of them can appear at all.
+        """
+        titles = self._titles("barrie")
+        for banned in ("grounds maintenance", "janitorial", "archaeolog", "a/c mainten"):
+            self.assertFalse(
+                any(banned in title for title in titles),
+                f"{banned!r} surfaced for an Ontario civil contractor: {titles}",
+            )
+
+    def test_the_barrie_query_shows_few_rows_and_flags_the_thin_pool(self) -> None:
+        result = self.results["barrie"]
+        self.assertTrue(result["hit"])
+        self.assertTrue(
+            result["thin"], "a pool this thin must be flagged, not presented as a board"
+        )
+        self.assertGreater(len(result["results"]), 0, "the real matches were all cut")
+        self.assertLess(
+            len(result["results"]),
+            10,
+            "a full board here would mean the gate let padding through",
+        )
+
+    def test_every_barrie_row_is_actually_in_one_of_the_firms_trades(self) -> None:
+        firm_slugs = set(self.results["barrie"]["slugs"])
+        for row in self.results["barrie"]["results"]:
+            self.assertTrue(
+                firm_slugs & set(row["tradeSlugs"]),
+                f"{row['title']!r} carries {row['tradeSlugs']} — none of {firm_slugs}",
+            )
+
+    def test_a_thin_pool_reports_honestly_low_fit_rather_than_a_confident_100(
+        self,
+    ) -> None:
+        """No row may reach the top of the scale just by being the best of a bad pool."""
+        best = max(row["fit"] for row in self.results["barrie"]["results"])
+        self.assertLess(
+            best,
+            50,
+            f"best Ontario match scored {best} fit; these are weak matches and the "
+            "number must say so",
+        )
+
+    def test_the_laval_query_still_fills_a_board_with_paving_work(self) -> None:
+        """The counterweight: the fix must not thin out a pool that is genuinely deep."""
+        result = self.results["laval"]
+        self.assertFalse(result["thin"], "Québec paving is not a thin market")
+        self.assertEqual(10, len(result["results"]))
+
+        titles = [row["title"].lower() for row in result["results"]]
+        paving = sum(
+            1
+            for title in titles
+            if any(
+                term in title
+                for term in ("pavage", "chaussée", "voirie", "resurfaçage", "enrobé")
+            )
+        )
+        self.assertGreaterEqual(paving, 6, f"only {paving}/10 rows are paving: {titles}")
+
+    def test_a_deep_pool_scores_far_higher_than_a_thin_one(self) -> None:
+        """The absolute scale must separate the two, not normalise them together."""
+        laval = max(row["fit"] for row in self.results["laval"]["results"])
+        barrie = max(row["fit"] for row in self.results["barrie"]["results"])
+        self.assertGreater(
+            laval - barrie,
+            40,
+            f"Laval best {laval}, Barrie best {barrie} — under pool-relative scoring "
+            "both read 100, which is the defect this asserts against",
+        )
+
+    def test_an_incidental_trade_tag_on_a_maintenance_contract_is_not_on_trade(
+        self,
+    ) -> None:
+        """`Grounds Maintenance` is tagged roadwork — 1 of 4 tags, the rest upkeep."""
+        verdicts = self.results["__onTrade"]
+        self.assertFalse(verdicts["grounds_maintenance"])
+        self.assertFalse(verdicts["no_overlap"])
+        # A resurfacing job also tagged landscaping is still roadwork.
+        self.assertTrue(verdicts["resurfacing_with_landscaping"])
+        self.assertTrue(verdicts["clean_match"])
+        # Several construction tags with no upkeep among them stay eligible.
+        self.assertTrue(verdicts["dam_replacement"])
 
     def test_every_row_carries_what_the_card_renders(self) -> None:
         for row in self.results["water"]["results"]:
