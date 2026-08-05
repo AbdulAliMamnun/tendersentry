@@ -1,5 +1,7 @@
 import type { MetadataRoute } from "next";
 
+import { SITE_URL } from "@/lib/guides";
+
 /**
  * Boards are private-by-link, not a search surface. They carry `noindex` too — this
  * is the belt to that suspenders, and keeps well-behaved crawlers from requesting
@@ -7,6 +9,7 @@ import type { MetadataRoute } from "next";
  */
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: [{ userAgent: "*", allow: "/", disallow: "/board" }],
+    rules: [{ userAgent: "*", allow: ["/", "/guides"], disallow: "/board" }],
+    sitemap: `${SITE_URL}/sitemap.xml`,
   };
 }
