@@ -25,10 +25,36 @@ type Row = {
   source: string;
   tradeSlugs: string[];
   fit: number;
+  scaleBand: string;
+  scaleSource: string;
+  scaleConfidence: number;
 };
+
+/**
+ * Size, with where it came from — always. An estimate rendered like a published
+ * figure is the pipeline telling a contractor the buyer said something the buyer
+ * never said.
+ */
+function scaleLabel(row: Row): { text: string; estimated: boolean } | null {
+  if (row.scaleSource === "published") {
+    return { text: `${row.scaleBand} (published)`, estimated: false };
+  }
+  if (row.scaleBand === "unknown" || row.scaleSource === "unknown") {
+    return { text: "size unknown", estimated: false };
+  }
+  const basis =
+    row.scaleSource === "estimated_pattern"
+      ? "estimated from the wording"
+      : "estimated from similar contracts";
+  return { text: `~${row.scaleBand} (${basis})`, estimated: true };
+}
 
 type Response = {
   reading: string;
+  /** True when the second-tier LLM read the description the keyword mapping missed. */
+  interpreted?: boolean;
+  /** Set when the visitor stated a job size, so the card can say what we did with it. */
+  declaredSize?: string | null;
   hit: boolean;
   results: Row[];
   considered: number;
@@ -158,9 +184,11 @@ export function DemoRanker() {
         </div>
 
         <p className="mt-4 text-xs leading-relaxed text-muted">
-          Demo ranks by description fit. Your full board also uses bidding history and
-          compliance checks. Your description isn&rsquo;t stored — only which trades it
-          matched, so we can tell where the matching falls short.
+          Demo ranks by description fit. Contract sizes marked estimated are inferred
+          from historical bids on similar work — check the notice for the buyer&rsquo;s
+          own figures. Your full board also uses bidding history and compliance checks.
+          Your description isn&rsquo;t stored — only which trades it matched, so we can
+          tell where the matching falls short.
         </p>
       </form>
 
@@ -177,7 +205,8 @@ export function DemoRanker() {
                 aria-hidden
               />
               <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-heading">
-                Reading: {data.reading}
+                {/* Say when a field was inferred rather than read from the words. */}
+                Reading{data.interpreted ? " (interpreted)" : ""}: {data.reading}
               </span>
             </div>
             <span className="text-xs text-muted">
@@ -185,6 +214,13 @@ export function DemoRanker() {
               {data.considered.toLocaleString()} open notices
             </span>
           </div>
+
+          {data.declaredSize && (
+            <p className="border-b border-hairline px-5 py-2.5 text-xs leading-relaxed text-muted sm:px-6">
+              You said {data.declaredSize} — showing fit against published and estimated
+              contract sizes; estimates are ours, not the buyer&rsquo;s.
+            </p>
+          )}
 
           {data.thin && (
             <div className="border-b border-hairline bg-brand-redSoft px-5 py-3 sm:px-6">
@@ -251,6 +287,19 @@ export function DemoRanker() {
                     {row.region ? ` · ${row.region}` : ""} ·{" "}
                     {sourceLabel(row.source)} · Closes {formatClosing(row.closingDate)}
                   </p>
+                  {(() => {
+                    const scale = scaleLabel(row);
+                    if (!scale) return null;
+                    return (
+                      <p
+                        className={`mt-1 text-xs ${
+                          scale.estimated ? "italic text-muted" : "text-body"
+                        }`}
+                      >
+                        {scale.text}
+                      </p>
+                    );
+                  })()}
                 </div>
                 <span className="shrink-0 rounded-pill bg-fit-greenSoft px-2.5 py-1 text-xs font-semibold text-fit-green">
                   {Math.round(row.fit)} fit

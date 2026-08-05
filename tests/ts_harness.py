@@ -32,7 +32,34 @@ MODULES = {
     "derive": WEB_DIR / "lib" / "derive.ts",
     "demoRank": WEB_DIR / "lib" / "demoRank.ts",
     "rateLimit": WEB_DIR / "lib" / "rateLimit.ts",
+    "llmExtract": WEB_DIR / "lib" / "llmExtract.ts",
+    "firmLookup": WEB_DIR / "lib" / "firmLookup.ts",
+    "enrichment": WEB_DIR / "lib" / "enrichment.ts",
 }
+
+#: Bare package imports the staged modules make. Resolved through Node from the site's
+#: own node_modules, so the harness loads the real dependency the site ships with
+#: rather than a stub — and so a version bump that breaks the import fails here.
+_BARE_IMPORT = re.compile(r'^(import .*? from )"(@[\w./-]+|[a-z][\w./-]*)";', re.MULTILINE)
+
+
+def _resolve_package(specifier: str) -> str:
+    """Absolute entry-point path for a bare specifier, resolved by Node itself.
+
+    Node's ESM loader will not import a bare specifier from a temp directory outside
+    the package tree, and will not accept a bare directory path either — it wants the
+    entry file. Asking Node to resolve it avoids guessing at package layout.
+    """
+    completed = subprocess.run(
+        ["node", "-e", f"console.log(require.resolve({specifier!r}))"],
+        cwd=str(WEB_DIR),
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    if completed.returncode != 0:
+        raise RuntimeError(f"cannot resolve {specifier}: {completed.stderr[:200]}")
+    return completed.stdout.strip()
 
 _JSON_IMPORT = re.compile(
     r'^import\s+(\w+)\s+from\s+"@/(.+?\.json)";\s*$', re.MULTILINE
@@ -70,6 +97,10 @@ def _prepare(name: str, source: Path, destination: Path) -> None:
 
     text = _JSON_IMPORT.sub(replace_json, text)
     text = _ALIAS_IMPORT.sub(r'from "./\1.mjs"', text)
+    # Point bare package imports at the site's own node_modules.
+    text = _BARE_IMPORT.sub(
+        lambda m: f'{m.group(1)}"{_resolve_package(m.group(2))}";', text
+    )
 
     # sucrase's CLI only walks directories, so each module is staged in its own.
     staging = destination / f"_src_{name}"

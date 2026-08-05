@@ -27,8 +27,42 @@ export const GLOBAL_RULE: LimitRule = {
   label: "day",
 };
 
+/**
+ * The LLM tier gets its own, much stricter budget.
+ *
+ * Unlike the ranking path this one has a real per-query cost, so the limits are set
+ * where a curious visitor never notices them and a loop stops immediately: three
+ * unrecognised descriptions an hour is well past what exploring the demo produces.
+ *
+ * **This ceiling is approximate and deliberately so.** Counting is per instance, so the
+ * true daily maximum is the cap times however many instances Vercel happens to run.
+ * Shipping an approximate ceiling now buys real volume data; a durable counter costs
+ * config surface to defend against a guess.
+ *
+ * **Follow-up trigger — make this durable (Redis or equivalent) when either holds:**
+ * launch-week logs show LLM-tier volume approaching the daily cap on any instance, or
+ * any single address shows a pattern that reads as abuse rather than exploration.
+ * Until one of those fires, the approximation is the right trade.
+ */
+export const LLM_IP_RULE: LimitRule = { windowMs: 3_600_000, max: 3, label: "hour" };
+export const LLM_GLOBAL_RULE: LimitRule = { windowMs: 86_400_000, max: 200, label: "day" };
+
 /** Only sweep once the key count is large enough to be worth the pass. */
 const SWEEP_THRESHOLD = 500;
+
+/** Keys that count everyone, and so must survive the per-address sweep. */
+const GLOBAL_KEYS = new Set(["global", "llm:global"]);
+
+/**
+ * How far back a key's history must be kept: the widest window it is judged against.
+ * Pruning to anything shorter would let the hourly and daily rules under-count.
+ */
+function horizonFor(key: string): number {
+  if (key === "global") return GLOBAL_RULE.windowMs;
+  if (key === "llm:global") return LLM_GLOBAL_RULE.windowMs;
+  if (key.startsWith("llm:")) return LLM_IP_RULE.windowMs;
+  return Math.max(...PER_IP_RULES.map((rule) => rule.windowMs));
+}
 
 export type LimitDecision = {
   allowed: boolean;
@@ -92,15 +126,32 @@ export class RateLimiter {
    * against. Without this the arrays grow without bound for a long-lived instance.
    */
   private record(key: string, timestamp: number): void {
-    const horizon =
-      key === "global"
-        ? GLOBAL_RULE.windowMs
-        : Math.max(...PER_IP_RULES.map((rule) => rule.windowMs));
     const existing = (this.hits.get(key) ?? []).filter(
-      (entry) => entry > timestamp - horizon,
+      (entry) => entry > timestamp - horizonFor(key),
     );
     existing.push(timestamp);
     this.hits.set(key, existing);
+  }
+
+  /**
+   * Judge and record a request against the LLM tier's own budget.
+   *
+   * Separate keyspace from `check`, so a visitor who has spent their LLM allowance can
+   * still rank recognised descriptions all day — the cheap path is never gated by the
+   * expensive one.
+   */
+  checkLlm(ip: string): LimitDecision {
+    const timestamp = this.now();
+
+    const perIp = this.evaluate(`llm:${ip}`, LLM_IP_RULE, timestamp);
+    if (!perIp.allowed) return { ...perIp, scope: "ip" };
+
+    const global = this.evaluate("llm:global", LLM_GLOBAL_RULE, timestamp);
+    if (!global.allowed) return { ...global, scope: "global" };
+
+    this.record(`llm:${ip}`, timestamp);
+    this.record("llm:global", timestamp);
+    return { allowed: true, retryAfterSeconds: 0, scope: null };
   }
 
   /**
@@ -110,10 +161,9 @@ export class RateLimiter {
    */
   private sweep(timestamp: number): void {
     if (this.hits.size < SWEEP_THRESHOLD) return;
-    const horizon = Math.max(...PER_IP_RULES.map((rule) => rule.windowMs));
     for (const [key, entries] of this.hits) {
-      if (key === "global") continue;
-      if (!entries.some((entry) => entry > timestamp - horizon)) {
+      if (GLOBAL_KEYS.has(key)) continue;
+      if (!entries.some((entry) => entry > timestamp - horizonFor(key))) {
         this.hits.delete(key);
       }
     }

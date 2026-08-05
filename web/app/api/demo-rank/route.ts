@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 
 import { isThin, rank } from "@/lib/demoRank";
+import { derive } from "@/lib/derive";
+import { extractWithLlm, llmAvailable, toDerived } from "@/lib/llmExtract";
 import { clientIp, limiter } from "@/lib/rateLimit";
 
 /**
@@ -15,6 +17,17 @@ import { clientIp, limiter } from "@/lib/rateLimit";
  * tell us whether the deterministic mapping is good enough or whether a real
  * embedding service is worth paying for.
  */
+
+/** The visitor's own words for the size they gave, echoed back to them. */
+function formatDeclaredSize(value: number | null): string | null {
+  if (!value) return null;
+  if (value >= 1_000_000) {
+    const millions = value / 1_000_000;
+    return `~$${millions % 1 === 0 ? millions.toFixed(0) : millions.toFixed(1)}M jobs`;
+  }
+  if (value >= 1_000) return `~$${Math.round(value / 1000)}K jobs`;
+  return `~$${Math.round(value)} jobs`;
+}
 
 /** Long enough for a real description, short enough to bound the work. */
 const MAX_DESCRIPTION = 500;
@@ -57,16 +70,38 @@ export async function POST(request: Request) {
 
   const started = Date.now();
   try {
-    const result = rank(description);
+    // Tier 1: the deterministic mapping, unchanged. Zero cost, no network.
+    let derived = derive(description);
+    let tier: "keyword" | "llm" | "llm_capped" | "llm_miss" = "keyword";
+
+    // Tier 2 fires only on a keyword miss, which is what structurally bounds volume.
+    if (!derived.hit && llmAvailable()) {
+      const budget = limiter.checkLlm(clientIp(request));
+      if (!budget.allowed) {
+        // Over budget: fall through to the no-hit message rather than degrade quietly.
+        tier = "llm_capped";
+      } else {
+        const extracted = await extractWithLlm(description);
+        if (extracted) {
+          derived = toDerived(extracted, description);
+          tier = "llm";
+        } else {
+          tier = "llm_miss";
+        }
+      }
+    }
+
+    const result = rank(description, { derived });
     const elapsed = Date.now() - started;
 
-    if (elapsed > TIME_BUDGET_MS) {
+    if (elapsed > TIME_BUDGET_MS && tier === "keyword") {
       console.warn(`demo-rank exceeded budget: ${elapsed}ms`);
     }
-    // Slugs and the hit flag only. Never the description text.
+    // Slugs, tier, and the hit flag only. Never the description text.
     console.log(
       JSON.stringify({
         event: "demo_rank",
+        tier,
         hit: result.derived.hit,
         slugs: result.derived.slugs,
         regions: result.derived.regions,
@@ -79,6 +114,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       reading: result.reading,
+      // The visitor is told when a field was inferred rather than read.
+      interpreted: tier === "llm",
+      declaredSize: formatDeclaredSize(result.derived.valueBand),
       hit: result.derived.hit,
       // similarity and rawScore are calibration internals; the browser gets the
       // display fields and the absolute fit only.
