@@ -283,6 +283,9 @@ export type RankResult = {
   considered: number;
   /** Candidates actually carrying one of the matched trades. */
   onTrade: number;
+  /** The region filter actually applied, after the selector has had its say. */
+  effectiveRegions: string[];
+  regionSource: RegionSource;
   generatedAt: string;
 };
 
@@ -312,7 +315,53 @@ export type RankOptions = {
    * understanding step differs, and the widget says which one ran.
    */
   derived?: Derived;
+  /**
+   * An explicit region choice from the selector, which overrides whatever the
+   * description implied. `[]` means "all" — rank the unfiltered pool. Undefined means
+   * the visitor has not chosen, so the derived region stands.
+   *
+   * Region detection already existed in the derivation step; the selector makes the
+   * inferred field visible and correctable rather than adding new capability.
+   */
+  regionOverride?: string[];
 };
+
+/** Where the region actually in force came from, so the echo line can say. */
+export type RegionSource = "derived" | "selected" | "none";
+
+/**
+ * How lopsided the shown board is by province.
+ *
+ * The pool is 1,297 SEAO notices against ~400 English ones, so an Ontario contractor
+ * ranking the unfiltered pool can get a board that is almost entirely Québec and
+ * reasonably conclude the tool is broken. It is not — it is the access asymmetry our
+ * own research documents, and saying so is better than letting them guess.
+ */
+export function provinceSkew(
+  rows: { region: string | null }[],
+): { province: string; share: number } | null {
+  if (!rows.length) return null;
+  const counts = new Map<string, number>();
+  for (const row of rows) {
+    const codes = (row.region ?? "").split(",").map((code) => code.trim());
+    const hasQC = codes.includes("QC");
+    const hasON = codes.includes("ON");
+    // Only rows that are unambiguously one province count toward a skew. National
+    // ("CA") and multi-province notices belong to neither and dilute the share, which
+    // makes this conservative rather than eager.
+    const province = hasQC && !hasON ? "QC" : hasON && !hasQC ? "ON" : null;
+    if (province) counts.set(province, (counts.get(province) ?? 0) + 1);
+  }
+  let best: { province: string; share: number } | null = null;
+  for (const [province, count] of counts) {
+    const share = count / rows.length;
+    if (!best || share > best.share) best = { province, share };
+  }
+  return best;
+}
+
+/** Above this share of one province on an unfiltered board, we explain why. */
+export const SKEW_THRESHOLD = 0.7;
 
 /**
  * Decode an int8-quantized firm centroid.
@@ -442,6 +491,8 @@ export function rankForFirm(
     poolSize: POOL.tenders.length,
     considered: candidates.length,
     onTrade: ranked.length,
+    effectiveRegions: derived.regions,
+    regionSource: "derived",
     generatedAt: POOL.generated_at,
   };
 }
@@ -454,10 +505,23 @@ export function rank(description: string, options: RankOptions = {}): RankResult
   const derived = options.derived ?? derive(description);
   const firm = firmVector(derived.slugs);
 
+  // An explicit selector choice wins over anything the description implied. On "all"
+  // the visitor passes an empty array, which is a real instruction — rank everything —
+  // and must not be confused with "they have not chosen yet".
+  const explicit = options.regionOverride !== undefined;
+  const effectiveRegions = explicit ? options.regionOverride! : derived.regions;
+  const regionSource: RegionSource = explicit
+    ? effectiveRegions.length
+      ? "selected"
+      : "none"
+    : effectiveRegions.length
+      ? "derived"
+      : "none";
+
   const candidates: number[] = [];
   POOL.tenders.forEach((tender, index) => {
     if (tender.closing_date && tender.closing_date < today) return;
-    if (!regionAllows(tender.region, derived.regions)) return;
+    if (!regionAllows(tender.region, effectiveRegions)) return;
     candidates.push(index);
   });
 
@@ -466,12 +530,14 @@ export function rank(description: string, options: RankOptions = {}): RankResult
   // description. Returning nothing is the honest result; the caller shows why.
   if (!derived.hit) {
     return {
-      reading: readingLine(derived),
+      reading: readingLine({ ...derived, regions: effectiveRegions }),
       derived,
       results: [],
       poolSize: POOL.tenders.length,
       considered: candidates.length,
       onTrade: 0,
+      effectiveRegions,
+      regionSource,
       generatedAt: POOL.generated_at,
     };
   }
@@ -540,12 +606,17 @@ export function rank(description: string, options: RankOptions = {}): RankResult
   ranked.sort((a, b) => b.fit - a.fit || a.closingDate.localeCompare(b.closingDate));
 
   return {
-    reading: readingLine(derived),
+    // Built from the region actually applied, not from the description's. A selector
+    // choice overrules the text, so echoing both would narrate a decision the visitor
+    // already made and make the override look like it had not taken.
+    reading: readingLine({ ...derived, regions: effectiveRegions }),
     derived,
     results: ranked.slice(0, limit),
     poolSize: POOL.tenders.length,
     considered: candidates.length,
     onTrade: ranked.length,
+    effectiveRegions,
+    regionSource,
     generatedAt: POOL.generated_at,
   };
 }

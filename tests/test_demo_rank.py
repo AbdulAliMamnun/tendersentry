@@ -451,6 +451,117 @@ process.stdout.write(JSON.stringify(out));
         self.assertTrue(ontario["thin"])
 
 
+class RegionSelectorTests(unittest.TestCase):
+    """The selector makes an inferred field visible and correctable.
+
+    Region detection already existed in the derivation step; what is new is that the
+    visitor can see what was inferred and overrule it. These assert the precedence —
+    and the skew line, which exists because the pool is 1,297 Québec notices against
+    ~400 English ones and an Ontario contractor on "All" would otherwise get a French
+    board and conclude the tool is broken.
+    """
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        if not ts_harness.available():
+            raise unittest.SkipTest("Node or sucrase unavailable")
+        cls.results = ts_harness.run(
+            """
+import { rank, isThin, provinceSkew, SKEW_THRESHOLD } from './demoRank.mjs';
+const out = {};
+const opts = { today: input.today, limit: 10 };
+
+const shape = (r) => ({
+  regions: r.effectiveRegions, source: r.regionSource,
+  considered: r.considered, onTrade: r.onTrade, thin: isThin(r),
+  provinces: r.results.map((x) => x.region),
+});
+
+// No override at all: the description's own region stands.
+out.derivedQC = shape(rank('watermain and sewer replacement in Québec', opts));
+out.noRegion = shape(rank('watermain and sewer replacement', opts));
+
+// Explicit "all" is an instruction, not an absence — it must beat a described region.
+out.allOverridesDescription = shape(
+  rank('watermain and sewer replacement in Québec', { ...opts, regionOverride: [] }));
+
+// Explicit province beats a different described province.
+out.onOverridesQC = shape(
+  rank('watermain and sewer replacement in Québec', { ...opts, regionOverride: ['ON'] }));
+
+// Explicit province with no province in the text.
+out.onFromSelector = shape(
+  rank('watermain and sewer replacement', { ...opts, regionOverride: ['ON'] }));
+
+out.skewThreshold = SKEW_THRESHOLD;
+out.skewOnUnfiltered = provinceSkew(rank('watermain and sewer replacement', opts).results);
+out.skewSynthetic = {
+  lopsided: provinceSkew(Array.from({ length: 10 }, (_, i) => ({ region: i < 8 ? 'QC' : 'ON' }))),
+  even: provinceSkew(Array.from({ length: 10 }, (_, i) => ({ region: i < 5 ? 'QC' : 'ON' }))),
+  national: provinceSkew(Array.from({ length: 10 }, () => ({ region: 'CA' }))),
+  multi: provinceSkew(Array.from({ length: 10 }, () => ({ region: 'ON,QC' }))),
+  empty: provinceSkew([]),
+};
+process.stdout.write(JSON.stringify(out));
+""",
+            {"today": TODAY},
+        )
+
+    def test_a_described_province_is_used_when_nothing_is_selected(self) -> None:
+        derived = self.results["derivedQC"]
+        self.assertEqual(["QC"], derived["regions"])
+        self.assertEqual("derived", derived["source"])
+
+    def test_no_province_anywhere_ranks_the_unfiltered_pool(self) -> None:
+        unfiltered = self.results["noRegion"]
+        self.assertEqual([], unfiltered["regions"])
+        self.assertEqual("none", unfiltered["source"])
+        self.assertGreater(unfiltered["considered"], self.results["derivedQC"]["considered"])
+
+    def test_selecting_all_overrides_a_province_named_in_the_description(self) -> None:
+        """"All" is an explicit instruction and must not read as "not chosen yet"."""
+        everything = self.results["allOverridesDescription"]
+        self.assertEqual([], everything["regions"])
+        self.assertEqual("none", everything["source"])
+        self.assertGreater(
+            everything["considered"], self.results["derivedQC"]["considered"]
+        )
+
+    def test_the_selector_overrides_a_different_described_province(self) -> None:
+        override = self.results["onOverridesQC"]
+        self.assertEqual(["ON"], override["regions"])
+        self.assertEqual("selected", override["source"])
+        for province in override["provinces"]:
+            if province and "," not in province and province != "CA":
+                self.assertEqual("ON", province)
+
+    def test_an_ontario_selection_still_fires_the_thin_pool_banner(self) -> None:
+        """The banner is unaffected by where the region came from."""
+        self.assertTrue(self.results["onFromSelector"]["thin"])
+
+    def test_the_skew_line_fires_on_a_lopsided_unfiltered_board(self) -> None:
+        lopsided = self.results["skewSynthetic"]["lopsided"]
+        self.assertEqual("QC", lopsided["province"])
+        self.assertGreater(lopsided["share"], self.results["skewThreshold"])
+
+    def test_the_skew_line_stays_silent_on_a_balanced_board(self) -> None:
+        even = self.results["skewSynthetic"]["even"]
+        self.assertLessEqual(even["share"], self.results["skewThreshold"])
+
+    def test_national_and_multi_province_rows_never_trigger_a_skew(self) -> None:
+        """A CA notice belongs to neither province; counting it would invent a skew."""
+        self.assertIsNone(self.results["skewSynthetic"]["national"])
+        self.assertIsNone(self.results["skewSynthetic"]["multi"])
+        self.assertIsNone(self.results["skewSynthetic"]["empty"])
+
+    def test_the_real_unfiltered_board_is_quebec_skewed(self) -> None:
+        """The condition the line exists for, on live data rather than a fixture."""
+        skew = self.results["skewOnUnfiltered"]
+        self.assertIsNotNone(skew)
+        self.assertEqual("QC", skew["province"])
+        self.assertGreater(skew["share"], self.results["skewThreshold"])
+
+
 class RateLimitTests(unittest.TestCase):
     """The limiter, driven by an injected clock so the suite never sleeps."""
 

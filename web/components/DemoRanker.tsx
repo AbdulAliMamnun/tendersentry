@@ -61,9 +61,23 @@ type Response = {
   onTrade: number;
   thin: boolean;
   regions: string[];
+  regionSource?: "derived" | "selected" | "none";
+  skew?: { province: string; share: number } | null;
   poolSize: number;
   error?: string;
 };
+
+type RegionChoice = "all" | "ON" | "QC";
+
+const REGION_OPTIONS: { value: RegionChoice; label: string }[] = [
+  // Shortened from "All (Ontario & Québec)": at full length the control truncated the
+  // example placeholder, and the example is the thing that gets good answers.
+  { value: "all", label: "All regions" },
+  { value: "ON", label: "Ontario" },
+  { value: "QC", label: "Québec" },
+];
+
+const PROVINCE_NAMES: Record<string, string> = { ON: "Ontario", QC: "Québec" };
 
 const EXAMPLES = [
   "Watermain and sanitary sewer replacement, jobs around $2M",
@@ -97,6 +111,12 @@ export function DemoRanker() {
   // Once the visitor has asked a question, every answer belongs to them. The example
   // board is scenery for the empty page, not a consolation prize for a failed attempt.
   const [attempted, setAttempted] = useState(false);
+  // The selector shows the region in force, whether the visitor picked it or the
+  // description implied it. `regionTouched` is what separates the two: until they
+  // touch it, the control is a readout of what was inferred and the description keeps
+  // winning; after, it is an instruction that overrides the text.
+  const [region, setRegion] = useState<RegionChoice>("all");
+  const [regionTouched, setRegionTouched] = useState(false);
 
   async function submit(text: string) {
     const value = text.trim();
@@ -109,7 +129,10 @@ export function DemoRanker() {
       const response = await fetch("/api/demo-rank", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ description: value }),
+        body: JSON.stringify({
+          description: value,
+          region: regionTouched ? region : null,
+        }),
       });
       const payload = (await response.json()) as Response;
       if (!response.ok) {
@@ -128,6 +151,12 @@ export function DemoRanker() {
         setData(null);
       } else {
         setData(payload);
+        // Show what was inferred, so the visitor can see it and override it. This is a
+        // display update, not a choice — the control stays untouched.
+        if (!regionTouched && payload.regionSource === "derived" && payload.regions.length === 1) {
+          const inferred = payload.regions[0];
+          if (inferred === "ON" || inferred === "QC") setRegion(inferred);
+        }
       }
     } catch {
       setFailed(true);
@@ -166,6 +195,24 @@ export function DemoRanker() {
             placeholder={PLACEHOLDER}
             className="w-full rounded-lg border border-hairline bg-white px-4 py-3 text-[15px] text-heading outline-none placeholder:text-muted focus:border-brand-red"
           />
+          <label htmlFor="firm-region" className="sr-only">
+            Region
+          </label>
+          <select
+            id="firm-region"
+            value={region}
+            onChange={(event) => {
+              setRegion(event.target.value as RegionChoice);
+              setRegionTouched(true);
+            }}
+            className="shrink-0 rounded-lg border border-hairline bg-white px-3 py-3 text-[15px] text-heading outline-none focus:border-brand-red sm:w-auto"
+          >
+            {REGION_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
           <button
             type="submit"
             disabled={busy || description.trim().length < 3}
@@ -217,8 +264,14 @@ export function DemoRanker() {
                 aria-hidden
               />
               <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-heading">
-                {/* Say when a field was inferred rather than read from the words. */}
+                {/* Say when a field was inferred rather than read from the words, and
+                    where the region in force came from. */}
                 Reading{data.interpreted ? " (interpreted)" : ""}: {data.reading}
+                {data.regionSource === "selected"
+                  ? " (you selected)"
+                  : data.regionSource === "derived" && data.regions.length
+                    ? " (from your description)"
+                    : ""}
               </span>
             </div>
             <span className="text-xs text-muted">
@@ -327,6 +380,16 @@ export function DemoRanker() {
                 means a weak match, not fifth place. It measures bid fit, never a chance
                 of winning.
               </p>
+              {data.skew && (
+                <p>
+                  Most matches here are in{" "}
+                  {PROVINCE_NAMES[data.skew.province] ?? data.skew.province} —
+                  Ontario&rsquo;s municipal tenders are largely behind gated portals.{" "}
+                  <Link href="/research" className="font-medium text-brand-red hover:opacity-80">
+                    Why →
+                  </Link>
+                </p>
+              )}
               <p>
                 Contract sizes marked estimated are inferred from historical bids on
                 similar work — check the notice for the buyer&rsquo;s own figures.

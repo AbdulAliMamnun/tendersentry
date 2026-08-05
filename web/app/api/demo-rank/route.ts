@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { isThin, rank } from "@/lib/demoRank";
+import { SKEW_THRESHOLD, isThin, provinceSkew, rank } from "@/lib/demoRank";
 import { derive } from "@/lib/derive";
 import { extractWithLlm, llmAvailable, toDerived } from "@/lib/llmExtract";
 import { clientIp, limiter } from "@/lib/rateLimit";
@@ -54,9 +54,20 @@ export async function POST(request: Request) {
   }
 
   let description: string;
+  let regionOverride: string[] | undefined;
   try {
-    const payload = (await request.json()) as { description?: unknown };
+    const payload = (await request.json()) as {
+      description?: unknown;
+      region?: unknown;
+    };
     description = String(payload.description ?? "").slice(0, MAX_DESCRIPTION);
+    // "all" and an absent value are different: the first is an explicit instruction to
+    // rank everything, the second means the description's own region still stands.
+    const choice = payload.region === undefined || payload.region === null
+      ? null
+      : String(payload.region);
+    if (choice === "all") regionOverride = [];
+    else if (choice === "ON" || choice === "QC") regionOverride = [choice];
   } catch {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
@@ -91,7 +102,7 @@ export async function POST(request: Request) {
       }
     }
 
-    const result = rank(description, { derived });
+    const result = rank(description, { derived, regionOverride });
     const elapsed = Date.now() - started;
 
     if (elapsed > TIME_BUDGET_MS && tier === "keyword") {
@@ -104,7 +115,8 @@ export async function POST(request: Request) {
         tier,
         hit: result.derived.hit,
         slugs: result.derived.slugs,
-        regions: result.derived.regions,
+        regions: result.effectiveRegions,
+        region_source: result.regionSource,
         has_value: result.derived.valueBand !== null,
         considered: result.considered,
         on_trade: result.onTrade,
@@ -128,7 +140,17 @@ export async function POST(request: Request) {
       considered: result.considered,
       onTrade: result.onTrade,
       thin: isThin(result),
-      regions: result.derived.regions,
+      regions: result.effectiveRegions,
+      regionSource: result.regionSource,
+      // Only meaningful on an unfiltered board: a Québec-heavy list is expected when
+      // the visitor asked for Québec, and needs no explanation.
+      skew:
+        result.regionSource === "none"
+          ? (() => {
+              const worst = provinceSkew(result.results);
+              return worst && worst.share > SKEW_THRESHOLD ? worst : null;
+            })()
+          : null,
       poolSize: result.poolSize,
       generatedAt: result.generatedAt,
     });
