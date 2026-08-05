@@ -126,10 +126,16 @@ banner.
 
 On the live domain:
 
-- **Homepage** — the board shows real rows and the fax blocker with its quote and
-  page; the stat strip matches `web/data/stats.json`.
-- **`/census`** — the lookup finds "Muskoka Lakes" and shows a green open-documents
-  pill; the distribution table totals 444 municipalities.
+- **Homepage** — the example board shows real rows and the fax blocker with its quote
+  and page; the three product cards link to `/product/*`; the credibility line matches
+  `web/data/stats.json`.
+- **`/research`** — the lookup finds "Muskoka Lakes" and shows a green open-documents
+  pill; the distribution table totals 444 municipalities; the four findings below the
+  census each show a method line.
+- **`/census`** — returns a 308 to `/research`. The old path is linked from published
+  material, so this redirect is load-bearing and should be checked on every deploy.
+- **`/guides` and `/product/*`** — all six guides and all three product pages render;
+  `/sitemap.xml` lists them and contains no `/board` path.
 - **`/check`** — submit with a small PDF and confirm the notification email arrives at
   `NOTIFY_EMAIL`. Try a file over 25 MB and confirm it is refused in the browser.
 - **`www` and apex** both resolve, and http redirects to https.

@@ -13,6 +13,17 @@ the finding that a median-lookup baseline barely beats a constant.
 
 An article that cannot carry an original figure does not get written.
 
+## Metric rule
+
+**Any externally-quoted metric names its split.** Default to the primary split
+everywhere — recall@10 **0.219**, **2.33×** the deterministic baseline — unless there
+is a stated reason to use another, in which case name it.
+
+`recall@10 0.219, 2.8× baseline` is two splits welded together: 0.219 is the primary
+split (2026-05-01, ratio 2.33×); 2.82× is the settled split (2025-10-01, where
+recall@10 is 0.217). Both figures are true and the pair overstates the result. It
+reached external copy before it was caught, which is why the rule exists.
+
 ## Tone rules
 
 - Every statistic traceable to a repo artifact and dated.

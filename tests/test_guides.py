@@ -248,10 +248,26 @@ class NavTests(unittest.TestCase):
         self.assertIn('href="/guides"', nav)
 
     def test_the_census_route_redirects_rather_than_breaking(self) -> None:
-        """/census is linked from the repo and from anything we have already sent."""
+        """/census is linked from published material and from anything already sent."""
         page = (WEB / "app" / "census" / "page.tsx").read_text(encoding="utf-8")
         self.assertIn("permanentRedirect", page)
         self.assertIn('"/research"', page)
+
+    def test_no_internal_link_relies_on_the_redirect(self) -> None:
+        """The redirect exists for links we do not control. Ours point at /research.
+
+        Relying on it internally costs a hop on every click, splits the signal that
+        consolidating the citation surface was meant to gather, and quietly rots the
+        day someone decides the redirect has served its purpose.
+        """
+        offenders = []
+        for path in list((WEB / "app").rglob("*.tsx")) + list((WEB / "components").rglob("*.tsx")):
+            if path.parent.name == "census":
+                continue  # the redirect itself
+            body = path.read_text(encoding="utf-8")
+            for match in re.finditer(r"[\"'`]/census\b", body):
+                offenders.append(f"{path.relative_to(WEB)}:{body[:match.start()].count(chr(10)) + 1}")
+        self.assertEqual([], offenders, f"internal links still hop through /census: {offenders}")
 
 
 if __name__ == "__main__":

@@ -73,6 +73,17 @@ class Split:
     note: str = ""
 
 
+#: **Standing rule: any externally-quoted metric names its split.**
+#:
+#: The default for anything that leaves this repository -- marketing copy, a guide, the
+#: research page, a commit message -- is the PRIMARY split: recall@10 0.219, 2.33x the
+#: deterministic baseline. Use another split only with a stated reason, and say which.
+#:
+#: This is not pedantry. "recall@10 0.219, 2.8x baseline" was quoted externally and is
+#: two splits welded together: 0.219 is primary (2026-05-01, ratio 2.33x) while 2.82x is
+#: settled (2025-10-01, where recall@10 is 0.217). Each figure is true; the pair
+#: overstates the result, and a reader citing us would repeat it.
+
 SPLITS = (
     Split("primary", "2026-05-01", None, "Approved split: test window is the period "
           "with complete bidder coverage in the original 12-week sample."),

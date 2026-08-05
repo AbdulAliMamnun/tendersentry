@@ -14,7 +14,7 @@ const BUCKET_COLORS: Record<string, string> = {
 
 /**
  * The homepage census band: one stacked bar, a five-item legend, and a lookup that
- * hands off to the full census page.
+ * hands off to the census section of /research.
  */
 export function CensusBand({ buckets }: { buckets: Bucket[] }) {
   const router = useRouter();
@@ -24,7 +24,7 @@ export function CensusBand({ buckets }: { buckets: Bucket[] }) {
   function onSubmit(event: React.FormEvent) {
     event.preventDefault();
     const target = query.trim()
-      ? `/census?q=${encodeURIComponent(query.trim())}`
+      ? `/research?q=${encodeURIComponent(query.trim())}`
       : "/research";
     router.push(target);
   }
