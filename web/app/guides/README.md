@@ -70,6 +70,21 @@ real and dated.
 - **Standing offers are not opportunities** — how many "open" notices close years out,
   and why closing date is a bad urgency signal. Computable today.
 
+## Where the guides sit in the site
+
+Since Milestone 11 the site has three content surfaces, and they answer different
+questions:
+
+| Surface | Question it answers | Voice |
+|---|---|---|
+| `/product/*` | What do I get? | Contractor's language; no pipeline jargon (a test enforces it) |
+| `/guides/*` | How does this market work, and what did you find out? | Practical, with the original data point |
+| `/research` | What have you measured, and how? | Method, figure, caveat — the page people cite |
+
+A guide links down to the product page for the thing it describes and across to
+`/research` for the measurement behind its number. Keep those links: they are the
+reason a reader who arrives from search finds the product at all.
+
 ## What these pages are not
 
 They are not a blog and they are not a content-marketing programme. Six articles that

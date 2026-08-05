@@ -142,7 +142,9 @@ export function WhatA200kJobLooksLike() {
       </P>
       <P>
         You can see the estimator working on today&rsquo;s open notices — with every band
-        labelled by where it came from — on <A href="/">the ranker</A>.
+        labelled by where it came from — on <A href="/">the ranker</A>, and how it fits
+        into finding work is on{" "}
+        <A href="/product/discovery">the discovery page</A>.
       </P>
     </>
   );

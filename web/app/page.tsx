@@ -1,40 +1,22 @@
 import Link from "next/link";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
-import { CensusBand } from "@/components/CensusBand";
 import { DemoRanker } from "@/components/DemoRanker";
-import { census, formatNumber, stats } from "@/lib/data";
+import { formatNumber, stats } from "@/lib/data";
+import { PRODUCTS } from "@/lib/products";
 
-const HOW_IT_WORKS = [
-  {
-    icon: "◎",
-    title: "Watch everything",
-    line: "Federal, Québec, and open Ontario sources. Daily.",
-  },
-  {
-    icon: "◈",
-    title: "Ranked to your firm",
-    line: "Trades, size, bonding, regions. Every score explained.",
-  },
-  {
-    icon: "❝",
-    title: "Proof, not promises",
-    line: "Every requirement cited to its page. Verified against the PDF.",
-  },
-];
-
+/**
+ * The homepage says what the company does, and then gets out of the way.
+ *
+ * What used to be here — a census band, a four-number stat strip, a how-it-works
+ * triptych — was the interesting parts of the *research* standing where the product
+ * should be. A contractor landing here needs to know what they get, not how much we
+ * have measured. The research moved to /research, where it is the point rather than
+ * an ornament, and the depth moved to the product pages.
+ *
+ * Target: understand the product without scrolling past the demo.
+ */
 export default function HomePage() {
-  const statItems = [
-    { value: formatNumber(stats.notices_tracked), label: "notices tracked" },
-    { value: formatNumber(stats.requirements_verified), label: "requirements verified" },
-    {
-      value: formatNumber(stats.fabrications_caught),
-      label: "fabrications caught",
-      red: true,
-    },
-    { value: formatNumber(stats.municipalities_mapped), label: "municipalities mapped" },
-  ];
-
   return (
     <>
       <Nav />
@@ -47,8 +29,10 @@ export default function HomePage() {
             Bid the right tenders. Skip the wrong ones.
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-[15px] leading-relaxed text-body sm:text-base">
-            TenderSentry watches the whole market, ranks what fits your firm, and proves
-            every disqualifying clause — the sentence, and the page it&rsquo;s on.
+            TenderSentry watches every open public tender in Ontario and Québec, ranks
+            the ones your firm can actually win, and shows you the clauses that would
+            disqualify your bid — quoted, with page numbers.{" "}
+            <span className="font-medium text-heading">Free while in beta.</span>
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <a href="#join" className="btn-primary w-full sm:w-auto">
@@ -60,7 +44,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Live ranker — the sample board is its empty and fallback state */}
+        {/* The demo — the strongest thing on the page, so nothing sits above it. */}
         <section className="shell pb-16">
           <DemoRanker />
           <p className="mt-4 text-center text-sm text-muted">
@@ -72,61 +56,42 @@ export default function HomePage() {
           </p>
         </section>
 
-        {/* Stat strip */}
-        <section className="border-y border-hairline">
-          <div className="shell grid grid-cols-2 gap-y-8 py-10 text-center md:grid-cols-4">
-            {statItems.map((item) => (
-              <div key={item.label}>
-                <p
-                  className={`text-2xl font-semibold tabular-nums ${
-                    item.red ? "text-brand-red" : "text-heading"
-                  }`}
-                >
-                  {item.value}
+        {/* Three product cards. One line each; the depth lives on the pages. */}
+        <section className="border-t border-hairline">
+          <div className="shell grid gap-4 py-16 md:grid-cols-3">
+            {PRODUCTS.map((product) => (
+              <Link
+                key={product.slug}
+                href={`/product/${product.slug}`}
+                className="card block px-5 py-6 transition hover:border-brand-red"
+              >
+                <h2 className="text-[17px] font-semibold leading-snug text-heading">
+                  {product.cardTitle}
+                </h2>
+                <p className="mt-2 text-[15px] leading-relaxed text-body">
+                  {product.cardLine}
                 </p>
-                <p className="mt-1 text-xs text-muted">{item.label}</p>
-              </div>
+                <p className="mt-4 text-sm font-medium text-brand-red">Learn more →</p>
+              </Link>
             ))}
           </div>
         </section>
 
-        {/* How it works */}
-        <section id="how-it-works" className="shell py-16">
-          <div className="grid gap-4 md:grid-cols-3">
-            {HOW_IT_WORKS.map((item) => (
-              <div key={item.title} className="card p-7 text-center">
-                <span
-                  className="mx-auto flex h-11 w-11 items-center justify-center rounded-control
-                    bg-page text-lg text-brand-red"
-                  aria-hidden
-                >
-                  {item.icon}
-                </span>
-                <h3 className="mt-4 text-[15px] font-semibold">{item.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-body">{item.line}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Census band */}
-        <section className="shell grid items-center gap-10 border-t border-hairline py-16 md:grid-cols-2 md:gap-14">
-          <div>
-            <h2 className="text-2xl font-semibold">Where tenders actually live</h2>
-            <p className="mt-4 text-[15px] leading-relaxed text-body">
-              Québec publishes every tender openly. Ontario doesn&rsquo;t — so we
-              surveyed all 444 municipalities: 51% of local tenders sit behind one
-              private platform, under 1% are openly posted.
+        {/* One line of credibility, pointing at the research rather than reciting it. */}
+        <section className="border-t border-hairline">
+          <div className="shell py-10 text-center">
+            <p className="text-sm leading-relaxed text-body">
+              Built on {formatNumber(stats.notices_tracked)} tracked notices, 950,000
+              historical bids, and a survey of all {stats.municipalities_mapped} Ontario
+              municipalities.{" "}
+              <Link
+                href="/research"
+                className="font-medium text-brand-red hover:opacity-80"
+              >
+                See the research →
+              </Link>
             </p>
-            <p className="mt-3 text-sm text-muted">Other provinces next.</p>
-            <Link
-              href="/census"
-              className="mt-6 inline-block text-sm font-semibold text-brand-red hover:opacity-80"
-            >
-              Explore the census →
-            </Link>
           </div>
-          <CensusBand buckets={census.buckets} />
         </section>
 
         {/* Free check */}

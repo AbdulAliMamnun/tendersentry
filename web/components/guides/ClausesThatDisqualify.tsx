@@ -127,7 +127,8 @@ export function ClausesThatDisqualify() {
 
       <P>
         If you want a second pair of eyes on a specific document, you can{" "}
-        <A href="/check">have us check one free</A> — we return the requirements we find
+        <A href="/check">have us check one free</A> — that is{" "}
+        <A href="/product/compliance">the compliance side of the product</A> — we return the requirements we find
         with each one quoted and cited to its page, so you can verify every call we make.
       </P>
       <P>

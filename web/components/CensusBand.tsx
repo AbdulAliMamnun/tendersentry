@@ -25,7 +25,7 @@ export function CensusBand({ buckets }: { buckets: Bucket[] }) {
     event.preventDefault();
     const target = query.trim()
       ? `/census?q=${encodeURIComponent(query.trim())}`
-      : "/census";
+      : "/research";
     router.push(target);
   }
 

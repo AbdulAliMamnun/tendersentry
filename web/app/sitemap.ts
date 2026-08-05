@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { GUIDES, SITE_URL } from "@/lib/guides";
+import { PRODUCTS } from "@/lib/products";
 
 /**
  * The real sitemap.
@@ -20,11 +21,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: SITE_URL, lastModified: new Date(), changeFrequency: "daily", priority: 1 },
     {
-      url: `${SITE_URL}/census`,
-      lastModified: new Date("2026-07-31"),
+      // /census permanently redirects here; only the destination is listed.
+      url: `${SITE_URL}/research`,
+      lastModified: new Date("2026-08-05"),
       changeFrequency: "monthly",
       priority: 0.9,
     },
+    ...PRODUCTS.map((product) => ({
+      url: `${SITE_URL}/product/${product.slug}`,
+      lastModified: new Date(product.updated),
+      changeFrequency: "monthly" as const,
+      priority: 0.9,
+    })),
     { url: `${SITE_URL}/check`, changeFrequency: "monthly", priority: 0.8 },
     {
       url: `${SITE_URL}/guides`,

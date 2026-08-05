@@ -132,6 +132,10 @@ export function HowWeRankTenders() {
       </P>
 
       <P>
+        What this looks like from a contractor&rsquo;s side, without the machinery, is on{" "}
+        <A href="/product/discovery">the discovery page</A>.
+      </P>
+      <P>
         Method aside: the ranking is only half the product. The other half is the
         qualification check that reads a document and quotes the clause that would
         disqualify you — covered in{" "}

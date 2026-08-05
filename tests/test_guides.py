@@ -19,6 +19,11 @@ GUIDES_TS = WEB / "lib" / "guides.ts"
 SITEMAP_TS = WEB / "app" / "sitemap.ts"
 ROBOTS_TS = WEB / "app" / "robots.ts"
 ARTICLES = WEB / "components" / "guides"
+PRODUCTS_TS = WEB / "lib" / "products.ts"
+PRODUCT_BODIES = WEB / "components" / "product"
+HOMEPAGE = WEB / "app" / "page.tsx"
+NAV = WEB / "components" / "Nav.tsx"
+RESEARCH = WEB / "components" / "ResearchFindings.tsx"
 
 
 def _slugs() -> list[str]:
@@ -79,8 +84,11 @@ class SitemapTests(unittest.TestCase):
             self.assertNotIn("/board", url)
 
     def test_the_public_pages_are_listed(self) -> None:
-        for path in ("/census", "/check", "/guides"):
+        for path in ("/research", "/check", "/guides", "/product/"):
             self.assertIn(path, self.source)
+
+    def test_products_are_expanded_from_the_registry(self) -> None:
+        self.assertIn("PRODUCTS.map", self.source)
 
     def test_guides_are_expanded_from_the_registry(self) -> None:
         """Hand-listing them would let a new guide ship unindexed."""
@@ -119,6 +127,131 @@ class OriginalDataTests(unittest.TestCase):
             body = path.read_text(encoding="utf-8").lower()
             for phrase in banned:
                 self.assertNotIn(phrase, body, f"{path.name} contains {phrase!r}")
+
+
+class HomepageTests(unittest.TestCase):
+    """The homepage says what the company does, and stops."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.source = HOMEPAGE.read_text(encoding="utf-8")
+
+    def test_the_census_band_is_gone(self) -> None:
+        """It lives on /research now; on the homepage it was research standing where
+        the product should be."""
+        self.assertNotIn("CensusBand", self.source)
+
+    def test_the_data_flex_stat_strip_is_gone(self) -> None:
+        self.assertNotIn("statItems", self.source)
+        self.assertNotIn("fabrications_caught", self.source)
+
+    def test_the_demo_sits_above_every_product_card(self) -> None:
+        """Nothing may push the strongest asset below the fold."""
+        self.assertIn("DemoRanker", self.source)
+        self.assertLess(
+            self.source.index("DemoRanker"),
+            self.source.index("PRODUCTS.map"),
+        )
+
+    def test_the_three_product_cards_come_from_the_registry(self) -> None:
+        """Hand-listing them would let a card drift from the page it links to."""
+        self.assertIn("PRODUCTS.map", self.source)
+
+    def test_the_credibility_line_points_at_the_research_rather_than_reciting_it(
+        self,
+    ) -> None:
+        self.assertIn('href="/research"', self.source)
+        self.assertIn("See the research", self.source)
+
+
+class ProductTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.source = PRODUCTS_TS.read_text(encoding="utf-8")
+        cls.slugs = re.findall(r'^\s*slug: "([a-z-]+)",', cls.source, re.M)
+
+    def test_three_products_are_defined(self) -> None:
+        self.assertEqual(["discovery", "compliance", "board"], self.slugs)
+
+    def test_each_has_a_distinct_seo_title_within_search_result_length(self) -> None:
+        titles = re.findall(r'seoTitle:\s*\n?\s*"([^"]+)"', self.source)
+        self.assertEqual(3, len(titles))
+        self.assertEqual(len(set(titles)), len(titles))
+        for title in titles:
+            self.assertLessEqual(len(title), 70, title)
+
+    def test_each_records_the_phrase_it_targets(self) -> None:
+        targets = re.findall(r'target: "([^"]+)"', self.source)
+        self.assertEqual(
+            ["tender matching software canada", "bid compliance check",
+             "government bid tracking ontario"],
+            targets,
+        )
+
+    def test_every_product_has_a_rendered_body(self) -> None:
+        index = (PRODUCT_BODIES / "index.ts").read_text(encoding="utf-8")
+        for slug in self.slugs:
+            self.assertIn(slug, index)
+
+    def test_product_pages_state_the_coverage_asymmetry(self) -> None:
+        """A contractor in Ontario must not learn about the gap in month two."""
+        for name in ("Discovery.tsx", "Board.tsx"):
+            body = (PRODUCT_BODIES / name).read_text(encoding="utf-8")
+            self.assertIn("Ontario", body)
+            self.assertIn("/research", body)
+
+    def test_product_pages_avoid_pipeline_jargon(self) -> None:
+        """These are for estimators, not for us."""
+        for path in PRODUCT_BODIES.glob("*.tsx"):
+            body = path.read_text(encoding="utf-8")
+            for jargon in ("cross_embedding", "LambdaRank", "centroid", "recall@10"):
+                self.assertNotIn(jargon, body, f"{path.name} leaks {jargon!r}")
+
+
+class ResearchTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.source = RESEARCH.read_text(encoding="utf-8")
+
+    def test_every_finding_carries_a_method(self) -> None:
+        titles = re.findall(r"^\s*title: \"([^\"]+)\",", cls_source(), re.M)
+        # String literals only — the `method: string` field on the type declaration
+        # is not a finding.
+        methods = re.findall(r'^\s*method:\s*\n?\s*"', cls_source(), re.M)
+        self.assertEqual(len(titles), len(methods))
+        self.assertEqual(4, len(titles))
+
+    def test_the_ranking_figure_uses_one_split_consistently(self) -> None:
+        """0.219 is the primary split; 2.8x is the settled split. Quoting them
+        together overstates the result, and the page says so explicitly."""
+        self.assertIn("2.3", self.source)
+        self.assertIn("different\n          splits", self.source.replace("\r", ""))
+
+    def test_the_lookup_versus_constant_finding_is_stated(self) -> None:
+        self.assertIn("34.9", self.source)
+        self.assertIn("34.4", self.source)
+
+    def test_the_access_asymmetry_is_stated_with_our_own_interest_disclosed(self) -> None:
+        self.assertIn("199,644", self.source)
+        self.assertIn("not a neutral", self.source)
+
+
+def cls_source() -> str:
+    return RESEARCH.read_text(encoding="utf-8")
+
+
+class NavTests(unittest.TestCase):
+    def test_nav_exposes_product_research_and_guides(self) -> None:
+        nav = NAV.read_text(encoding="utf-8")
+        self.assertIn("Product", nav)
+        self.assertIn('href="/research"', nav)
+        self.assertIn('href="/guides"', nav)
+
+    def test_the_census_route_redirects_rather_than_breaking(self) -> None:
+        """/census is linked from the repo and from anything we have already sent."""
+        page = (WEB / "app" / "census" / "page.tsx").read_text(encoding="utf-8")
+        self.assertIn("permanentRedirect", page)
+        self.assertIn('"/research"', page)
 
 
 if __name__ == "__main__":

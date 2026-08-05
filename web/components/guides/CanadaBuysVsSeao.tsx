@@ -119,7 +119,7 @@ export function CanadaBuysVsSeao() {
       </P>
       <P>
         The full municipality-by-municipality map is on{" "}
-        <A href="/census">the census page</A>, and the longer version of what that costs
+        <A href="/research">the research page</A>, and the longer version of what that costs
         both sides is in{" "}
         <A href="/guides/quebec-publishes-ontario-doesnt">
           Québec publishes everything, Ontario doesn&rsquo;t

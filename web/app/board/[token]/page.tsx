@@ -105,7 +105,7 @@ export default async function BoardPage({
             tendersentry.com
           </Link>{" "}
           ·{" "}
-          <Link href="/census" className="underline underline-offset-2 hover:text-body">
+          <Link href="/research" className="underline underline-offset-2 hover:text-body">
             The Ontario tender access census
           </Link>{" "}
           ·{" "}

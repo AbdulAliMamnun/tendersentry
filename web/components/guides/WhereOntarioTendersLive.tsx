@@ -139,7 +139,7 @@ export function WhereOntarioTendersLive() {
 
       <P>
         The full census is browsable, municipality by municipality, on{" "}
-        <A href="/census">the census page</A> — including the classification we assigned
+        <A href="/research">the research page</A> — including the classification we assigned
         each one and the page we assigned it from. If we got yours wrong, that page shows
         you exactly what we saw.
       </P>
@@ -148,6 +148,13 @@ export function WhereOntarioTendersLive() {
         We publish the underlying data because the interesting fact here is not our
         number. It is that this number did not exist before, for a market that spends
         billions of public dollars a year.
+      </P>
+      <P>
+        If you bid in Ontario, the practical follow-on is{" "}
+        <A href="/product/discovery">how we rank what we can see</A> — and, more
+        usefully given the coverage above,{" "}
+        <A href="/product/compliance">what we can tell you about a document you
+        already have</A>.
       </P>
     </>
   );

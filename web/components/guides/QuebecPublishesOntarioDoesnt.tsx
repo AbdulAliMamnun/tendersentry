@@ -73,7 +73,7 @@ export function QuebecPublishesOntarioDoesnt() {
       </P>
       <P>
         The full municipality-by-municipality breakdown is on{" "}
-        <A href="/census">the census page</A>.
+        <A href="/research">the research page</A>.
       </P>
 
       <H2>What each side actually loses</H2>

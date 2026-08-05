@@ -246,7 +246,7 @@ export function DemoRanker() {
               <p className="mt-1.5 text-sm leading-relaxed text-body">
                 Most Ontario municipal tenders sit behind gated portals.{" "}
                 <Link
-                  href="/census"
+                  href="/research"
                   className="font-medium text-brand-red hover:opacity-80"
                 >
                   See why &rarr;
