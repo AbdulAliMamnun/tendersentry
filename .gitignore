@@ -16,3 +16,9 @@ data/model_cache/
 !.env.example
 web/.vercel/
 .vercel
+
+# StatCan full-table downloads. The 4 KB series slice we actually use
+# (data/statcan/bcpi-*.json) is committed; the 53 MB source CSV is regenerable with
+# `python3 -m model.inflation --extract`.
+data/statcan/*.csv
+data/statcan/*.zip

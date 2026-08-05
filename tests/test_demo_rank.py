@@ -328,6 +328,129 @@ process.stdout.write(JSON.stringify(out));
             self.assertLessEqual(row["fit"], 100)
 
 
+class ScaleTests(unittest.TestCase):
+    """Estimated size as a filter and a bounded modifier — never a model feature."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        if not ts_harness.available():
+            raise unittest.SkipTest("Node or sucrase unavailable")
+        cls.results = ts_harness.run(
+            """
+import { bandOf, bandDistance, scaleModifier } from './demoRank.mjs';
+process.stdout.write(JSON.stringify({
+  bands: {
+    small: bandOf(45_000), mid: bandOf(200_000), large: bandOf(4_000_000),
+    none: bandOf(null), zero: bandOf(0),
+  },
+  distances: {
+    same: bandDistance('$100\u2013500K', '$100\u2013500K'),
+    far: bandDistance('<$100K', '$2\u201310M'),
+    unknown: bandDistance('unknown', '$2\u201310M'),
+  },
+  modifiers: {
+    match: scaleModifier('$100\u2013500K', '$100\u2013500K'),
+    adjacent: scaleModifier('$500K\u20132M', '$100\u2013500K'),
+    farOff: scaleModifier('$2\u201310M', '$100\u2013500K'),
+    unknownNotice: scaleModifier('unknown', '$100\u2013500K'),
+    unknownDeclared: scaleModifier('$2\u201310M', 'unknown'),
+  },
+}));
+""",
+        )
+
+    def test_bands_mirror_the_python_definition(self) -> None:
+        """Two implementations of the same bands would drift; these must not."""
+        bands = self.results["bands"]
+        self.assertEqual("<$100K", bands["small"])
+        self.assertEqual("$100–500K", bands["mid"])
+        self.assertEqual("$2–10M", bands["large"])
+        self.assertEqual("unknown", bands["none"])
+        self.assertEqual("unknown", bands["zero"])
+
+    def test_distance_refuses_to_compare_against_unknown(self) -> None:
+        self.assertEqual(0, self.results["distances"]["same"])
+        self.assertEqual(3, self.results["distances"]["far"])
+        self.assertIsNone(self.results["distances"]["unknown"])
+
+    def test_a_matching_size_is_a_bounded_boost(self) -> None:
+        modifiers = self.results["modifiers"]
+        self.assertGreater(modifiers["match"], 0)
+        self.assertLessEqual(modifiers["match"], 10)
+
+    def test_an_adjacent_band_is_neutral(self) -> None:
+        """One band apart is within the noise of an estimate."""
+        self.assertEqual(0, self.results["modifiers"]["adjacent"])
+
+    def test_a_two_band_mismatch_is_a_strong_down_rank(self) -> None:
+        self.assertLess(self.results["modifiers"]["farOff"], -10)
+
+    def test_an_unknown_band_on_either_side_is_neutral(self) -> None:
+        """Most notices have no size. A firm must not be pushed away from work
+        because our estimator had nothing to say about it."""
+        self.assertEqual(0, self.results["modifiers"]["unknownNotice"])
+        self.assertEqual(0, self.results["modifiers"]["unknownDeclared"])
+
+
+class AcceptanceTests(unittest.TestCase):
+    """The two queries the milestone is accepted on, run side by side.
+
+    Québec is the real test: a deep pool where a declared size should reorder real
+    work. Ontario runs beside it as the honest coverage statement — nine priced
+    awards exist for the whole province, so the contrast is the finding, not a bug.
+    """
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        if not ts_harness.available():
+            raise unittest.SkipTest("Node or sucrase unavailable")
+        cls.results = ts_harness.run(
+            """
+import { rank, isThin } from './demoRank.mjs';
+const out = {};
+for (const [key, text] of Object.entries(input.cases)) {
+  const r = rank(text, { today: input.today, limit: 10 });
+  out[key] = {
+    reading: r.reading, onTrade: r.onTrade, thin: isThin(r), considered: r.considered,
+    rows: r.results.map((x) => ({
+      title: x.title, fit: x.fit, band: x.scaleBand, source: x.scaleSource,
+    })),
+  };
+}
+process.stdout.write(JSON.stringify(out));
+""",
+            {
+                "today": TODAY,
+                "cases": {
+                    # The acceptance query.
+                    "qc_sized": "watermain and sewer replacement in Québec, $200K jobs",
+                    # Same firm, no size declared — the before/after control.
+                    "qc_unsized": "watermain and sewer replacement in Québec",
+                    # The coverage statement.
+                    "on_sized": "watermain and sewer replacement in Ontario, $200K jobs",
+                },
+            },
+        )
+
+    def test_declaring_a_size_reorders_the_quebec_board(self) -> None:
+        """If the declared size changed nothing, the whole feature would be cosmetic."""
+        sized = [r["title"] for r in self.results["qc_sized"]["rows"]]
+        unsized = [r["title"] for r in self.results["qc_unsized"]["rows"]]
+        self.assertTrue(sized, "the sized query returned nothing")
+        self.assertNotEqual(sized, unsized)
+
+    def test_every_row_carries_its_scale_provenance(self) -> None:
+        """A band without its source would render as though the buyer published it."""
+        for row in self.results["qc_sized"]["rows"]:
+            self.assertIn(row["source"], ("published", "estimated_model", "estimated_pattern", "unknown"))
+
+    def test_the_ontario_query_is_reported_not_hidden(self) -> None:
+        """Ontario coverage is thin and the demo says so rather than padding."""
+        ontario = self.results["on_sized"]
+        self.assertLess(ontario["onTrade"], 10)
+        self.assertTrue(ontario["thin"])
+
+
 class RateLimitTests(unittest.TestCase):
     """The limiter, driven by an injected clock so the suite never sleeps."""
 

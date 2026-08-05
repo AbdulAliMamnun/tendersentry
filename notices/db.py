@@ -162,6 +162,52 @@ def upsert_notices(
     return tally
 
 
+#: Scale columns, added after the table shipped. See ``model.scale``.
+SCALE_COLUMNS: tuple[tuple[str, str], ...] = (
+    ("scale_band", "TEXT"),
+    ("scale_source", "TEXT"),
+    ("scale_confidence", "REAL"),
+)
+
+
+def migrate_scale_columns(connection: sqlite3.Connection) -> dict[str, Any]:
+    """Add the estimated-scale columns to ``tenders``.
+
+    Purely additive, so unlike :func:`migrate_source_constraint` this needs no table
+    rebuild — ``ALTER TABLE ADD COLUMN`` is safe and the existing rows simply carry
+    NULL until a backfill runs. The CHECK constraints are enforced in the same spirit
+    as the source constraint: a value outside the vocabulary is a bug that should fail
+    at the write, not surface later as a band nobody can explain.
+
+    Idempotent: columns that already exist are left alone, so this can run on every
+    backfill without a guard at the call site.
+    """
+    existing = {
+        row["name"] for row in connection.execute("PRAGMA table_info(tenders)").fetchall()
+    }
+    if not existing:
+        return {"migrated": False, "reason": "no tenders table"}
+
+    before = int(connection.execute("SELECT COUNT(*) FROM tenders").fetchone()[0])
+    added = []
+    with connection:
+        for name, sql_type in SCALE_COLUMNS:
+            if name in existing:
+                continue
+            connection.execute(f"ALTER TABLE tenders ADD COLUMN {name} {sql_type}")
+            added.append(name)
+
+    after = int(connection.execute("SELECT COUNT(*) FROM tenders").fetchone()[0])
+    if before != after:
+        raise RuntimeError(
+            f"Row count changed during an additive migration: {before} -> {after}"
+        )
+
+    if added:
+        LOGGER.info("Added scale columns to tenders: %s", ", ".join(added))
+    return {"migrated": bool(added), "added": added, "rows": after}
+
+
 def migrate_source_constraint(connection: sqlite3.Connection) -> dict[str, Any]:
     """Rebuild ``tenders`` so its source CHECK matches ``SOURCES``.
 
