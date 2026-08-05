@@ -149,3 +149,110 @@ Most Ontario municipal notices sit behind portals TenderSentry monitors rather t
 republishes. An Ontario-filtered ranking can therefore be genuinely thin — at the time
 of writing, 2 open watermain notices and 2 roadwork. The widget says so on the card
 instead of padding the list to ten rows.
+
+## Contract-scale estimation (`model/scale.py`)
+
+```bash
+python3 -m model.inflation --extract data/statcan/18100289.csv   # once, or on refresh
+python3 -m model.scale --report                                  # held-out comparison
+python3 -m model.scale --backfill                                # write bands to the DB
+```
+
+Under 1% of open notices publish a value — 241 of 48,834 — so the first question a
+contractor asks is unanswerable from the notice almost every time. But 199,714 past
+procurements carry a winning bid amount, which *is* the contract value. Three tiers,
+best-available wins: `published` (the buyer said so; nothing overrides it),
+`estimated_model` (learned from comparable past contracts), `estimated_pattern`
+(deterministic EN+FR wording markers). A notice with no signal gets `unknown` — a band
+is never forced, because "we don't know" is useful to a contractor and a fabricated
+band is not.
+
+**Estimates are a filter and a bounded modifier, never a model feature.** A *published*
+value two or more bands from the firm's declared size is a hard filter — the buyer
+stated the size, so there is nothing to be wrong about. An estimate only adjusts. The
+estimate is derived from the notice title and so is the trade match; feeding one into a
+ranking that already uses the other would make "size fit" a restatement of "trade fit"
+dressed as independent evidence, which is the same failure mode as a leaked feature.
+
+### Held-out results
+
+Temporal split at 2025-07-01: 168,541 train, 19,329 test. Band accuracy:
+
+| | exact | within one band |
+|---|---:|---:|
+| always guess the most common band (`$100–500K`) | 34.4% | 89.8% |
+| median lookup (trade × buyer type × region) | 34.9% | 89.2% |
+| pattern rules alone | 4.1% | 9.1% |
+| **GBM (title embedding + trade + buyer + region)** | **41.7%** | **92.1%** |
+
+**The lookup baseline is barely better than a constant** — 34.9% against 34.4% for
+always guessing `$100–500K`, and it is actually *worse* on within-one-band. That is a
+real result, not a tuning failure: contract size within a trade varies enormously, and
+the categorical keys carry almost no information on their own. The GBM's +7.3 points
+over the constant comes from the title, which is where the size signal actually lives.
+
+The GBM ships. But 41.7% exact means the specific band is wrong more often than right,
+so **92.1% within one band is the honest headline**, and the UI presents every estimate
+as approximate with its provenance attached. The lookup remains as the fallback when
+the GBM is unavailable, and its weakness is the reason `estimated_pattern` exists at
+all rather than leaning on the lookup for everything.
+
+### Known limit: the corpus is Québec
+
+199,644 of 199,714 priced awards are QC. **Ontario has nine.** So a band on an Ontario
+notice is an inference from Québec comparables. This is the census finding again in a
+different dimension: rich estimation where the data is open, near-nothing where it is
+not.
+
+**Watch item — the Ontario-side label source.** `data.ontario.ca`'s *Historical contract
+data for highway construction and maintenance contracts* is the dataset that would
+supply it. As of this writing it is a **listing, not data**: the CKAN API reports
+`num_resources: 0`, licence `notspecified`, `current_as_of: 2017-04-03`, and the page
+states the data is under review to determine whether it can be released publicly. All
+eight Ontario contract/tender datasets on the portal return zero resources. If MTO's
+contract data — or the associated quantity-sheets dataset — is ever released under an
+open licence, that is the Ontario-side corpus to ingest. No weaker substitute is worth
+taking.
+
+### Known limit: the deflator is the wrong sector
+
+Amounts are restated in current dollars with **StatCan table 18-10-0289-01**, geography
+*Quebec*, type *Non-residential buildings [622]*, division *Division composite*, base
+period **2023 = 100**. The adjustment is large and matters: $1.00 in 2018-Q1 is $1.62
+today.
+
+That is a **building** index deflating work that is overwhelmingly roadwork, watermain,
+and paving — *engineering* construction. The correct instrument would be an
+infrastructure or engineering construction price index, and **Statistics Canada does not
+publish an active one**: table 18-10-0022 (Infrastructure construction price index) ends
+2019 and 18-10-0096 (Highway construction price indexes) ends 1993, both inactive. The
+choice is a live index for the wrong sector or a right-sector index that stopped seven
+years ago. We use the former and label it wherever an adjusted figure surfaces. The gap
+is in Canadian price statistics rather than in this pipeline, which is worth recording
+because someone will eventually ask.
+
+The Quebec non-residential series also only starts **2017-Q1**, so awards before then
+are excluded rather than carried unadjusted — 3.8% of priced awards.
+
+## Milestone 11 candidate: combine the two profile paths
+
+Name lookup and description ranking overlap **2 of 8 rows** for the same firm
+(GROUPE COLAS QUÉBEC INC., 2,900 bids since 2004, measured 2026-08-04). Neither is
+wrong, and that is the finding:
+
+- **History knows demonstrated capability at demonstrated scale.** What this firm has
+  actually pursued, for which buyers, at what sizes. It returns tighter, more expensive
+  roadwork — mostly `$500K–2M`.
+- **The description knows current intent.** What the firm says it does *today*. It
+  returns a wider spread skewing `$100–500K`.
+
+For a firm that has shifted focus, the record is stale and the description is right.
+For a firm describing itself loosely, the record is right.
+
+The candidate is not to pick a winner but to carry both — description as intent,
+history as capability — and **surface the disagreement rather than resolving it**. A
+row the record ranks highly and the description does not is worth showing *as* a
+disagreement: it is either work the firm has moved on from, or work it forgot it was
+good at, and only the firm knows which.
+
+Not built. Recorded so the observation is not lost.

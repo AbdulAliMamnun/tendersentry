@@ -38,7 +38,7 @@ import numpy as np
 import config
 from matchrec import schema as matchrec_schema
 from matchrec import trades
-from model import embeddings, features, train
+from model import embeddings, features, profiles, train
 from notices import db
 
 
@@ -79,6 +79,39 @@ MANIFEST_NOTES = [
     "a backstop. Per-language centroids would fix this and are a known follow-up.",
     "Displayed fit is an absolute logistic on the raw score, never a min-max over the "
     "day's pool. Pool-relative scoring let the best row of a bad pool read 100.",
+    "scale_band is an ESTIMATE unless scale_source is 'published'. It is inferred from "
+    "historical winning bids on similar work, never stated by the buyer. Any surface "
+    "that shows a band must show its source alongside it.",
+    "Scale estimates are a filter and a bounded modifier only, never a model feature. "
+    "The estimate derives from the notice title and so does the trade match; feeding "
+    "one into a ranking that already uses the other would make size fit a restatement "
+    "of trade fit dressed as independent evidence.",
+    "The scale corpus is 99.96% Quebec: 199,644 of 199,714 priced awards are QC and "
+    "Ontario has 9. The Ontario counterweight (data.ontario.ca's MTO contract-award "
+    "dataset) is a listing with zero resources and an unspecified licence, so a band "
+    "on an Ontario notice is an inference from Quebec comparables.",
+    "Firm profiles carry aggregate facts only: counts, distinct-value tallies, "
+    "categories, regions, and buyer keys. They never carry the list of procurements a "
+    "named firm bid on, and no served surface attributes a bid amount to a named firm. "
+    "Name lookup is gated behind the beta form, not open on the public demo.",
+    "Firm centroids ship int8-quantized to keep the artifact affordable. "
+    "tests/test_profiles.py asserts the ranking divergence against float32 rather than "
+    "assuming quantization is harmless. Measured: max cosine error 0.0018, zero "
+    "MATERIAL reorderings (a swap between tenders separated by more than twice the "
+    "quantization error). Raw rank shifts of a few positions do occur and are not a "
+    "defect: they are swaps between near-tied tenders, which any perturbation produces.",
+    "Two ways to measure quantization damage that produce confident nonsense, both "
+    "hit while building this. (1) Re-quantizing the SHIPPED centroids is idempotent "
+    "and reports exactly zero error -- a perfect-looking number that measures nothing; "
+    "rebuild in float32 instead. (2) Building test centroids from RANDOM tender "
+    "subsets collapses them toward the global mean, leaving every cosine near-tied, so "
+    "the measurement reports tie-breaking rather than quantization; cluster by trade, "
+    "which is what a real firm centroid is.",
+    "Amounts are deflated with StatCan 18-10-0289-01 (Quebec, non-residential "
+    "buildings, division composite, 2023=100). That is a BUILDING index used as a "
+    "proxy for engineering construction, because StatCan publishes no active "
+    "infrastructure index: 18-10-0022 ends 2019 and 18-10-0096 ends 1993. Awards "
+    "before 2017-Q1 are excluded rather than carried unadjusted.",
 ]
 
 
@@ -87,6 +120,7 @@ def open_pool(connection: Any, limit: int | None = None) -> list[dict]:
     query = (
         "SELECT t.id, t.source, t.source_id, t.title, t.buyer_name, t.buyer_type, "
         "       t.region, t.estimated_value, t.closing_date_utc, t.notice_url, "
+        "       t.scale_band, t.scale_source, t.scale_confidence, "
         "       nt.trade_slugs, nt.mapping_status "
         "FROM tenders t LEFT JOIN notice_trades nt ON nt.tender_id = t.id "
         "WHERE t.status = 'open' AND t.closing_date_utc IS NOT NULL "
@@ -110,6 +144,11 @@ def open_pool(connection: Any, limit: int | None = None) -> list[dict]:
                 "url": row["notice_url"],
                 "trade_slugs": matchrec_schema.loads(row["trade_slugs"], []),
                 "mapping_status": row["mapping_status"] or "unmapped",
+                # Scale travels with its provenance. A band whose source the UI cannot
+                # see would be shown as though the buyer had published it.
+                "scale_band": row["scale_band"] or "unknown",
+                "scale_source": row["scale_source"] or "unknown",
+                "scale_confidence": row["scale_confidence"] or 0.0,
             }
         )
     LOGGER.info("Open-tender pool: %d notices", len(pool))
@@ -207,6 +246,15 @@ def export(
         },
     )
     _write(directory / "slugs.json", {"centroids": centroids})
+
+    # Firm profiles for the gated name-lookup path. Computed as-of the export date via
+    # the same strict-inequality machinery training uses, so a shipped profile
+    # describes what a firm had done before today and nothing after.
+    firm_profiles = profiles.build_profiles(
+        db.connect(db_path), interactions, as_of=datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    )
+    _write(directory / "firms.json", profiles.serialize(firm_profiles))
+    LOGGER.info("Firm profiles: %s", profiles.bytes_estimate(firm_profiles))
     # The demo derives trade slugs in the browser-facing function, so the rules
     # must travel with the artifacts rather than being re-implemented.
     mapping_path = Path(config.PROJECT_ROOT) / "matchrec" / "trade_mapping.json"
@@ -220,6 +268,11 @@ def export(
         "feature_order": served_names,
         "leaky_features_excluded": list(train.LEAKY_FEATURES),
         "pool": {"count": len(pool), "sources": sorted({e["source"] for e in pool})},
+        "firms": {
+            "count": len(firm_profiles),
+            "min_bids": profiles.MIN_BIDS,
+            "distinct_names": len(profiles.name_index(firm_profiles)),
+        },
         "model": {
             "trees": booster["num_trees"],
             "training_rows": int(dataset.train_x.shape[0]),

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FirmBoard } from "@/components/FirmBoard";
+import { FirmLookup } from "@/components/FirmLookup";
 import { formatGenerated, loadBoard } from "@/lib/boards";
 import { GITHUB_URL } from "@/lib/data";
 
@@ -33,6 +34,11 @@ export default async function BoardPage({
   if (!data) notFound();
 
   const { firm, board, generated_at, candidate_count } = data;
+
+  // Name lookup is beta-only. The key lives server-side; a board page is already an
+  // authenticated-by-possession surface, so this is the right place to expose it —
+  // and the public demo never gets it.
+  const betaKey = process.env.BETA_ACCESS_KEY ?? null;
 
   return (
     <main className="shell py-12">
@@ -116,6 +122,8 @@ export default async function BoardPage({
           share it publicly.
         </p>
       </footer>
+
+      {betaKey && <FirmLookup betaKey={betaKey} />}
     </main>
   );
 }
