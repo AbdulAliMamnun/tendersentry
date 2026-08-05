@@ -71,7 +71,16 @@ const EXAMPLES = [
   "Rooftop HVAC and electrical retrofits for school boards",
 ];
 
-const PLACEHOLDER = "Describe your firm — what you build, where, and typical job size";
+/**
+ * A whole example answer rather than a description of the field.
+ *
+ * Showing the shape of a good answer is what gets good answers: trade, buyer type,
+ * place, and a size range in one sentence. A placeholder that describes the field
+ * ("what you build, where, and typical job size") tells someone what to think about;
+ * this tells them what a finished answer looks like.
+ */
+const PLACEHOLDER =
+  "e.g. We do watermain and sewer replacement for municipalities around Barrie, jobs $300K–$1.5M";
 
 function sourceLabel(source: string): string {
   if (source === "seao") return "SEAO";
@@ -146,7 +155,7 @@ export function DemoRanker() {
           htmlFor="firm-description"
           className="text-[11px] font-semibold uppercase tracking-[0.12em] text-heading"
         >
-          Rank the live market for your firm
+          What does your firm build, and what size jobs do you want?
         </label>
         <div className="mt-3 flex flex-col gap-3 sm:flex-row">
           <input
@@ -183,12 +192,15 @@ export function DemoRanker() {
           ))}
         </div>
 
-        <p className="mt-4 text-xs leading-relaxed text-muted">
-          Demo ranks by description fit. Contract sizes marked estimated are inferred
-          from historical bids on similar work — check the notice for the buyer&rsquo;s
-          own figures. Your full board also uses bidding history and compliance checks.
-          Your description isn&rsquo;t stored — only which trades it matched, so we can
-          tell where the matching falls short.
+        {/* The hint that used to appear only after a failed match. It is advice about
+            how to write the input, so it belongs beside the input. */}
+        <p className="mt-3 text-xs leading-relaxed text-muted">
+          Name the work directly — &ldquo;watermain replacement&rdquo;,
+          &ldquo;pavage&rdquo;, &ldquo;roofing&rdquo;.
+        </p>
+        {/* One line. Everything else waits until there are results to explain. */}
+        <p className="mt-2 text-xs leading-relaxed text-muted">
+          Description isn&rsquo;t stored — only which trades it matched.
         </p>
       </form>
 
@@ -309,21 +321,29 @@ export function DemoRanker() {
           </ul>
 
           {data.results.length > 0 && (
-            <p className="border-t border-hairline px-5 py-3 text-xs leading-relaxed text-muted sm:px-6">
-              Fit is an absolute score, not a rank within this list — a low number means
-              a weak match, not fifth place. It measures bid fit, never a chance of
-              winning.
-            </p>
+            <div className="space-y-2 border-t border-hairline px-5 py-3 text-xs leading-relaxed text-muted sm:px-6">
+              <p>
+                Fit is an absolute score, not a rank within this list — a low number
+                means a weak match, not fifth place. It measures bid fit, never a chance
+                of winning.
+              </p>
+              <p>
+                Contract sizes marked estimated are inferred from historical bids on
+                similar work — check the notice for the buyer&rsquo;s own figures.
+              </p>
+              <p>
+                This demo ranks by description fit alone. Your full board also uses
+                bidding history and compliance checks.
+              </p>
+            </div>
           )}
         </div>
       )}
 
       {data && !data.hit && (
         <p className="mt-5 rounded-lg border border-hairline px-5 py-4 text-sm leading-relaxed text-body">
-          We couldn&rsquo;t recognise a trade in that. Naming the work directly —
-          &ldquo;watermain replacement&rdquo;, &ldquo;pavage&rdquo;, &ldquo;roofing&rdquo;
-          — is what the matching keys off. Try again and we&rsquo;ll rank the live
-          market against it.
+          We couldn&rsquo;t recognise a trade in that. Try naming the work more
+          directly and we&rsquo;ll rank the live market against it.
         </p>
       )}
 
