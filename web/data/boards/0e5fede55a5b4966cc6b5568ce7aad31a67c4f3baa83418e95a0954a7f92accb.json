@@ -12,15 +12,15 @@
       "quebec"
     ]
   },
-  "generated_at": "2026-08-01T03:14:51-04:00",
-  "candidate_count": 586,
+  "generated_at": "2026-08-30T19:53:47-04:00",
+  "candidate_count": 507,
   "board": [
     {
       "rank": 1,
-      "title": "Construction d’une conduite principale d’eau potable, réfection de ponceaux et travaux connexes - Secteur 8e avenue de l’Aéroport (PSP200280)",
-      "buyer": "Ville de Québec",
-      "closing_date": "2026-08-26",
-      "score": 96,
+      "title": "Côte-Nord / Sécurisation L7004 - Accès BA121 - Déboisement, aménagement de chemins et construction de ponts forestiers",
+      "buyer": "Hydro-Québec.",
+      "closing_date": "2026-09-10",
+      "score": 98,
       "source": "seao",
       "flags": [
         "value_unknown"
@@ -28,10 +28,10 @@
     },
     {
       "rank": 2,
-      "title": "Équipe multidisciplinaire pour la réfection du mur de soutènement du chemin des Pluviers, secteur St-Nicolas, à Lévis",
-      "buyer": "Ville de Lévis.",
-      "closing_date": "2026-08-26",
-      "score": 96,
+      "title": "Travaux de réfection de pavage et de trottoirs - 2026",
+      "buyer": "Ville de Lachute",
+      "closing_date": "2026-09-10",
+      "score": 93,
       "source": "seao",
       "flags": [
         "value_unknown"
@@ -39,9 +39,9 @@
     },
     {
       "rank": 3,
-      "title": "Travaux de pavage et d'excavation prolongement sentier multi",
-      "buyer": "MRC de D'Autray",
-      "closing_date": "2026-08-11",
+      "title": "Remplacement d'un ponceau, chemin de la Rivière-Rouge",
+      "buyer": "L'Ascension",
+      "closing_date": "2026-09-15",
       "score": 93,
       "source": "seao",
       "flags": [
@@ -50,9 +50,9 @@
     },
     {
       "rank": 4,
-      "title": "Travaux de bordures, pavage et éclairage (BPE) des rues Samuel-Hatt et Jean-Baptiste-Many",
-      "buyer": "Ville de Chambly",
-      "closing_date": "2026-08-11",
+      "title": "Reconstruction de deux regards en béton armé coulés en place Réfection locale du béton dégradé d'une partie du ponceau existant",
+      "buyer": "Municipalité Sainte-Hélène de Bagot",
+      "closing_date": "2026-09-15",
       "score": 93,
       "source": "seao",
       "flags": [
@@ -61,9 +61,9 @@
     },
     {
       "rank": 5,
-      "title": "DÉBOISEMENT, TRANSPORT ET MISE EN MARCHÉ DU BOIS, MISE EN FORME ET GRAVELAGE D’UN CHEMIN D’ACCÈS À LA VILLÉGIATURE, SECTEUR «MIWAPANEE (MUNICIPALITÉ DE KIPAWA)",
-      "buyer": "MRC du Témiscamingue.",
-      "closing_date": "2026-08-12",
+      "title": "Travaux de conduite principale, de réhabilitation d'égout, de reconstruction de trottoirs et de massifs de la CSEM, sur la rue Bélanger entre la rue Saint-Michel et la 18e avenue.",
+      "buyer": "Ville de Montréal - Service de l'Eau",
+      "closing_date": "2026-09-17",
       "score": 93,
       "source": "seao",
       "flags": [
@@ -72,9 +72,9 @@
     },
     {
       "rank": 6,
-      "title": "TRAVAUX DE REMPLACEMENT ÉGOUTS PLUVIAUX CARREFOUR GIRATOIRE ROUTE 117",
-      "buyer": "Ville de Sainte-Agathe-des-Monts.",
-      "closing_date": "2026-08-13",
+      "title": "8807-26-0202 - Travaux de planage et pavage sur plusieurs structures sur le territoire du centre de services de Saint-Jérôme (Laurentides)",
+      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
+      "closing_date": "2026-09-17",
       "score": 93,
       "source": "seao",
       "flags": [
@@ -83,10 +83,10 @@
     },
     {
       "rank": 7,
-      "title": "Lanaudière / Raccordement ligne 120 kV de la Mine Nouveau Monde Graphite - Déboisement de l’emprise de la ligne et aménagement de chemins d’accès en terres privées",
-      "buyer": "Hydro-Québec.",
-      "closing_date": "2026-08-13",
-      "score": 93,
+      "title": "Services professionnels multidisciplinaires – Mise à niveau du bassin de rétention du parc du Centenaire",
+      "buyer": "Ville de Dollard-des-Ormeaux",
+      "closing_date": "2026-09-21",
+      "score": 91,
       "source": "seao",
       "flags": [
         "value_unknown"
@@ -94,10 +94,10 @@
     },
     {
       "rank": 8,
-      "title": "NPTB - Nouveaux pavages, trottoirs et bordures sur  la rue du Vert et l'Ave. Andrée-Champagne",
-      "buyer": "Ville de Saint-Hyacinthe .",
-      "closing_date": "2026-08-17",
-      "score": 93,
+      "title": "Services professionnels pour la réfection du poste de pompage sanitaire Martel",
+      "buyer": "Ville de Chambly",
+      "closing_date": "2026-09-21",
+      "score": 91,
       "source": "seao",
       "flags": [
         "value_unknown"
@@ -105,10 +105,10 @@
     },
     {
       "rank": 9,
-      "title": "6610-26-4696 - Déneigement, déglaçage, fourniture, chargement des matériaux et transport de la neige du trottoir du Pont de Québec et de la piste cyclable (Chaudière-Appalaches).",
+      "title": "2512-26-FE10 - Effectuer la préparation d’un APD préliminaires et définitifs pour la reconstruction des ponceaux P-17951 et P-18131, situés sous l’autoroute 20, au-dessus de la rivière à la Graisse et du ruisseau Ménard-Thibault (Les Cèdres",
       "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
-      "closing_date": "2026-08-17",
-      "score": 93,
+      "closing_date": "2026-09-21",
+      "score": 91,
       "source": "seao",
       "flags": [
         "value_unknown"
@@ -116,9 +116,9 @@
     },
     {
       "rank": 10,
-      "title": "Remplacement des lampadaires - secteurs des Érablières et chemin Larocque",
-      "buyer": "Ville de Salaberry-de-Valleyfield",
-      "closing_date": "2026-08-24",
+      "title": "2503-21-1103 - Contrat suivant la qualif. en travaux complexes de const. ou d'ouvrage d'art, selon liste en vigueur au dépôt de la soumission, pour la construction d'un échangeur, de l'autoroute A-640 et Ave. Urbanova (Terrebonne)",
+      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
+      "closing_date": "2026-09-21",
       "score": 91,
       "source": "seao",
       "flags": [
@@ -127,9 +127,9 @@
     },
     {
       "rank": 11,
-      "title": "Déneigement et entretien hivernal des rues, stationnements municipaux et ouverture printanière de chemins de villégiature",
-      "buyer": "Municipalité d'Aguanish",
-      "closing_date": "2026-08-24",
+      "title": "Entretien des chemins d'hiver",
+      "buyer": "Municipalité de Saint-Joseph-de-Coleraine.",
+      "closing_date": "2026-09-24",
       "score": 91,
       "source": "seao",
       "flags": [
@@ -138,9 +138,9 @@
     },
     {
       "rank": 12,
-      "title": "Inspection télévisée des conduites et regards d'égouts",
-      "buyer": "Ville de Mont-Tremblant.",
-      "closing_date": "2026-08-24",
+      "title": "Services professionnels pour la réalisation d’un rapport d’appréciation des risques liés aux inondations et à la mobilité des cours d’eau et à l’analyse de solution d’adaptation pour le bassin versant de la rivière Bécancour",
+      "buyer": "MRC DE BÉCANCOUR.",
+      "closing_date": "2026-09-25",
       "score": 91,
       "source": "seao",
       "flags": [
@@ -149,9 +149,9 @@
     },
     {
       "rank": 13,
-      "title": "Entretien hivernal des diverses rues (gravier et pavage) - Secteur du lac Saint-Augustin",
-      "buyer": "Ville de Québec",
-      "closing_date": "2026-08-24",
+      "title": "Remplacement des variateurs de vitesse des groupes motopompes de la station d'épuration des eaux usées J.-R.-Marcotte",
+      "buyer": "Ville de Montréal - Service de l'Eau",
+      "closing_date": "2026-09-29",
       "score": 91,
       "source": "seao",
       "flags": [
@@ -160,9 +160,9 @@
     },
     {
       "rank": 14,
-      "title": "Services professionnels – Préparation de plans et devis et surveillance – Mise à niveau des ouvrages d’assainissement des eaux usées",
-      "buyer": "Ville de Disraeli.",
-      "closing_date": "2026-08-24",
+      "title": "Services Professionnels en ingénierie et architecture pour des infrastructures de gestion des eaux pluviales et des eaux usées - Service de l'eau",
+      "buyer": "Ville de Montréal - Service de l'approvisionnement",
+      "closing_date": "2026-09-29",
       "score": 91,
       "source": "seao",
       "flags": [
@@ -171,9 +171,9 @@
     },
     {
       "rank": 15,
-      "title": "Entretien d’hiver des chemins municipaux pour les saisons  2026-2027, 2027-2028, 2028-2029",
-      "buyer": "Municipalité de Sainte-Émélie-de-l'Énergie.",
-      "closing_date": "2026-08-24",
+      "title": "Travaux électriques pour l'éclairage sportif et structures de support",
+      "buyer": "Parc olympique",
+      "closing_date": "2026-10-07",
       "score": 91,
       "source": "seao",
       "flags": [
@@ -182,10 +182,10 @@
     },
     {
       "rank": 16,
-      "title": "Vidange, transport et disposition des boues de l'usine de traitement des eaux usées 2027",
-      "buyer": "Municipalité de Mont-Saint-Grégoire.",
-      "closing_date": "2026-08-25",
-      "score": 91,
+      "title": "RÉFECTION PONCEAUX RANG CLEARY ET CHEMIN NORD",
+      "buyer": "Municipalité de Saint-Joachim-de-Shefford.",
+      "closing_date": "2026-09-08",
+      "score": 90,
       "source": "seao",
       "flags": [
         "value_unknown"
@@ -193,10 +193,10 @@
     },
     {
       "rank": 17,
-      "title": "Fourniture et livraison de produits de béton préfabriqués",
-      "buyer": "Ville de Lévis.",
-      "closing_date": "2026-08-26",
-      "score": 91,
+      "title": "ENTRETIEN ET DÉNEIGEMENT DES TROTTOIRS ET CHEMINS D'HIVER ET NETTOYAGE DES RUES DU PÉRIMÈTRE URBAIN",
+      "buyer": "Municipalité de Saint-Joseph-de-Kamouraska",
+      "closing_date": "2026-09-08",
+      "score": 90,
       "source": "seao",
       "flags": [
         "value_unknown"
@@ -204,10 +204,10 @@
     },
     {
       "rank": 18,
-      "title": "Réfection du poste de pompage SP-02",
-      "buyer": "Ville de Lévis.",
-      "closing_date": "2026-08-26",
-      "score": 91,
+      "title": "Contrat de déneigement, de déglaçage et d'entretien des chaussées",
+      "buyer": "Municipalité de Trois-Rives",
+      "closing_date": "2026-09-10",
+      "score": 89,
       "source": "seao",
       "flags": [
         "value_unknown"
@@ -215,10 +215,10 @@
     },
     {
       "rank": 19,
-      "title": "7103-26-0001 - Réfection de sept (7) ponceaux sur la route 138 (Saint-Siméon)",
-      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
-      "closing_date": "2026-08-26",
-      "score": 91,
+      "title": "Remplacement du système de prétraitement de la station d’épuration des eaux usées – Conception et construction",
+      "buyer": "Ville de Sainte-Adèle.",
+      "closing_date": "2026-09-10",
+      "score": 89,
       "source": "seao",
       "flags": [
         "value_unknown"
@@ -226,10 +226,10 @@
     },
     {
       "rank": 20,
-      "title": "Services professionnels d’ingénieurs-conseils – Réfection routière 2026 – Secteurs de Buckingham et de Gatineau",
-      "buyer": "Ville de Gatineau.",
-      "closing_date": "2026-08-26",
-      "score": 91,
+      "title": "Remplacement du système d’aération des bassins aérés de la station d’épuration des eaux usées – Conception et construction",
+      "buyer": "Ville de Sainte-Adèle.",
+      "closing_date": "2026-09-10",
+      "score": 89,
       "source": "seao",
       "flags": [
         "value_unknown"
@@ -237,10 +237,10 @@
     },
     {
       "rank": 21,
-      "title": "Travaux de réfection des perrons à la Maison des gouverneurs, située au 90, chemin des Patriotes",
-      "buyer": "Ville de Sorel-Tracy (approvisionnement)",
-      "closing_date": "2026-08-26",
-      "score": 91,
+      "title": "Services professionnels en ingénierie des structures et génie civil  Habitations Lenoir-Saint-Henri (0335) 3721 À 3731 Rue Sainte-Émilie",
+      "buyer": "OMH de Montréal (OMHM)",
+      "closing_date": "2026-09-10",
+      "score": 89,
       "source": "seao",
       "flags": [
         "value_unknown"
@@ -248,10 +248,10 @@
     },
     {
       "rank": 22,
-      "title": "Remplacement du système de prétraitement de la station d’épuration des eaux usées – Conception et construction",
-      "buyer": "Ville de Sainte-Adèle.",
-      "closing_date": "2026-08-27",
-      "score": 91,
+      "title": "Pavage de diverses rues municipales",
+      "buyer": "Ville de Grande-Rivière.",
+      "closing_date": "2026-09-10",
+      "score": 89,
       "source": "seao",
       "flags": [
         "value_unknown"
@@ -259,10 +259,10 @@
     },
     {
       "rank": 23,
-      "title": "Remplacement du système d’aération des bassins aérés de la station d’épuration des eaux usées – Conception et construction",
-      "buyer": "Ville de Sainte-Adèle.",
-      "closing_date": "2026-08-27",
-      "score": 91,
+      "title": "CI32 - Construction des structures auxiliaires SA1, SA2 et SA3",
+      "buyer": "Société de transport de Montréal",
+      "closing_date": "2026-09-10",
+      "score": 89,
       "source": "seao",
       "flags": [
         "value_unknown"
@@ -270,10 +270,10 @@
     },
     {
       "rank": 24,
-      "title": "Services professionnels d'ingénieries - Prolongement d'infrastructures municipales sur la rue Gabrielle-Roy, Saint-Janvier",
-      "buyer": "Ville de Mirabel",
-      "closing_date": "2026-08-27",
-      "score": 91,
+      "title": "26045-C Reconstruction du bâtiment d'opération du barrage Mitchinamecus Municipalité régionale de Compté d'Antoine-Labelle",
+      "buyer": "Ministère de l'Environnement, de la Lutte contre les changements climatiques, de la Faune et des Parcs",
+      "closing_date": "2026-09-10",
+      "score": 89,
       "source": "seao",
       "flags": [
         "value_unknown"
@@ -281,10 +281,10 @@
     },
     {
       "rank": 25,
-      "title": "Fourniture de services d’analyse de laboratoire des eaux usées et de boues pour les années 2027, 2028, 2029",
-      "buyer": "Régie Intermunicipale d'assainissement des eaux usées de St-Bruno-de-Montarville et St-Basile-le-Grand",
-      "closing_date": "2026-08-27",
-      "score": 91,
+      "title": "9302-26-8502 - Réfection de la structure P-19242 au point milliaire 26.90 de la subdivision Cascapédia, sur le Chemin de fer de la Gaspésie (Escuminac)",
+      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
+      "closing_date": "2026-09-10",
+      "score": 89,
       "source": "seao",
       "flags": [
         "value_unknown"

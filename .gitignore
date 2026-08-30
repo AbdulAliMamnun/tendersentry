@@ -22,3 +22,10 @@ web/.vercel/
 # `python3 -m model.inflation --extract`.
 data/statcan/*.csv
 data/statcan/*.zip
+
+# The CanadaBuys open-data CSV, re-downloaded by every ingest. It was tracked, which
+# would have gone wrong quietly: the daily workflow stages only web/data and the slim
+# database, so this file would have frozen in git at its 2026-07-29 state while the
+# database moved on — a committed 6 MB artifact that disagrees with the data derived
+# from it. Regenerable by `python3 -m notices.ingest --source canadabuys`.
+data/open_tender_notices.csv
