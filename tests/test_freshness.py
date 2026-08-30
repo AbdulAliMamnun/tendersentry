@@ -6,16 +6,29 @@ working perfectly on a pool that stopped being true weeks ago. A ranked board of
 notices that all closed last month is not a degraded product, it is a wrong one, and
 until now nothing in the repo would have said so.
 
-Two independent conditions, because they fail for different reasons and a single
-check would miss one of them:
+Five conditions. Each catches something none of the others can, which is the only
+reason to have five rather than one:
 
-* **Age** — the pool has not been re-exported recently. Something is wrong with the
-  refresh: the schedule is disabled, the job is failing, credentials expired.
-* **Closed share** — the pool is being re-exported but the notices in it have aged
-  out. The refresh is running and still not delivering usable data.
+* **(a) export age** — the export stopped running. The schedule is disabled, the job
+  is failing, credentials expired. *Machinery.*
+* **(b) closed share** — the pool is being re-exported but its notices have aged out.
+  *Result.*
+* **(c) ingest age** — **ingestion stopped while the export kept running.** This is
+  the failure the daily refresh exists to prevent, and until `max_ingested_at` was
+  carried into the manifest it was undetectable: an export that ingests nothing still
+  writes a perfectly fresh `generated_at`, so (a) stays green, and (b) only notices
+  weeks later once enough notices have expired. *Intake.*
+* **(d) rankable floor** — the pool has collapsed in absolute terms. Distinct from
+  (b): a pool of 300 notices that are all open passes the closed-share check and is
+  still too thin to rank against. *Volume.*
+* **(e) per-region floor** — one *source* stopped while the other carried the total.
+  If CanadaBuys broke and SEAO kept working, the total sails past (d) while an
+  Ontario contractor loses every nationally-open notice. Only a per-region count
+  sees it. *Source coverage.*
 
-The first is about the machinery, the second about the result. A run can pass the
-first and fail the second.
+(a) and (c) look similar and are not. (a) is about the last write; (c) is about the
+last arrival. The gap between them is precisely the failure that motivated this
+module.
 
 **These thresholds are not tuned to pass.** At the time of writing both fire — the
 pool was exported 2026-08-04 and 1,595 of its 2,003 notices have closed. That is the
@@ -53,6 +66,45 @@ MAX_EXPORT_AGE_DAYS = 7
 #: rows — it means the pool it filters from has thinned to the point where an
 #: honest board is a short one.
 MAX_CLOSED_SHARE = 0.50
+
+#: How stale intake may be before it counts as stopped.
+#:
+#: Same seven days as the export age, for the same reason, but measuring a different
+#: thing. Note what `ingested_at` is: the moment a notice was first INSERTED, never
+#: touched on update. So this fires if seven days pass with no *new* notice from
+#: either source — across CanadaBuys and SEAO combined, which publish continuously.
+#: A day of pure updates does not advance it, which is why the window is a week and
+#: not a day.
+MAX_INGEST_AGE_DAYS = 7
+
+#: Rankable notices — open, not yet closed — below which the pool has collapsed.
+#:
+#: Derived from the pool's own history, reconstructed from the database: over the
+#: reliable window the rankable pool ran 1,835–2,208. 750 sits 2.4x below the lowest
+#: healthy observation and 1.8x above today's broken 408, so it separates a genuine
+#: collapse from ordinary week-to-week variation without sitting near either.
+MIN_RANKABLE = 750
+
+#: Per-region floors, and they are not the same kind of number as each other.
+#:
+#: Counted the way the ranker counts (a null region or a `CA` code matches every
+#: filter), the two regions behaved very differently over the same history:
+#:
+#:   QC-visible   1,609 – 2,119 healthy, 295 today   -> floor 600, 2.7x headroom
+#:   ON-visible     152 –   436 healthy, 207 today   -> floor 120, see below
+#:
+#: **The Ontario floor is the soft one and should be read as provisional.** It is
+#: derived from five sampled historical dates, and its margin is 21% below the
+#: observed minimum of 152 — against 2.4x and 2.7x for the global and Québec floors.
+#: It is deliberately set BELOW today's 207, because Ontario is not what is broken
+#: today: any floor above 207 would also have failed on healthy days (2026-04-10 sat
+#: at 152), making this module permanently red and training everyone to ignore it.
+#: What it does catch is a CanadaBuys outage, which would drop Ontario near 45.
+#:
+#: Revisit it once the cron has produced a month of real daily variance. Five sampled
+#: points are enough to rule out the obviously wrong values and not enough to know the
+#: true floor.
+MIN_RANKABLE_BY_REGION = {"ON": 120, "QC": 600}
 
 
 def _load(path: Path) -> dict:
@@ -154,6 +206,101 @@ class PoolUsabilityTests(unittest.TestCase):
         )
 
 
+class IngestAgeTests(unittest.TestCase):
+    """Condition (c): is anything still arriving?
+
+    The one an export cannot detect about itself. A refresh that runs perfectly and
+    ingests nothing satisfies every other check here for weeks.
+    """
+
+    def test_new_notices_are_still_arriving(self) -> None:
+        self.assertTrue(MANIFEST_PATH.is_file(), f"no manifest at {MANIFEST_PATH}")
+        manifest = _load(MANIFEST_PATH)
+
+        stamp = manifest.get("max_ingested_at")
+        self.assertIsNotNone(
+            stamp,
+            "manifest carries no max_ingested_at; re-export with "
+            "scripts.export_model_service so intake staleness is detectable",
+        )
+        arrived = datetime.fromisoformat(str(stamp))
+        if arrived.tzinfo is None:
+            arrived = arrived.replace(tzinfo=timezone.utc)
+        age_days = (datetime.now(timezone.utc) - arrived).total_seconds() / 86400.0
+
+        self.assertLessEqual(
+            age_days,
+            MAX_INGEST_AGE_DAYS,
+            f"\nNo new notice has arrived in {age_days:.1f} days "
+            f"(limit {MAX_INGEST_AGE_DAYS}).\n"
+            f"  newest ingest: {stamp}\n"
+            f"  last export:   {manifest.get('generated_at')}\n"
+            "The export may be running while ingestion is not — the failure the "
+            "daily refresh exists to prevent. Check the ingest step of the most "
+            "recent Actions run: it can exit 0 having fetched nothing.\n"
+            "Do not raise this threshold to make the suite green.",
+        )
+
+
+class RankableVolumeTests(unittest.TestCase):
+    """Conditions (d) and (e): is there enough left to rank against?"""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        if not MANIFEST_PATH.is_file():
+            raise unittest.SkipTest(f"no manifest at {MANIFEST_PATH}")
+        cls.manifest = _load(MANIFEST_PATH)
+        cls.rankable = cls.manifest.get("rankable")
+
+    def test_the_manifest_reports_what_is_rankable(self) -> None:
+        self.assertIsNotNone(
+            self.rankable,
+            "manifest carries no rankable block; the pool count alone describes "
+            "notices nobody is served",
+        )
+
+    def test_enough_notices_are_still_rankable(self) -> None:
+        self.assertIsNotNone(self.rankable, "manifest carries no rankable block")
+        count = self.rankable["count"]
+
+        self.assertGreaterEqual(
+            count,
+            MIN_RANKABLE,
+            f"\nOnly {count} notices are rankable (floor {MIN_RANKABLE}).\n"
+            f"  measured as of: {self.rankable['as_of']}\n"
+            f"  pool size:      {self.manifest['pool']['count']}\n"
+            f"  by region:      {self.rankable['by_region']}\n"
+            "Healthy has been 1,835-2,208. This is what a visitor is ranked "
+            "against, not what the pool contains.\n"
+            "Do not lower this floor to make the suite green.",
+        )
+
+    def test_each_region_has_enough_to_rank(self) -> None:
+        """Catches a single-source outage the global floor would mask."""
+        self.assertIsNotNone(self.rankable, "manifest carries no rankable block")
+        by_region = self.rankable["by_region"]
+
+        failures = []
+        for region, floor in sorted(MIN_RANKABLE_BY_REGION.items()):
+            actual = by_region.get(region)
+            if actual is None:
+                failures.append(f"  {region}: not counted in the manifest")
+            elif actual < floor:
+                failures.append(f"  {region}: {actual} rankable, floor {floor}")
+
+        self.assertFalse(
+            failures,
+            "\nA region has too little to rank against:\n"
+            + "\n".join(failures)
+            + f"\n  all regions: {self.rankable['count']}"
+            + f"\n  measured as of: {self.rankable['as_of']}\n"
+            "Counted the way the ranker counts, where a null region or a CA code "
+            "matches every filter. One region collapsing while the total holds up "
+            "means a source stopped, not that the market did.\n"
+            "Do not lower these floors to make the suite green.",
+        )
+
+
 class ThresholdIntegrityTests(unittest.TestCase):
     """Guard the guard.
 
@@ -177,6 +324,29 @@ class ThresholdIntegrityTests(unittest.TestCase):
             "MAX_CLOSED_SHARE was raised above 0.50. Past half, the pool is mostly "
             "notices nobody can bid on.",
         )
+
+    def test_the_ingest_age_threshold_has_not_been_loosened(self) -> None:
+        self.assertLessEqual(
+            MAX_INGEST_AGE_DAYS,
+            7,
+            "MAX_INGEST_AGE_DAYS was raised above 7. Both sources publish "
+            "continuously; a longer window lets intake stop unnoticed for over a week.",
+        )
+
+    def test_the_rankable_floor_has_not_been_lowered(self) -> None:
+        self.assertGreaterEqual(
+            MIN_RANKABLE,
+            750,
+            "MIN_RANKABLE was lowered below 750. Healthy has been 1,835-2,208; "
+            "below 750 the floor stops separating a collapse from normal variation.",
+        )
+
+    def test_the_regional_floors_have_not_been_lowered(self) -> None:
+        # ON is knowingly the soft one — provisional, 21% below its observed minimum,
+        # and due a revisit once the cron has produced a month of real variance. That
+        # is a reason to re-derive it from better data, not to quietly lower it.
+        self.assertGreaterEqual(MIN_RANKABLE_BY_REGION["ON"], 120)
+        self.assertGreaterEqual(MIN_RANKABLE_BY_REGION["QC"], 600)
 
 
 if __name__ == "__main__":
