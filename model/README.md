@@ -155,8 +155,40 @@ instead of padding the list to ten rows.
 ```bash
 python3 -m model.inflation --extract data/statcan/18100289.csv   # once, or on refresh
 python3 -m model.scale --report                                  # held-out comparison
-python3 -m model.scale --backfill                                # write bands to the DB
+python3 -m model.scale --fit                                     # RETRAIN: write the artifact
+python3 -m model.scale --backfill                                # DAILY: band new notices
+python3 -m model.scale --backfill --all                          # after a --fit, re-band everything
 ```
+
+### `--fit` must run before any `--backfill`
+
+The estimators are artifacts, committed at `model/artifacts/scale-estimator.json` (the
+lookup cells, the categorical orders, and the provenance) and
+`model/artifacts/scale-estimator.lgb` (the LightGBM regressor). 2.4 MB for the pair.
+
+**`--backfill` never refits.** With no artifact it exits 1 naming `--fit`. That is
+deliberate and it is the whole point of the split: refitting from whatever corpus the
+database happens to hold produces bands that are indistinguishable from correct ones —
+no error, no warning, just different numbers on a public page. A missing file is a
+failure you find in seconds; a quietly partial corpus is one you find months later, if
+ever.
+
+The consequence for scheduling: **the first `--backfill` on any new machine, container,
+or cron runner will fail unless `--fit` has run and its artifact is present.** The
+artifact is committed, so a clean checkout already has it — but a workflow that fits and
+backfills in the same job must order them, and one that only backfills must not assume
+it can recover on its own.
+
+`--fit` belongs to the retrain path and runs when `bid_interactions` changes.
+`--backfill` is a daily step: it touches only notices with no band yet, which after
+ingestion is the handful just added. Pass `--all` to re-band the full table, which is
+what a fresh `--fit` requires — otherwise the existing 48,834 bands go on describing the
+previous fit while the artifact claims otherwise.
+
+Verified on the current database: banding all 48,834 notices from the artifact changed
+zero rows against the bands the in-line refit had produced, so the split is a change of
+mechanism and not of output. Wall clock went from roughly 5–10 minutes to 31 seconds for
+a full pass and about 1 second for an incremental one.
 
 Under 1% of open notices publish a value — 241 of 48,834 — so the first question a
 contractor asks is unanswerable from the notice almost every time. But 199,714 past

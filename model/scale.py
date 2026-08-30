@@ -17,6 +17,18 @@ nothing.
 A notice with no signal gets ``unknown``. A band is never forced: "we don't know" is a
 usable answer to a contractor and a fabricated band is not.
 
+**The estimators are artifacts, and ``--fit`` must run before any ``--backfill``.**
+
+    python3 -m model.scale --fit          # reads bid_interactions, writes the artifact
+    python3 -m model.scale --backfill     # reads the artifact, writes scale_* columns
+
+``--backfill`` never refits. Without ``model/artifacts/scale-estimator.json`` it exits
+naming ``--fit`` rather than rebuilding the corpus, because a refit against a partial
+database produces bands that look exactly like correct ones. ``--fit`` belongs to the
+retrain path and runs when ``bid_interactions`` changes; ``--backfill`` is a daily step
+and touches only notices with no band yet, unless ``--all`` is passed. Re-fit and you
+want ``--backfill --all``, or the existing bands go on describing the previous fit.
+
 **Estimates are never model features.** They filter and they display, and a declared
 job size applies the same bounded modifier `matchrec.scoring` uses — nothing more. The
 estimate is derived from the notice's title, and so is the trade match; feeding one
@@ -39,8 +51,10 @@ import math
 import re
 import sqlite3
 import statistics
+import subprocess
 from collections import defaultdict
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -52,6 +66,17 @@ from notices.normalize import normalize_buyer_type
 
 
 LOGGER = logging.getLogger(__name__)
+
+#: Where the fitted estimators live. Committed, because the bands they produce are
+#: published and an unreproducible published number is the thing this repo keeps
+#: refusing to ship.
+ARTIFACT_DIR = Path(config.PROJECT_ROOT) / "model" / "artifacts"
+ESTIMATOR_PATH = ARTIFACT_DIR / "scale-estimator.json"
+BOOSTER_PATH = ARTIFACT_DIR / "scale-estimator.lgb"
+
+#: Bumped when the artifact's shape changes in a way a previous loader would
+#: misread. A mismatch fails the load rather than reading the old shape wrongly.
+ARTIFACT_VERSION = 1
 
 #: Bands in ascending order. The upper bound is exclusive.
 BANDS: tuple[tuple[str, float, float], ...] = (
@@ -402,6 +427,228 @@ def fit_gbm(awards: list[Award], embeddings: Any) -> GbmEstimator:
 
 
 # --------------------------------------------------------------------------------------
+# Artifacts — fit once, load thereafter
+# --------------------------------------------------------------------------------------
+
+
+class MissingArtifact(RuntimeError):
+    """Raised when a backfill is asked to run without a fitted estimator.
+
+    Deliberately fatal. The alternative — refitting from whatever corpus happens to
+    be reachable — is the failure this whole artifact exists to remove: a partial
+    corpus produces plausible bands with no error, and nothing downstream can tell
+    the difference between a band learned from 187,870 awards and one learned from
+    a thousand.
+    """
+
+
+def git_revision() -> str | None:
+    """Current git revision, or None outside a repository."""
+    try:
+        completed = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"],
+            cwd=str(config.PROJECT_ROOT),
+            capture_output=True,
+            text=True,
+            timeout=10,
+            check=False,
+        )
+    except (OSError, subprocess.SubprocessError) as exc:
+        LOGGER.warning("Could not read the git revision: %s", exc)
+        return None
+    return completed.stdout.strip() or None
+
+
+def _encode_keys(mapping: dict[tuple, Any]) -> list[list]:
+    """Tuple keys as JSON lists.
+
+    Not joined into a delimited string: key parts are trade slugs, buyer types and
+    region codes drawn from source data, and any separator chosen here would be one
+    a future slug could contain.
+    """
+    return [[list(key), value] for key, value in mapping.items()]
+
+
+def _decode_keys(pairs: Any) -> dict[tuple, Any]:
+    return {tuple(key): value for key, value in pairs}
+
+
+def save_estimators(
+    lookup: LookupEstimator,
+    gbm: GbmEstimator | None,
+    awards: list[Award],
+    estimator_path: Path | str | None = None,
+    booster_path: Path | str | None = None,
+) -> dict[str, Any]:
+    """Write the fitted estimators and the provenance that explains them."""
+    estimator_file = Path(estimator_path or ESTIMATOR_PATH)
+    booster_file = Path(booster_path or BOOSTER_PATH)
+    estimator_file.parent.mkdir(parents=True, exist_ok=True)
+
+    if gbm is not None:
+        gbm.model.booster_.save_model(str(booster_file))
+    elif booster_file.exists():
+        # A lookup-only refit must not leave the previous run's booster behind for
+        # the loader to pick up and pair with mismatched slug orders.
+        booster_file.unlink()
+
+    dates = [award.date for award in awards if award.date]
+    payload = {
+        "artifact_version": ARTIFACT_VERSION,
+        "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "git_revision": git_revision(),
+        "corpus": {
+            "awards": len(awards),
+            "date_filter": f"interaction_date >= {CORPUS_START}",
+            "corpus_start": CORPUS_START,
+            "first_award": min(dates) if dates else None,
+            "last_award": max(dates) if dates else None,
+            "min_amount": MIN_AMOUNT,
+            "max_amount": MAX_AMOUNT,
+            "source_table": "bid_interactions",
+            "source_filter": "won = 1 AND bid_amount IS NOT NULL",
+        },
+        "deflator": dict(inflation.SERIES),
+        "bands": list(BAND_NAMES),
+        "lookup": {
+            "min_cell": lookup.min_cell,
+            "cells_above_floor": len(lookup.cells),
+            "buckets_total": len(lookup.counts),
+            "global_median": lookup.global_median,
+            "cells": _encode_keys(lookup.cells),
+            "counts": _encode_keys(lookup.counts),
+        },
+        "gbm": None
+        if gbm is None
+        else {
+            "booster_file": booster_file.name,
+            "embedding_model": embeddings_model_name(),
+            "slug_order": gbm.slug_order,
+            "buyer_order": gbm.buyer_order,
+            "region_order": gbm.region_order,
+        },
+        "notes": [
+            "Bands are ESTIMATES unless scale_source is 'published'. Any surface "
+            "showing a band must show its source alongside it.",
+            "The corpus is 99.96% Quebec, so a band on an Ontario notice is an "
+            "inference from Quebec comparables.",
+            "Amounts are deflated to current dollars before fitting; awards before "
+            f"{CORPUS_START} are excluded rather than carried unadjusted.",
+            "Scale estimates are a filter and a bounded modifier only, never a "
+            "ranking-model feature.",
+        ],
+    }
+    with estimator_file.open("w", encoding="utf-8") as handle:
+        json.dump(payload, handle, ensure_ascii=False, indent=2)
+        handle.write("\n")
+
+    LOGGER.info(
+        "Wrote %s (%.1f KB) and %s",
+        estimator_file.name,
+        estimator_file.stat().st_size / 1024,
+        booster_file.name if gbm is not None else "(no booster: lookup-only fit)",
+    )
+    return payload
+
+
+def embeddings_model_name() -> str:
+    """The embedding model name, without importing torch when nobody needs it."""
+    from model import embeddings as emb
+
+    return emb.MODEL_NAME
+
+
+def load_estimators(
+    estimator_path: Path | str | None = None,
+    booster_path: Path | str | None = None,
+) -> tuple[LookupEstimator, GbmEstimator | None, dict[str, Any]]:
+    """Load the fitted estimators, or fail loudly naming ``--fit``."""
+    estimator_file = Path(estimator_path or ESTIMATOR_PATH)
+    if not estimator_file.is_file():
+        raise MissingArtifact(
+            f"No scale estimator at {estimator_file}. Fit one first:\n"
+            f"    python3 -m model.scale --fit\n"
+            "A backfill will not refit from the database: doing so silently produces "
+            "bands from whatever corpus is reachable, which is indistinguishable "
+            "from a correct run."
+        )
+    try:
+        with estimator_file.open(encoding="utf-8") as handle:
+            payload = json.load(handle)
+    except (OSError, json.JSONDecodeError) as exc:
+        raise MissingArtifact(
+            f"Could not read the scale estimator at {estimator_file}: {exc}. "
+            "Re-fit it with `python3 -m model.scale --fit`."
+        ) from exc
+
+    version = payload.get("artifact_version")
+    if version != ARTIFACT_VERSION:
+        raise MissingArtifact(
+            f"Scale estimator at {estimator_file} is version {version!r}, but this "
+            f"code reads version {ARTIFACT_VERSION}. Re-fit it with "
+            "`python3 -m model.scale --fit`."
+        )
+
+    body = payload.get("lookup") or {}
+    lookup = LookupEstimator(min_cell=int(body.get("min_cell", MIN_CELL)))
+    lookup.cells = _decode_keys(body.get("cells") or [])
+    lookup.counts = _decode_keys(body.get("counts") or [])
+    lookup.global_median = body.get("global_median")
+
+    gbm = None
+    gbm_body = payload.get("gbm")
+    if gbm_body:
+        booster_file = Path(booster_path or BOOSTER_PATH)
+        if not booster_file.is_file():
+            raise MissingArtifact(
+                f"{estimator_file.name} describes a GBM but {booster_file} is "
+                "missing. Re-fit with `python3 -m model.scale --fit`."
+            )
+        from lightgbm import Booster
+
+        gbm = GbmEstimator(
+            model=Booster(model_file=str(booster_file)),
+            slug_order=list(gbm_body.get("slug_order") or []),
+            buyer_order=list(gbm_body.get("buyer_order") or []),
+            region_order=list(gbm_body.get("region_order") or []),
+        )
+
+    LOGGER.info(
+        "Loaded scale estimator generated %s (%s awards, %d cells, gbm=%s)",
+        payload.get("generated_at"),
+        (payload.get("corpus") or {}).get("awards"),
+        len(lookup.cells),
+        gbm is not None,
+    )
+    return lookup, gbm, payload
+
+
+def fit(
+    connection: sqlite3.Connection,
+    use_gbm: bool = True,
+    estimator_path: Path | str | None = None,
+    booster_path: Path | str | None = None,
+) -> dict[str, Any]:
+    """Build the corpus, fit both estimators, and write the artifact."""
+    awards = build_corpus(connection)
+    if not awards:
+        raise RuntimeError(
+            "The corpus is empty; refusing to write an estimator that would band "
+            "every notice from nothing."
+        )
+    lookup = LookupEstimator().fit(awards)
+
+    gbm = None
+    if use_gbm:
+        from model import embeddings as emb
+
+        vectors = emb.embed([award.title for award in awards])
+        gbm = fit_gbm(awards, vectors)
+
+    return save_estimators(lookup, gbm, awards, estimator_path, booster_path)
+
+
+# --------------------------------------------------------------------------------------
 # Combined estimate
 # --------------------------------------------------------------------------------------
 
@@ -562,30 +809,43 @@ def _primary_slug(notice: dict, mapping: trades.TradeMapping) -> str | None:
     return slugs[0] if slugs else None
 
 
-def backfill(connection: sqlite3.Connection, use_gbm: bool = True) -> dict[str, Any]:
-    """Estimate every tender and write the three columns. Idempotent and re-runnable."""
+def backfill(
+    connection: sqlite3.Connection,
+    all_rows: bool = False,
+    estimator_path: Path | str | None = None,
+    booster_path: Path | str | None = None,
+) -> dict[str, Any]:
+    """Band the notices that need it, from the fitted artifact. Re-runnable.
+
+    Incremental by default: only rows with no ``scale_band`` are touched, which on a
+    daily run is the handful of notices ingestion just added. ``all_rows`` forces a
+    full pass, which is what to use after re-fitting the estimator — otherwise the
+    existing bands keep describing the previous fit.
+
+    Never refits. A missing artifact raises :class:`MissingArtifact`.
+    """
     db.migrate_scale_columns(connection)
 
-    awards = build_corpus(connection)
-    lookup = LookupEstimator().fit(awards)
-
-    gbm = None
+    lookup, gbm, provenance = load_estimators(estimator_path, booster_path)
     embeddings_for = None
-    if use_gbm:
-        try:
-            from model import embeddings as emb
+    if gbm is not None:
+        from model import embeddings as emb
 
-            vectors = emb.embed([a.title for a in awards])
-            gbm = fit_gbm(awards, vectors)
-            embeddings_for = emb
-        except Exception as error:  # pragma: no cover - optional dependency path
-            LOGGER.warning("GBM unavailable (%s); falling back to the lookup", error)
+        embeddings_for = emb
 
-    rows = connection.execute(
+    query = (
         "SELECT t.id, t.title, t.buyer_name, t.buyer_type, t.region, t.estimated_value, "
         "       nt.trade_slugs "
         "FROM tenders t LEFT JOIN notice_trades nt ON nt.tender_id = t.id"
-    ).fetchall()
+    )
+    if not all_rows:
+        query += " WHERE t.scale_band IS NULL"
+    rows = connection.execute(query).fetchall()
+    LOGGER.info(
+        "Banding %d notices (%s)",
+        len(rows),
+        "full pass" if all_rows else "unbanded only",
+    )
 
     notices = []
     for row in rows:
@@ -603,21 +863,22 @@ def backfill(connection: sqlite3.Connection, use_gbm: bool = True) -> dict[str, 
             }
         )
 
-    title_vectors = None
-    if gbm is not None and embeddings_for is not None:
-        title_vectors = embeddings_for.embed([str(n["title"] or "") for n in notices])
-
     mapping = trades.load_mapping()
 
-    # One batched call rather than 48,834 single-row predictions.
+    # One batched call rather than one prediction per notice. Only rows the GBM will
+    # actually score are embedded — a published value or a missing slug sends the
+    # notice down another tier, and embedding its title would be work thrown away.
     predicted: dict[int, float] = {}
-    if gbm is not None and title_vectors is not None:
+    if gbm is not None and embeddings_for is not None:
         rows_for_gbm = [
             index
             for index, notice in enumerate(notices)
             if not notice["estimated_value"] and _primary_slug(notice, mapping)
         ]
         if rows_for_gbm:
+            title_vectors = embeddings_for.embed(
+                [str(notices[i]["title"] or "") for i in rows_for_gbm]
+            )
             values = gbm.predict_many(
                 [_primary_slug(notices[i], mapping) for i in rows_for_gbm],
                 [
@@ -626,7 +887,7 @@ def backfill(connection: sqlite3.Connection, use_gbm: bool = True) -> dict[str, 
                 ],
                 [notices[i]["region"] for i in rows_for_gbm],
                 [str(notices[i]["title"] or "") for i in rows_for_gbm],
-                title_vectors[rows_for_gbm],
+                title_vectors,
             )
             predicted = dict(zip(rows_for_gbm, values))
 
@@ -654,9 +915,14 @@ def backfill(connection: sqlite3.Connection, use_gbm: bool = True) -> dict[str, 
 
     summary = {
         "notices": len(updates),
-        "corpus_awards": len(awards),
+        "scope": "all" if all_rows else "unbanded",
         "by_source": dict(counts),
         "gbm": gbm is not None,
+        "estimator": {
+            "generated_at": provenance.get("generated_at"),
+            "git_revision": provenance.get("git_revision"),
+            "corpus_awards": (provenance.get("corpus") or {}).get("awards"),
+        },
     }
     LOGGER.info("Backfilled %d notices: %s", len(updates), dict(counts))
     return summary
@@ -664,16 +930,61 @@ def backfill(connection: sqlite3.Connection, use_gbm: bool = True) -> dict[str, 
 
 def _main() -> None:
     parser = argparse.ArgumentParser(description="Estimate contract scale for notices")
+    parser.add_argument(
+        "--fit",
+        action="store_true",
+        help="fit the estimators from bid_interactions and write the artifact",
+    )
     parser.add_argument("--backfill", action="store_true", help="write bands to the database")
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        help="with --backfill: re-band every notice, not only unbanded ones",
+    )
     parser.add_argument("--no-gbm", action="store_true", help="lookup baseline only")
     parser.add_argument("--report", action="store_true", help="held-out comparison")
     parser.add_argument("--db", default=None)
+    parser.add_argument("--artifact", default=None, help="path to scale-estimator.json")
+    parser.add_argument("--booster", default=None, help="path to scale-estimator.lgb")
     args = parser.parse_args()
 
     connection = db.connect(args.db)
     try:
-        if args.backfill:
-            print(json.dumps(backfill(connection, use_gbm=not args.no_gbm), indent=2))
+        if args.fit:
+            payload = fit(
+                connection,
+                use_gbm=not args.no_gbm,
+                estimator_path=args.artifact,
+                booster_path=args.booster,
+            )
+            print(
+                json.dumps(
+                    {
+                        key: value
+                        for key, value in payload.items()
+                        if key not in {"lookup", "notes"}
+                    }
+                    | {
+                        "lookup": {
+                            key: value
+                            for key, value in payload["lookup"].items()
+                            if key not in {"cells", "counts"}
+                        }
+                    },
+                    indent=2,
+                )
+            )
+        elif args.backfill:
+            try:
+                summary = backfill(
+                    connection,
+                    all_rows=args.all,
+                    estimator_path=args.artifact,
+                    booster_path=args.booster,
+                )
+            except MissingArtifact as error:
+                raise SystemExit(str(error)) from error
+            print(json.dumps(summary, indent=2))
         elif args.report:
             awards = build_corpus(connection)
             print(json.dumps(evaluate(awards, use_gbm=not args.no_gbm), indent=2))

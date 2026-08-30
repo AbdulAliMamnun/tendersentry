@@ -7,9 +7,13 @@ assert both halves, because a band that is always produced is worse than no band
 
 from __future__ import annotations
 
+import json
 import sqlite3
+import tempfile
 import unittest
+from pathlib import Path
 
+from matchrec import schema as matchrec_schema
 from model import inflation, scale
 from notices import db
 
@@ -205,6 +209,261 @@ class LookupTests(unittest.TestCase):
         self.assertEqual({}, lookup.cells)
         # It still answers, from the global median, and the caller sees the weaker cell.
         self.assertEqual("global", lookup.predict("roadwork", "municipal", "QC")[1])
+
+
+def _awards(count: int = 40) -> list[scale.Award]:
+    """A corpus spanning two trades and two bands, big enough to clear MIN_CELL."""
+    awards = []
+    for index in range(count):
+        big = index % 2 == 0
+        awards.append(
+            scale.Award(
+                ocid=f"ocid-{index}",
+                date="2024-03-15",
+                amount=5_000_000.0 if big else 60_000.0,
+                slug="roadwork" if big else "janitorial",
+                buyer_type="municipal",
+                region="QC",
+                title=(
+                    "Reconstruction de la rue Principale"
+                    if big
+                    else "Entretien menager edifice"
+                ),
+            )
+        )
+    return awards
+
+
+class ArtifactTests(unittest.TestCase):
+    """Round-trip: a loaded estimator must predict exactly what the fitted one did.
+
+    The lookup tier is asserted here rather than the GBM tier because it is the one
+    that survives without lightgbm installed; the GBM round-trip is covered by
+    `test_the_booster_round_trips_when_lightgbm_is_available`, which skips when it
+    is not.
+    """
+
+    def setUp(self) -> None:
+        self.temp = tempfile.TemporaryDirectory()
+        self.estimator = Path(self.temp.name) / "scale-estimator.json"
+        self.booster = Path(self.temp.name) / "scale-estimator.lgb"
+
+    def tearDown(self) -> None:
+        self.temp.cleanup()
+
+    def test_the_lookup_round_trips_through_the_artifact(self) -> None:
+        awards = _awards()
+        original = scale.LookupEstimator().fit(awards)
+        scale.save_estimators(original, None, awards, self.estimator, self.booster)
+
+        loaded, gbm, payload = scale.load_estimators(self.estimator, self.booster)
+
+        self.assertIsNone(gbm)
+        self.assertEqual(original.cells, loaded.cells)
+        self.assertEqual(original.counts, loaded.counts)
+        self.assertEqual(original.global_median, loaded.global_median)
+        self.assertEqual(original.min_cell, loaded.min_cell)
+        for slug in ("roadwork", "janitorial", "unheard-of"):
+            self.assertEqual(
+                original.predict(slug, "municipal", "QC"),
+                loaded.predict(slug, "municipal", "QC"),
+            )
+
+    def test_the_booster_round_trips_when_lightgbm_is_available(self) -> None:
+        try:
+            from model import embeddings as emb
+        except ImportError:  # pragma: no cover - optional dependency
+            self.skipTest("embeddings unavailable")
+        try:
+            import lightgbm  # noqa: F401
+        except ImportError:  # pragma: no cover - optional dependency
+            self.skipTest("lightgbm unavailable")
+
+        awards = _awards()
+        vectors = emb.embed([award.title for award in awards])
+        original = scale.fit_gbm(awards, vectors)
+        lookup = scale.LookupEstimator().fit(awards)
+        scale.save_estimators(lookup, original, awards, self.estimator, self.booster)
+
+        _, loaded, _ = scale.load_estimators(self.estimator, self.booster)
+
+        self.assertIsNotNone(loaded)
+        self.assertEqual(original.slug_order, loaded.slug_order)
+        self.assertEqual(original.buyer_order, loaded.buyer_order)
+        self.assertEqual(original.region_order, loaded.region_order)
+        before = original.predict_many(
+            [a.slug for a in awards],
+            [a.buyer_type for a in awards],
+            [a.region for a in awards],
+            [a.title for a in awards],
+            vectors,
+        )
+        after = loaded.predict_many(
+            [a.slug for a in awards],
+            [a.buyer_type for a in awards],
+            [a.region for a in awards],
+            [a.title for a in awards],
+            vectors,
+        )
+        self.assertEqual(before, after)
+
+    def test_the_artifact_carries_its_provenance(self) -> None:
+        awards = _awards()
+        scale.save_estimators(
+            scale.LookupEstimator().fit(awards), None, awards, self.estimator, self.booster
+        )
+        payload = json.loads(self.estimator.read_text(encoding="utf-8"))
+
+        self.assertEqual(scale.ARTIFACT_VERSION, payload["artifact_version"])
+        self.assertIn("generated_at", payload)
+        self.assertEqual(len(awards), payload["corpus"]["awards"])
+        self.assertEqual(scale.CORPUS_START, payload["corpus"]["corpus_start"])
+        self.assertEqual("bid_interactions", payload["corpus"]["source_table"])
+        self.assertEqual(inflation.SERIES["table"], payload["deflator"]["table"])
+
+    def test_a_lookup_only_refit_removes_a_stale_booster(self) -> None:
+        """Otherwise the loader pairs a new slug order with an old booster."""
+        awards = _awards()
+        self.booster.write_text("stale booster", encoding="utf-8")
+        scale.save_estimators(
+            scale.LookupEstimator().fit(awards), None, awards, self.estimator, self.booster
+        )
+        self.assertFalse(self.booster.exists())
+
+
+class MissingArtifactTests(unittest.TestCase):
+    """A backfill without an artifact must stop, not quietly refit."""
+
+    def setUp(self) -> None:
+        self.temp = tempfile.TemporaryDirectory()
+        self.missing = Path(self.temp.name) / "absent.json"
+        self.connection = sqlite3.connect(":memory:")
+        self.connection.row_factory = sqlite3.Row
+        db.create_schema(self.connection)
+
+    def tearDown(self) -> None:
+        self.connection.close()
+        self.temp.cleanup()
+
+    def test_loading_an_absent_artifact_names_the_fix(self) -> None:
+        with self.assertRaises(scale.MissingArtifact) as caught:
+            scale.load_estimators(self.missing, self.missing)
+        self.assertIn("--fit", str(caught.exception))
+
+    def test_backfill_refuses_rather_than_refitting(self) -> None:
+        with self.assertRaises(scale.MissingArtifact) as caught:
+            scale.backfill(self.connection, estimator_path=self.missing)
+        self.assertIn("--fit", str(caught.exception))
+
+    def test_a_corrupt_artifact_fails_the_load(self) -> None:
+        broken = Path(self.temp.name) / "broken.json"
+        broken.write_text("{not json", encoding="utf-8")
+        with self.assertRaises(scale.MissingArtifact):
+            scale.load_estimators(broken, self.missing)
+
+    def test_an_artifact_from_a_future_shape_is_refused(self) -> None:
+        """A silently misread artifact is worse than a missing one."""
+        future = Path(self.temp.name) / "future.json"
+        future.write_text(
+            json.dumps({"artifact_version": scale.ARTIFACT_VERSION + 1, "lookup": {}}),
+            encoding="utf-8",
+        )
+        with self.assertRaises(scale.MissingArtifact) as caught:
+            scale.load_estimators(future, self.missing)
+        self.assertIn("--fit", str(caught.exception))
+
+
+class IncrementalBackfillTests(unittest.TestCase):
+    """The daily pass touches new notices only."""
+
+    def setUp(self) -> None:
+        self.temp = tempfile.TemporaryDirectory()
+        self.estimator = Path(self.temp.name) / "scale-estimator.json"
+        self.booster = Path(self.temp.name) / "scale-estimator.lgb"
+        awards = _awards()
+        scale.save_estimators(
+            scale.LookupEstimator().fit(awards), None, awards, self.estimator, self.booster
+        )
+
+        self.connection = sqlite3.connect(":memory:")
+        self.connection.row_factory = sqlite3.Row
+        db.create_schema(self.connection)
+        # notice_trades belongs to matchrec, and the daily path creates it when
+        # map_notices runs ahead of the backfill. The join here has always assumed it.
+        matchrec_schema.ensure_schema(self.connection)
+        db.migrate_scale_columns(self.connection)
+        with self.connection:
+            for index in range(4):
+                self.connection.execute(
+                    "INSERT INTO tenders (source, source_id, title, buyer_name, region, "
+                    "documents_open, status, ingested_at, updated_at) "
+                    "VALUES ('seao', ?, ?, 'Ville de Test', 'QC', 0, 'open', 'n', 'n')",
+                    (f"t-{index}", "Reconstruction de la rue Principale"),
+                )
+
+    def tearDown(self) -> None:
+        self.connection.close()
+        self.temp.cleanup()
+
+    def _bands(self) -> dict[int, tuple]:
+        return {
+            int(row["id"]): (row["scale_band"], row["scale_source"], row["scale_confidence"])
+            for row in self.connection.execute(
+                "SELECT id, scale_band, scale_source, scale_confidence FROM tenders"
+            )
+        }
+
+    def _run(self, all_rows: bool = False) -> dict:
+        return scale.backfill(
+            self.connection,
+            all_rows=all_rows,
+            estimator_path=self.estimator,
+            booster_path=self.booster,
+        )
+
+    def test_the_first_pass_bands_everything_unbanded(self) -> None:
+        summary = self._run()
+        self.assertEqual(4, summary["notices"])
+        self.assertEqual("unbanded", summary["scope"])
+        self.assertTrue(all(band is not None for band, _, _ in self._bands().values()))
+
+    def test_a_second_pass_selects_nothing(self) -> None:
+        self._run()
+        before = self._bands()
+        summary = self._run()
+
+        self.assertEqual(0, summary["notices"])
+        self.assertEqual(before, self._bands())
+
+    def test_only_the_new_notice_is_banded(self) -> None:
+        self._run()
+        before = self._bands()
+        with self.connection:
+            self.connection.execute(
+                "INSERT INTO tenders (source, source_id, title, buyer_name, region, "
+                "documents_open, status, ingested_at, updated_at) "
+                "VALUES ('seao', 'fresh', 'Entretien menager edifice', 'Ville', 'QC', "
+                "0, 'open', 'n', 'n')"
+            )
+
+        summary = self._run()
+
+        self.assertEqual(1, summary["notices"])
+        after = self._bands()
+        # Every pre-existing row is byte-identical; only the new id appears.
+        self.assertEqual(before, {k: v for k, v in after.items() if k in before})
+        self.assertEqual(1, len(set(after) - set(before)))
+
+    def test_the_all_flag_forces_a_full_pass(self) -> None:
+        self._run()
+        summary = self._run(all_rows=True)
+        self.assertEqual(4, summary["notices"])
+        self.assertEqual("all", summary["scope"])
+
+    def test_the_summary_cites_the_estimator_it_used(self) -> None:
+        summary = self._run()
+        self.assertIsNotNone(summary["estimator"]["generated_at"])
+        self.assertEqual(40, summary["estimator"]["corpus_awards"])
 
 
 class MigrationTests(unittest.TestCase):
