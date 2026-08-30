@@ -1,0 +1,385 @@
+# Daily tender refresh.
+#
+# Ingest new notices, re-map trades, band the new rows, re-rank, re-export, commit.
+# The order here is the corrected one established in Milestone 13, not the sequence in
+# DEPLOY.md:15-20, which omits ingest, the scale backfill and export_model_service —
+# that is, it omits every step that refreshes the pool.
+#
+# THIS JOB CANNOT RETRAIN, and not because it declines to. It runs against
+# data/tendersentry-slim.db, which drops bid_interactions and firm_entities. Both
+# retrain paths read those tables, so `--refit` and `--fit` fail here on the missing
+# corpus with a message naming the full database. There is no flag to set and none to
+# unset: adding `--refit` to a step below breaks that step on its first run rather than
+# quietly shipping a model the published evaluation no longer describes.
+#
+# Every step fails loudly. `exit 0` with no output is treated as a failure, because the
+# documented failure in this project is a process killed mid-run leaving a partial
+# result that looks like a quiet success. Steps assert their outputs exist AND that row
+# counts either moved or explicitly did not.
+#
+# Zero new notices is a NORMAL outcome, not a failure. The assertions distinguish "ran
+# and found nothing" from "died": exit code, printed tally, and a notice count that
+# never decreases.
+
+name: Daily refresh
+
+on:
+  schedule:
+    # 10:00 UTC. That is 06:00 ET in EDT and 05:00 ET in EST — GitHub cron is UTC only
+    # and does not follow DST. Nothing downstream cares about the hour; the job summary
+    # prints the run's actual local start time so the question is answerable from the
+    # log rather than by reasoning about which side of the DST boundary we are on.
+    - cron: "0 10 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Run everything, show the diff, commit nothing"
+        type: boolean
+        default: true
+
+concurrency:
+  # Two refreshes writing the same database would interleave commits. Never cancel a
+  # run in progress: it may be mid-write on the slim database.
+  group: daily-refresh
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+env:
+  SLIM_DB: data/tendersentry-slim.db
+  PYTHON_VERSION: "3.13"
+  # Staged bytes above this fail the run. A normal day stages ~64 MB (slim database 58,
+  # pool.json 5.2), so this is ~2.3x headroom. It is a runaway guard, not a repo-growth
+  # control: growth is bounded by delta compression, measured at ~135 KB/day.
+  MAX_STAGED_MB: "150"
+  # More notices than this in one run means the ingest window or the dedup key broke.
+  MAX_NEW_NOTICES: "5000"
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    outputs:
+      committed: ${{ steps.commit.outputs.committed }}
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Cache the embedding model
+        uses: actions/cache@v4
+        with:
+          # The model is pinned and never changes, so the key is fixed. A miss
+          # re-downloads (~470 MB) and the run continues; it is never fatal.
+          path: ~/.cache/huggingface
+          key: hf-paraphrase-multilingual-MiniLM-L12-v2-v1
+          restore-keys: hf-paraphrase-multilingual-MiniLM-L12-v2-
+
+      - name: Record the starting state
+        id: before
+        run: |
+          set -euo pipefail
+          python - <<'PY' >> "$GITHUB_ENV"
+          import sqlite3, os, json
+          from datetime import datetime
+          con = sqlite3.connect(f"file:{os.environ['SLIM_DB']}?mode=ro", uri=True)
+          n = con.execute("SELECT COUNT(*) FROM tenders").fetchone()[0]
+          print(f"NOTICES_BEFORE={n}")
+          print(f"RUN_LOCAL_START={datetime.now().astimezone().isoformat(timespec='seconds')}")
+          con.close()
+          PY
+
+      - name: Report the slim database's provenance
+        run: |
+          set -euo pipefail
+          python -m scripts.build_slim_db --show --dest "$SLIM_DB" | tee /tmp/provenance.json
+          test -s /tmp/provenance.json
+
+      - name: Ingest CanadaBuys and SEAO
+        id: ingest
+        run: |
+          set -euo pipefail
+          # --adaptive sizes the SEAO window from the gap since the last ingest:
+          # floor 3 weeks, ceiling 12. A run after a missed day widens on its own
+          # instead of fetching its usual window and stepping over the middle.
+          python -m notices.ingest --source all --adaptive --db "$SLIM_DB" \
+            2>&1 | tee /tmp/ingest.log
+          # A killed process leaves an empty log and a zero exit through the pipe.
+          # pipefail catches the exit; this catches the silence.
+          test -s /tmp/ingest.log
+          grep -q "rows in db" /tmp/ingest.log \
+            || { echo "::error::ingest produced no tally table"; exit 1; }
+          grep -q "seao window:" /tmp/ingest.log \
+            || { echo "::error::ingest did not report its SEAO window"; exit 1; }
+
+      - name: Assert the ingest moved forward, or explicitly did not
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import sqlite3, os, sys
+          before = int(os.environ["NOTICES_BEFORE"])
+          con = sqlite3.connect(f"file:{os.environ['SLIM_DB']}?mode=ro", uri=True)
+          after = con.execute("SELECT COUNT(*) FROM tenders").fetchone()[0]
+          con.close()
+          added = after - before
+          print(f"notices {before} -> {after} ({added:+d})")
+          if after < before:
+              sys.exit(f"::error::notice count DECREASED: {before} -> {after}")
+          cap = int(os.environ["MAX_NEW_NOTICES"])
+          if added > cap:
+              sys.exit(f"::error::{added} new notices exceeds the {cap} cap")
+          if added == 0:
+              # Normal. Recorded so the summary distinguishes it from a dead step.
+              print("no new notices this run (a normal outcome, not a failure)")
+          with open(os.environ["GITHUB_ENV"], "a") as fh:
+              fh.write(f"NOTICES_AFTER={after}\nNOTICES_ADDED={added}\n")
+          PY
+
+      - name: Re-map trades on new rows
+        run: |
+          set -euo pipefail
+          python -m matchrec.schema --db "$SLIM_DB" 2>&1 | tee /tmp/schema.log
+          test -s /tmp/schema.log
+          python -m matchrec.trades --db "$SLIM_DB" 2>&1 | tee /tmp/trades.log
+          grep -q "mapping " /tmp/trades.log \
+            || { echo "::error::trade mapping produced no summary"; exit 1; }
+
+      - name: Band the new notices
+        run: |
+          set -euo pipefail
+          # Loads the committed 2.4 MB artifact. Incremental: WHERE scale_band IS NULL.
+          # A missing artifact exits 1 naming --fit; it never refits.
+          python -m model.scale --backfill --db "$SLIM_DB" 2>&1 | tee /tmp/scale.log
+          python - <<'PY'
+          import json, sys
+          # Logging goes to stderr and is merged in by 2>&1, so slice from the first
+          # line that is exactly "{" rather than filtering on log-level prefixes — a
+          # message that happened not to start with one would corrupt the parse.
+          lines = open("/tmp/scale.log").read().splitlines()
+          start = next((i for i, line in enumerate(lines) if line.strip() == "{"), None)
+          if start is None:
+              sys.exit("::error::backfill printed no JSON summary; it may have died")
+          body = json.loads("\n".join(lines[start:]))
+          print(f"banded {body['notices']} notice(s), scope={body['scope']}")
+          if body["estimator"]["generated_at"] is None:
+              sys.exit("::error::backfill reported no estimator provenance")
+          PY
+
+      - name: Re-rank and re-export
+        run: |
+          set -euo pipefail
+          for firm in $(python -c "
+          import sqlite3, os
+          con = sqlite3.connect(f\"file:{os.environ['SLIM_DB']}?mode=ro\", uri=True)
+          print(' '.join(str(r[0]) for r in con.execute('SELECT id FROM firms ORDER BY id')))
+          "); do
+            python -m matchrec.rank --firm "$firm" --top 5 --db "$SLIM_DB"
+          done
+          # No --refit. It would fail on the missing corpus if it were here.
+          python -m scripts.export_model_service --db "$SLIM_DB"
+          python -m scripts.export_demo_board --db "$SLIM_DB"
+          python -m scripts.export_firm_boards --db "$SLIM_DB"
+
+      - name: Assert the exported artifacts are sane
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, sys, subprocess, hashlib, pathlib
+          root = pathlib.Path("web/data/model")
+          manifest = json.loads((root / "manifest.json").read_text())
+          pool = json.loads((root / "pool.json").read_text())
+
+          if manifest.get("model_source") != "carried-forward":
+              sys.exit(f"::error::model_source is {manifest.get('model_source')!r}; "
+                       "this job must never refit")
+          if manifest["pool"]["count"] != pool["count"]:
+              sys.exit("::error::manifest and pool disagree on the notice count")
+          if pool["count"] == 0:
+              sys.exit("::error::the exported pool is empty")
+
+          # Only --refit may touch these, and it cannot run here.
+          for name in ("firms.json", "booster.json"):
+              head = subprocess.run(["git", "show", f"HEAD:web/data/model/{name}"],
+                                    capture_output=True)
+              now = (root / name).read_bytes()
+              if hashlib.sha256(head.stdout).hexdigest() != hashlib.sha256(now).hexdigest():
+                  sys.exit(f"::error::{name} changed, but only --refit may change it")
+          print(f"pool {pool['count']} notices, model carried forward, artifacts intact")
+          PY
+
+      - name: Build the job summary
+        if: always()
+        run: |
+          set -euo pipefail
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json, os, pathlib, datetime
+          root = pathlib.Path("web/data/model")
+          print("## Daily refresh\n")
+          print(f"- Run started (runner local): `{os.environ.get('RUN_LOCAL_START','?')}`")
+          print(f"- Run started (UTC): `{datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds')}`\n")
+
+          print("### Ingest\n")
+          log = pathlib.Path("/tmp/ingest.log")
+          window = "not recorded"
+          if log.is_file():
+              for line in log.read_text().splitlines():
+                  if line.startswith("seao window:"):
+                      window = line.split(":", 1)[1].strip()
+          print(f"- SEAO window: **{window}**")
+          print(f"- Notices: {os.environ.get('NOTICES_BEFORE','?')} → "
+                f"{os.environ.get('NOTICES_AFTER','?')} "
+                f"(**{os.environ.get('NOTICES_ADDED','?')}** new)\n")
+
+          stamp = pathlib.Path("/tmp/provenance.json")
+          if stamp.is_file():
+              p = json.loads(stamp.read_text())
+              print("### Slim database provenance\n")
+              print(f"- Built `{p['generated_at']}` from `{p['source_path']}`")
+              print(f"- Source sha256 `{str(p['source_sha256'])[:16]}…`, "
+                    f"{p['source_size_bytes'] / 1048576:.0f} MB")
+              print(f"- Source last ingest: `{p['source_max_ingested_at']}`")
+              print(f"- Dropped: {p['source_bid_interactions']:,} bid_interactions, "
+                    f"{p['source_firm_entities']:,} firm_entities")
+              print("\n**Retrain generation this database descends from**\n")
+              print(f"- Scale estimator `{p['scale_estimator_generated_at']}` "
+                    f"(git `{p['scale_estimator_git_revision']}`, "
+                    f"{p['scale_estimator_corpus_awards']:,} awards)")
+              print(f"- Booster `{str(p['booster_sha256'])[:16]}…`, "
+                    f"{p['booster_trees']} trees")
+              print(f"- Firm profiles built `{p['firms_built_at']}`\n")
+
+          if (root / "pool.json").is_file():
+              pool = json.loads((root / "pool.json").read_text())
+              today = datetime.date.today().isoformat()
+              closed = sum(1 for t in pool["tenders"]
+                           if (t.get("closing_date") or "9999") < today)
+              total = pool["count"]
+              print("### Pool freshness\n")
+              print(f"- Exported: `{pool['generated_at']}`")
+              print(f"- Notices: **{total}**, closed: **{closed}** "
+                    f"({100 * closed / total:.1f}%)")
+              print(f"- Open today: **{total - closed}**\n")
+          PY
+
+      - name: Stage what changed
+        id: stage
+        run: |
+          set -euo pipefail
+          git add -A web/data "$SLIM_DB"
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "nothing changed this run"
+            exit 0
+          fi
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          git diff --cached --stat
+          python - <<'PY'
+          import subprocess, os, sys
+          names = subprocess.run(["git", "diff", "--cached", "--name-only"],
+                                 capture_output=True, text=True).stdout.split()
+          total = 0
+          for name in names:
+              size = subprocess.run(["git", "cat-file", "-s", f":{name}"],
+                                    capture_output=True, text=True).stdout.strip()
+              size = int(size) if size else 0
+              total += size
+              print(f"  {size / 1048576:8.2f} MB  {name}")
+          cap = float(os.environ["MAX_STAGED_MB"])
+          print(f"  {total / 1048576:8.2f} MB  TOTAL (cap {cap:.0f} MB)")
+          if total / 1048576 > cap:
+              sys.exit(f"::error::staged {total / 1048576:.1f} MB exceeds the "
+                       f"{cap:.0f} MB cap; refusing to commit")
+          PY
+
+      - name: Show the diff without committing (dry run)
+        if: steps.stage.outputs.changed == 'true' && inputs.dry_run
+        run: |
+          set -euo pipefail
+          echo "::notice::dry run — nothing will be committed"
+          git diff --cached --stat | tee /tmp/diff.txt
+          {
+            echo "### Dry run — not committed"
+            echo '```'
+            cat /tmp/diff.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the dry-run diff
+        if: steps.stage.outputs.changed == 'true' && inputs.dry_run
+        uses: actions/upload-artifact@v4
+        with:
+          name: dry-run-diff
+          path: |
+            /tmp/diff.txt
+            /tmp/ingest.log
+            /tmp/provenance.json
+          retention-days: 7
+
+      - name: Commit and push
+        id: commit
+        if: steps.stage.outputs.changed == 'true' && !inputs.dry_run
+        run: |
+          set -euo pipefail
+          git config user.name "tendersentry-bot"
+          git config user.email "noreply@users.noreply.github.com"
+          git commit -m "data: daily refresh $(date -u +%Y-%m-%d)" \
+                     -m "Notices ${NOTICES_BEFORE} -> ${NOTICES_AFTER} (${NOTICES_ADDED} new). Model carried forward; no retrain." \
+                     -m "Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>"
+          # Rebase rather than force: a human commit landing mid-run must survive.
+          git pull --rebase --autostash origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+          echo "committed=true" >> "$GITHUB_OUTPUT"
+
+  notify:
+    needs: refresh
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Email the failure via Resend
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          NOTIFY_EMAIL: ${{ secrets.NOTIFY_EMAIL }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          if [ -z "${RESEND_API_KEY:-}" ] || [ -z "${NOTIFY_EMAIL:-}" ]; then
+            echo "::error::RESEND_API_KEY or NOTIFY_EMAIL is unset, so this failure \
+          could not be emailed. A schedule that fails unnoticed for 60 days is \
+          disabled by GitHub, which is the exact outcome this notification exists to \
+          prevent. Set both secrets."
+            exit 1
+          fi
+          curl -sS --fail-with-body -X POST https://api.resend.com/emails \
+            -H "Authorization: Bearer ${RESEND_API_KEY}" \
+            -H "Content-Type: application/json" \
+            -d "$(python3 -c "
+          import json, os
+          print(json.dumps({
+            'from': 'TenderSentry <onboarding@resend.dev>',
+            'to': [os.environ['NOTIFY_EMAIL']],
+            'subject': 'TenderSentry daily refresh FAILED',
+            'text': (
+              'The daily refresh failed.\n\n'
+              f\"Run: {os.environ['RUN_URL']}\n\n\"
+              'The exported pool is now one day staler. Two consecutive failures are '
+              'worth looking at immediately; the freshness test turns red after seven '
+              'days, and GitHub disables a schedule after 60 days without repo '
+              'activity, which a failing job does not produce.'
+            ),
+          }))
+          ")"

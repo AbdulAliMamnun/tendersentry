@@ -630,6 +630,9 @@ def fit(
     booster_path: Path | str | None = None,
 ) -> dict[str, Any]:
     """Build the corpus, fit both estimators, and write the artifact."""
+    from model import dataset
+
+    dataset.require_corpus(connection, "--fit")
     awards = build_corpus(connection)
     if not awards:
         raise RuntimeError(

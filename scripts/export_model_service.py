@@ -40,6 +40,9 @@ import config
 from matchrec import schema as matchrec_schema
 from matchrec import trades
 from model import embeddings, features, profiles, train
+# Aliased: `dataset` is a local inside export(), and the bare name would shadow the
+# module into an UnboundLocalError at the guard below.
+from model import dataset as model_dataset
 from notices import db
 
 
@@ -376,6 +379,8 @@ def export(
         # bid_interactions is read only on the retrain path. Both consumers — the GBM
         # fit and build_profiles — are behind --refit, so a daily export never opens
         # the table, and the daily database does not need to contain it.
+        if refit:
+            model_dataset.require_corpus(connection, "--refit")
         interactions = features.load_interactions(connection) if refit else None
         pool = open_pool(connection, pool_limit)
     finally:

@@ -87,6 +87,55 @@ SCHEMA_STATEMENTS = (
 )
 
 
+#: The tables every retrain path reads, and that the committed slim database omits.
+CORPUS_TABLES = ("bid_interactions", "firm_entities")
+
+
+class CorpusUnavailable(RuntimeError):
+    """Raised when a retrain is attempted against a database that cannot support one."""
+
+
+def require_corpus(connection: sqlite3.Connection, action: str) -> dict[str, int]:
+    """Refuse a retrain when the corpus is absent or empty.
+
+    The daily refresh runs against a slim database that drops both of these tables,
+    which is what makes retraining structurally impossible rather than merely
+    discouraged — there is no flag to set and none to unset. This function exists so
+    that impossibility reads as a sentence instead of ``no such table:
+    bid_interactions`` from four frames down, and so a workflow that grows a
+    ``--refit`` fails on its first run with something a person can act on.
+
+    Empty counts as absent. A table present but unpopulated would otherwise train a
+    model on nothing and report success, which is the exact class of silent failure
+    the artifact split was built to remove.
+    """
+    counts: dict[str, int] = {}
+    for table in CORPUS_TABLES:
+        try:
+            counts[table] = int(
+                connection.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+            )
+        except sqlite3.OperationalError:
+            counts[table] = 0
+
+    missing = [table for table, count in counts.items() if count == 0]
+    if missing:
+        raise CorpusUnavailable(
+            f"{action} needs {', '.join(CORPUS_TABLES)}, and "
+            f"{', '.join(missing)} {'is' if len(missing) == 1 else 'are'} absent or "
+            "empty in this database.\n"
+            "This is almost certainly the committed slim database "
+            "(data/tendersentry-slim.db), which drops both tables on purpose: the "
+            "daily refresh must not be able to retrain, because a refit produces a "
+            "model the published evaluation no longer describes.\n"
+            "Retraining is a local operation against the full database:\n"
+            "    python3 -m model.dataset      # rebuild the corpus\n"
+            "    python3 -m model.train        # and its evaluation report\n"
+            "then rebuild the slim database with scripts.build_slim_db."
+        )
+    return counts
+
+
 def ensure_schema(connection: sqlite3.Connection) -> None:
     """Create the Phase A tables."""
     with connection:
