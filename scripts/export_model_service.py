@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import hashlib
 import json
 import logging
 from datetime import datetime, timezone
@@ -49,6 +50,25 @@ OUT_DIR = Path(config.PROJECT_ROOT) / "web" / "data" / "model"
 #: Cutoff for the model that ships. Evaluation used held-out windows; the served
 #: model is fitted on everything up to here so it is as current as the corpus allows.
 SERVING_CUTOFF = "2026-07-01"
+
+#: The report that characterises the served configuration.
+#:
+#: Stated carefully, because the obvious phrasing would be a lie. The served booster is
+#: fitted with Split("serving", cutoff, None) — everything up to the cutoff, no held-out
+#: window. The report evaluates the same feature set and hyperparameters on three
+#: held-out splits. They are the same recipe fitted to different data, so the report
+#: describes what this configuration achieves; it never scored the artifact that ships.
+#: Anyone quoting a number from it is quoting the configuration, not this file.
+EVALUATION = {
+    "report": "eval/model/model-report-20260802T215513+0000.json",
+    "model": "5_gbm_no_leakage",
+    "primary_split": "primary",
+    "relationship": (
+        "same feature set and hyperparameters, fitted to serving_cutoff with no "
+        "held-out window. The report characterises this configuration; it did not "
+        "score this booster."
+    ),
+}
 
 MANIFEST_NOTES = [
     "The demo does not embed the visitor's description. The description is mapped to "
@@ -197,6 +217,128 @@ def dump_booster(booster: Any, feature_names: list[str]) -> dict:
     }
 
 
+# --------------------------------------------------------------------------------------
+# Is the shipped booster still the right one?
+# --------------------------------------------------------------------------------------
+
+
+class StaleBooster(RuntimeError):
+    """Raised when the shipped booster cannot be reused and --refit was not given."""
+
+
+def served_feature_names() -> list[str]:
+    """The feature order the running code would train and serve with.
+
+    Derived the same way ``export`` derives it — ``features.feature_names()`` minus
+    the leaky ones — but without building a dataset, so it can be checked against a
+    manifest before deciding whether a dataset is needed at all.
+    """
+    return [
+        name for name in features.feature_names() if name not in train.LEAKY_FEATURES
+    ]
+
+
+def file_sha256(path: Path) -> str:
+    """Content hash, streamed — booster.json runs to a few megabytes."""
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1 << 20), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def booster_is_current(
+    directory: Path, cutoff: str, manifest: dict | None = None
+) -> tuple[bool, str | None]:
+    """Whether the shipped booster still describes what this code would produce.
+
+    Tied to the manifest, never to mtime. A booster does not decay with time; it
+    decays when its feature contract, its embedding model, or its cutoff moves out
+    from under it. Age is a different question and belongs to a freshness check.
+
+    Deliberately NOT part of this decision:
+
+    * **the pool.** It changes every day by design and invalidates nothing.
+    * **generated_at and file mtime.** A rebuild that changes no input is not a
+      newer model, and a touch is not a stale one.
+    * **mapping_version.** The near-miss. A mapping change does alter what the
+      served model is *fed* — ``tender_feature_rows`` derives ``category`` from
+      trade slugs — but the booster was trained on ``category`` drawn from
+      ``bid_interactions``. It changes the input, not the model's validity. Folding
+      it in here would force a retrain on every vocabulary edit, which is exactly
+      the coupling this split exists to remove.
+    """
+    manifest_path = directory / "manifest.json"
+    booster_path = directory / "booster.json"
+    if manifest is None:
+        if not manifest_path.is_file():
+            return False, f"no manifest at {manifest_path}"
+        try:
+            with manifest_path.open(encoding="utf-8") as handle:
+                manifest = json.load(handle)
+        except (OSError, json.JSONDecodeError) as exc:
+            return False, f"manifest is unreadable: {exc}"
+    if not booster_path.is_file():
+        return False, f"no booster at {booster_path}"
+
+    expected = served_feature_names()
+    stored = list(manifest.get("feature_order") or [])
+    if stored != expected:
+        return False, (
+            f"feature_order differs from this code: manifest has {len(stored)} "
+            f"features, code produces {len(expected)}"
+            + (
+                f"; first divergence at position {_first_difference(stored, expected)}"
+                if len(stored) == len(expected)
+                else ""
+            )
+        )
+    if list(manifest.get("leaky_features_excluded") or []) != list(train.LEAKY_FEATURES):
+        return False, "leaky_features_excluded differs from train.LEAKY_FEATURES"
+    if manifest.get("embedding_model") != embeddings.MODEL_NAME:
+        return False, (
+            f"embedding_model is {manifest.get('embedding_model')!r}, code uses "
+            f"{embeddings.MODEL_NAME!r}"
+        )
+    if manifest.get("serving_cutoff") != cutoff:
+        return False, (
+            f"serving_cutoff is {manifest.get('serving_cutoff')!r}, exporting with "
+            f"{cutoff!r}"
+        )
+
+    try:
+        with booster_path.open(encoding="utf-8") as handle:
+            booster = json.load(handle)
+    except (OSError, json.JSONDecodeError) as exc:
+        return False, f"booster is unreadable: {exc}"
+    if list(booster.get("feature_names") or []) != expected:
+        return False, "booster.feature_names disagrees with the manifest"
+    recorded_trees = (manifest.get("model") or {}).get("trees")
+    if booster.get("num_trees") != recorded_trees:
+        return False, (
+            f"booster has {booster.get('num_trees')} trees, manifest records "
+            f"{recorded_trees}"
+        )
+
+    recorded_hash = (manifest.get("model") or {}).get("booster_sha256")
+    if not recorded_hash:
+        return False, "manifest records no booster_sha256"
+    actual = file_sha256(booster_path)
+    if actual != recorded_hash:
+        return False, (
+            f"booster.json hashes to {actual[:12]}…, manifest records "
+            f"{str(recorded_hash)[:12]}…"
+        )
+    return True, None
+
+
+def _first_difference(left: list[str], right: list[str]) -> int:
+    for index, (a, b) in enumerate(zip(left, right)):
+        if a != b:
+            return index
+    return min(len(left), len(right))
+
+
 def _encode(vectors: np.ndarray) -> str:
     return base64.b64encode(vectors.astype(np.float32).tobytes()).decode("ascii")
 
@@ -206,34 +348,72 @@ def export(
     db_path: Any = None,
     cutoff: str = SERVING_CUTOFF,
     pool_limit: int | None = None,
+    refit: bool = False,
 ) -> dict:
-    """Fit the served model and write every serving artifact."""
+    """Write every serving artifact, refitting the model only when asked.
+
+    A daily run reuses the shipped booster. Refitting it every export cost 10-20
+    minutes and, worse, produced a ranking model the published evaluation no longer
+    described — the report characterises a configuration, and silently refitting it
+    against a moved corpus breaks the link between what is measured and what is
+    served. ``--refit`` is how that link is deliberately re-drawn.
+    """
     directory = Path(out_dir) if out_dir else OUT_DIR
     directory.mkdir(parents=True, exist_ok=True)
 
+    reusable, reason = booster_is_current(directory, cutoff)
+    if not refit and not reusable:
+        raise StaleBooster(
+            f"The shipped booster cannot be reused: {reason}.\n"
+            "Refit it deliberately:\n"
+            "    python3 -m scripts.export_model_service --refit\n"
+            "Refitting is not automatic because the served model would then stop "
+            "matching the evaluation report that describes it."
+        )
+
     connection = db.connect(db_path)
     try:
+        # Still loaded on every run: build_profiles below needs it. Milestone 13C
+        # makes that conditional too, and this read goes with it.
         interactions = features.load_interactions(connection)
         pool = open_pool(connection, pool_limit)
     finally:
         connection.close()
 
-    split = train.Split("serving", cutoff, None, "Model fitted for serving.")
-    dataset = train.build_dataset(interactions, split, max_eval_firms=1)
-
-    clean = [
-        index
-        for index, name in enumerate(dataset.feature_names)
-        if name not in train.LEAKY_FEATURES
-    ]
-    served_names = [dataset.feature_names[i] for i in clean]
-    gbm = train.fit_gbm(dataset, clean)
+    if refit:
+        split = train.Split("serving", cutoff, None, "Model fitted for serving.")
+        dataset = train.build_dataset(interactions, split, max_eval_firms=1)
+        clean = [
+            index
+            for index, name in enumerate(dataset.feature_names)
+            if name not in train.LEAKY_FEATURES
+        ]
+        served_names = [dataset.feature_names[i] for i in clean]
+        gbm = train.fit_gbm(dataset, clean)
+        booster = dump_booster(gbm.booster_, served_names)
+        model_stats = {
+            "trees": booster["num_trees"],
+            "training_rows": int(dataset.train_x.shape[0]),
+            "training_firms": len(dataset.train_groups),
+        }
+        _write(directory / "booster.json", booster)
+    else:
+        with (directory / "booster.json").open(encoding="utf-8") as handle:
+            booster = json.load(handle)
+        served_names = list(booster["feature_names"])
+        previous = _read_manifest(directory)
+        model_stats = dict(previous.get("model") or {})
+        LOGGER.info(
+            "Reusing the shipped booster: %d trees, fitted %s",
+            booster.get("num_trees"),
+            previous.get("generated_at"),
+        )
 
     vectors = embeddings.embed([entry["title"] for entry in pool])
     centroids = slug_centroids(pool, vectors)
 
-    booster = dump_booster(gbm.booster_, served_names)
-    _write(directory / "booster.json", booster)
+    # Recorded after the file is final, so the hash describes what actually shipped.
+    model_stats["booster_sha256"] = file_sha256(directory / "booster.json")
     _write(
         directory / "pool.json",
         {
@@ -247,9 +427,11 @@ def export(
     )
     _write(directory / "slugs.json", {"centroids": centroids})
 
-    # Firm profiles for the gated name-lookup path. Computed as-of the export date via
-    # the same strict-inequality machinery training uses, so a shipped profile
-    # describes what a firm had done before today and nothing after.
+    # Firm profiles for the gated name-lookup path. A retrain-time artifact: they are
+    # a function of bid_interactions, which only model.dataset writes, so between
+    # retrains recomputing them is work that cannot change the answer. A daily run
+    # leaves the file untouched — not rewritten with identical content, untouched —
+    # so the bytes on disk stay traceable to the run that actually built them.
     firm_profiles = profiles.build_profiles(
         db.connect(db_path), interactions, as_of=datetime.now(timezone.utc).strftime("%Y-%m-%d")
     )
@@ -273,16 +455,64 @@ def export(
             "min_bids": profiles.MIN_BIDS,
             "distinct_names": len(profiles.name_index(firm_profiles)),
         },
-        "model": {
-            "trees": booster["num_trees"],
-            "training_rows": int(dataset.train_x.shape[0]),
-            "training_firms": len(dataset.train_groups),
-        },
+        "model": model_stats,
+        # Which report describes the served booster, and — precisely — how.
+        "evaluation": dict(EVALUATION),
+        "model_source": "refitted" if refit else "carried-forward",
         "notes": MANIFEST_NOTES,
     }
     _write(directory / "manifest.json", manifest)
     LOGGER.info("Exported serving artifacts to %s", directory)
     return manifest
+
+
+def adopt(out_dir: Path | str | None = None, cutoff: str = SERVING_CUTOFF) -> dict:
+    """Record the shipped booster's hash in the manifest, without refitting.
+
+    A one-time bridge for a manifest written before ``booster_sha256`` existed.
+    Every other condition is checked first, so this can only bless a booster that
+    already agrees with the code — it fills in a field, it does not wave anything
+    through. Refitting to obtain the hash would have been the alternative, and that
+    changes the served model to satisfy a bookkeeping gap.
+    """
+    directory = Path(out_dir) if out_dir else OUT_DIR
+    manifest = _read_manifest(directory)
+    if not manifest:
+        raise StaleBooster(f"No manifest to adopt at {directory / 'manifest.json'}")
+
+    probe = dict(manifest)
+    probe.setdefault("model", {})
+    probe["model"] = dict(probe["model"]) | {
+        "booster_sha256": file_sha256(directory / "booster.json")
+    }
+    reusable, reason = booster_is_current(directory, cutoff, probe)
+    if not reusable:
+        raise StaleBooster(
+            f"Refusing to adopt: {reason}. This booster genuinely does not match the "
+            "code; refit it with --refit."
+        )
+
+    manifest["model"] = probe["model"]
+    manifest["evaluation"] = dict(EVALUATION)
+    manifest["model_source"] = "adopted"
+    _write(directory / "manifest.json", manifest)
+    LOGGER.info(
+        "Adopted the shipped booster: sha256 %s…",
+        manifest["model"]["booster_sha256"][:12],
+    )
+    return manifest
+
+
+def _read_manifest(directory: Path) -> dict:
+    """The manifest already on disk, or an empty dict when there is none."""
+    path = Path(directory) / "manifest.json"
+    if not path.is_file():
+        return {}
+    try:
+        with path.open(encoding="utf-8") as handle:
+            return json.load(handle)
+    except (OSError, json.JSONDecodeError):
+        return {}
 
 
 def _write(path: Path, payload: Any) -> None:
@@ -297,9 +527,26 @@ def _main() -> None:
     parser.add_argument("--db", default=None)
     parser.add_argument("--cutoff", default=SERVING_CUTOFF)
     parser.add_argument("--pool-limit", type=int, default=None)
+    parser.add_argument(
+        "--refit",
+        action="store_true",
+        help="refit the ranking model from bid_interactions (retrain path, ~15 min)",
+    )
+    parser.add_argument(
+        "--adopt",
+        action="store_true",
+        help="record the shipped booster's hash in the manifest, without refitting",
+    )
     args = parser.parse_args()
 
-    manifest = export(args.out, args.db, args.cutoff, args.pool_limit)
+    try:
+        if args.adopt:
+            manifest = adopt(args.out, args.cutoff)
+            print(json.dumps(manifest["model"], indent=2))
+            return
+        manifest = export(args.out, args.db, args.cutoff, args.pool_limit, args.refit)
+    except StaleBooster as error:
+        raise SystemExit(str(error)) from error
     print(json.dumps({k: v for k, v in manifest.items() if k != "feature_order"}, indent=2))
     print(f"features: {len(manifest['feature_order'])}")
 
