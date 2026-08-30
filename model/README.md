@@ -151,6 +151,35 @@ republishes. An Ontario-filtered ranking can therefore be genuinely thin — at 
 of writing, 2 open watermain notices and 2 roadwork. The widget says so on the card
 instead of padding the list to ten rows.
 
+### Known limit: one rule, two implementations — and the one still unguarded
+
+Three rules in this codebase exist twice, because the pipeline is Python and the
+serving path is TypeScript. Duplication is the right call each time — a serverless
+function cannot import `model/`, and the exporter cannot run Node — but a duplicated
+rule that nothing compares drifts silently, and silently is the operative word: every
+layer keeps looking healthy while the two halves answer differently.
+
+Two are guarded by a parity test that runs the *real shipped* TypeScript through
+`tests/ts_harness.py` and compares it against the Python:
+
+| Rule | Python | TypeScript | Guarded by |
+|---|---|---|---|
+| Firm-name normalization | `model/dataset.normalize_name` | `web/lib/firmLookup.normalizeName` | `tests/test_firm_lookup.py` |
+| Region eligibility | `scripts/export_model_service.region_allows` | `web/lib/demoRank.regionAllows` | `tests/test_freshness_regions.py` |
+
+**The third is open.** `scaleLabel()` is implemented independently in
+`web/components/DemoRanker.tsx` and `web/components/FirmLookup.tsx`, and nothing keeps
+them in agreement — recorded in `docs/STATE-20260830.md` §9 and still true. Both turn
+a `scale_band` plus its `scale_source` into the text a contractor reads, and the whole
+point of shipping `scale_source` is that an estimate is never displayed as though the
+buyer had published it. So the failure mode is not cosmetic: if one copy stops
+distinguishing `published` from `estimated_model`, one surface starts presenting an
+inference as a stated fact, and the other keeps labelling it correctly.
+
+Unlike the two above, this pair is TypeScript on both sides, so the fix is smaller
+than a parity test — lift `scaleLabel` into `web/lib/` and have both components import
+it. Not done here. Recorded so it survives outside the conversation that found it.
+
 ### What `as_of` actually does to `firms.json`, and one wrong theory about it
 
 Recorded because the wrong version is more plausible than the right one and was

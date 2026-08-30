@@ -231,8 +231,16 @@ function cosine(firm: Float64Array, tender: Float32Array): number {
   return tenderNorm === 0 ? 0 : dot / tenderNorm;
 }
 
-/** True when a tender is open to a firm working in `regions`. */
-function regionAllows(tenderRegion: string | null, regions: string[]): boolean {
+/**
+ * True when a tender is open to a firm working in `regions`.
+ *
+ * Exported because `scripts/export_model_service.py` mirrors this rule to count the
+ * rankable pool per region for the manifest, and `tests/test_freshness_regions.py`
+ * asserts the two agree. A silent drift would put a region count in the manifest that
+ * the ranker disagrees with — the same defect class as the Python/TypeScript name
+ * normalizer, which is tested the same way.
+ */
+export function regionAllows(tenderRegion: string | null, regions: string[]): boolean {
   if (!regions.length) return true;
   if (!tenderRegion) return true;
   const codes = tenderRegion.split(",").map((code) => code.trim());

@@ -178,6 +178,61 @@ def open_pool(connection: Any, limit: int | None = None) -> list[dict]:
     return pool
 
 
+#: Regions the demo offers as an explicit filter, and so the ones worth counting.
+TRACKED_REGIONS = ("ON", "QC")
+
+
+def region_allows(tender_region: str | None, regions: list[str]) -> bool:
+    """Mirror of ``regionAllows`` in web/lib/demoRank.ts.
+
+    Duplicated deliberately — the manifest is written in Python and the ranking runs
+    in TypeScript — and therefore tested for agreement rather than trusted, by
+    ``tests/test_freshness_regions.py``, which runs the real shipped function through
+    the Node harness against this one. A drift here would publish a region count the
+    ranker does not honour.
+    """
+    if not regions:
+        return True
+    if not tender_region:
+        return True
+    codes = [code.strip() for code in str(tender_region).split(",")]
+    # "CA" marks a nationally-open notice, not a region the firm has to match.
+    if "CA" in codes:
+        return True
+    return any(code in regions for code in codes)
+
+
+def rankable_counts(pool: list[dict], today: str | None = None) -> dict[str, Any]:
+    """How much of the pool a visitor can actually be shown, now.
+
+    ``pool.json`` holds every open notice with a closing date, but the ranker drops
+    anything already closed at request time (demoRank.ts:447). That gap is the whole
+    problem: a pool of 2,003 whose notices have expired serves 408. This counts what
+    is served, so the manifest carries the number a visitor experiences rather than
+    the number the export happened to write.
+
+    Per-region counts use the ranker's own semantics, where a null region or a ``CA``
+    code matches every filter — so ``by_region["ON"]`` is what an Ontario contractor
+    sees, not the count of notices whose region column reads exactly "ON".
+    """
+    as_of = today or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    rankable = [
+        entry
+        for entry in pool
+        if not entry.get("closing_date") or str(entry["closing_date"]) >= as_of
+    ]
+    return {
+        "as_of": as_of,
+        "count": len(rankable),
+        "by_region": {
+            region: sum(
+                1 for entry in rankable if region_allows(entry.get("region"), [region])
+            )
+            for region in TRACKED_REGIONS
+        },
+    }
+
+
 def tender_feature_rows(pool: list[dict], feature_names: list[str]) -> list[dict]:
     """Tender-side features for each pool entry, keyed by feature name."""
     rows = []
@@ -383,6 +438,12 @@ def export(
             model_dataset.require_corpus(connection, "--refit")
         interactions = features.load_interactions(connection) if refit else None
         pool = open_pool(connection, pool_limit)
+        # When a genuinely new notice last arrived. Set on INSERT and never on update,
+        # so this answers "is ingestion still bringing anything in" — the one failure
+        # an export cannot detect about itself, because an export that ingested
+        # nothing still writes a perfectly fresh generated_at.
+        row = connection.execute("SELECT MAX(ingested_at) FROM tenders").fetchone()
+        max_ingested_at = row[0] if row else None
     finally:
         connection.close()
 
@@ -464,6 +525,10 @@ def export(
 
     manifest = {
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        # Two different facts, and conflating them is what let a stale pool look
+        # current: when the export ran, and when data last came in.
+        "max_ingested_at": max_ingested_at,
+        "rankable": rankable_counts(pool),
         "serving_cutoff": cutoff,
         "embedding_model": embeddings.MODEL_NAME,
         "mapping_version": trades.load_mapping().version,
