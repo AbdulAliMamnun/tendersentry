@@ -225,6 +225,96 @@ class RefusalTests(unittest.TestCase):
         self.assertTrue(current, reason)
 
 
+class CarriedFirmsTests(unittest.TestCase):
+    """firms.json is a retrain artifact; a daily run must not touch it.
+
+    Not "rewritten with identical content" — untouched. A file rewritten every day
+    stops being traceable to the run that computed it, and its mtime starts lying
+    about how old the profiles inside it are.
+    """
+
+    def setUp(self) -> None:
+        self.temp = tempfile.TemporaryDirectory()
+        self.directory = Path(self.temp.name)
+        self.firms = self.directory / "firms.json"
+
+    def tearDown(self) -> None:
+        self.temp.cleanup()
+
+    def _write_firms(self, **extra) -> None:
+        payload = {
+            "count": 3,
+            "min_bids": 5,
+            "embedding_dim": 384,
+            "index": {"acme": ["c1"], "beta": ["c2"], "gamma": ["c3"]},
+            "firms": [],
+        }
+        payload.update(extra)
+        with self.firms.open("w", encoding="utf-8") as handle:
+            json.dump(payload, handle)
+
+    def test_a_carried_artifact_reports_its_own_build_date(self) -> None:
+        self._write_firms(as_of="2026-08-04")
+        carried = export_service._carried_firms(self.firms, {})
+
+        self.assertEqual("carried-forward", carried["source"])
+        self.assertEqual("2026-08-04", carried["built_at"])
+        self.assertEqual(3, carried["count"])
+        self.assertEqual(3, carried["distinct_names"])
+
+    def test_built_at_never_becomes_the_date_it_was_carried(self) -> None:
+        """The whole point: a carried artifact claiming today would be a lie."""
+        self._write_firms(as_of="2026-08-04")
+        carried = export_service._carried_firms(
+            self.firms, {"generated_at": "2026-12-25T00:00:00+00:00"}
+        )
+        self.assertEqual("2026-08-04", carried["built_at"])
+
+    def test_an_artifact_predating_the_field_falls_back_and_says_so(self) -> None:
+        self._write_firms()
+        carried = export_service._carried_firms(
+            self.firms, {"generated_at": "2026-08-04T23:23:02+00:00"}
+        )
+        self.assertEqual("2026-08-04T23:23:02+00:00", carried["built_at"])
+        self.assertIn("predates its own as_of field", carried["built_at_source"])
+
+    def test_a_prior_built_at_is_preferred_to_the_manifest_timestamp(self) -> None:
+        self._write_firms()
+        carried = export_service._carried_firms(
+            self.firms,
+            {
+                "generated_at": "2026-12-25T00:00:00+00:00",
+                "firms": {"built_at": "2026-08-04"},
+            },
+        )
+        self.assertEqual("2026-08-04", carried["built_at"])
+        self.assertNotIn("built_at_source", carried)
+
+    def test_a_stand_in_timestamp_keeps_its_caveat_across_repeated_carries(self) -> None:
+        """Otherwise the second carry silently promotes it to a real build date."""
+        self._write_firms()
+        first = export_service._carried_firms(
+            self.firms, {"generated_at": "2026-08-04T23:23:02+00:00"}
+        )
+        second = export_service._carried_firms(self.firms, {"firms": first})
+
+        self.assertEqual(first["built_at"], second["built_at"])
+        self.assertEqual(first["built_at_source"], second["built_at_source"])
+
+    def test_a_missing_artifact_refuses_and_names_refit(self) -> None:
+        with self.assertRaises(export_service.StaleBooster) as caught:
+            export_service._carried_firms(self.firms, {})
+        self.assertIn("--refit", str(caught.exception))
+
+
+class ProfileSerializationTests(unittest.TestCase):
+    def test_as_of_is_stamped_when_given_and_absent_otherwise(self) -> None:
+        from model import profiles
+
+        self.assertNotIn("as_of", profiles.serialize([]))
+        self.assertEqual("2026-08-30", profiles.serialize([], as_of="2026-08-30")["as_of"])
+
+
 class ShippedArtifactTests(unittest.TestCase):
     """The committed artifacts must satisfy their own guard."""
 

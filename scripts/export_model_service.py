@@ -373,9 +373,10 @@ def export(
 
     connection = db.connect(db_path)
     try:
-        # Still loaded on every run: build_profiles below needs it. Milestone 13C
-        # makes that conditional too, and this read goes with it.
-        interactions = features.load_interactions(connection)
+        # bid_interactions is read only on the retrain path. Both consumers — the GBM
+        # fit and build_profiles — are behind --refit, so a daily export never opens
+        # the table, and the daily database does not need to contain it.
+        interactions = features.load_interactions(connection) if refit else None
         pool = open_pool(connection, pool_limit)
     finally:
         connection.close()
@@ -432,11 +433,25 @@ def export(
     # retrains recomputing them is work that cannot change the answer. A daily run
     # leaves the file untouched — not rewritten with identical content, untouched —
     # so the bytes on disk stay traceable to the run that actually built them.
-    firm_profiles = profiles.build_profiles(
-        db.connect(db_path), interactions, as_of=datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    )
-    _write(directory / "firms.json", profiles.serialize(firm_profiles))
-    LOGGER.info("Firm profiles: %s", profiles.bytes_estimate(firm_profiles))
+    firms_path = directory / "firms.json"
+    if refit:
+        as_of = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        connection = db.connect(db_path)
+        try:
+            firm_profiles = profiles.build_profiles(connection, interactions, as_of=as_of)
+        finally:
+            connection.close()
+        _write(firms_path, profiles.serialize(firm_profiles, as_of=as_of))
+        LOGGER.info("Firm profiles: %s", profiles.bytes_estimate(firm_profiles))
+        firms_manifest = {
+            "count": len(firm_profiles),
+            "min_bids": profiles.MIN_BIDS,
+            "distinct_names": len(profiles.name_index(firm_profiles)),
+            "source": "rebuilt",
+            "built_at": as_of,
+        }
+    else:
+        firms_manifest = _carried_firms(firms_path, _read_manifest(directory))
     # The demo derives trade slugs in the browser-facing function, so the rules
     # must travel with the artifacts rather than being re-implemented.
     mapping_path = Path(config.PROJECT_ROOT) / "matchrec" / "trade_mapping.json"
@@ -450,11 +465,7 @@ def export(
         "feature_order": served_names,
         "leaky_features_excluded": list(train.LEAKY_FEATURES),
         "pool": {"count": len(pool), "sources": sorted({e["source"] for e in pool})},
-        "firms": {
-            "count": len(firm_profiles),
-            "min_bids": profiles.MIN_BIDS,
-            "distinct_names": len(profiles.name_index(firm_profiles)),
-        },
+        "firms": firms_manifest,
         "model": model_stats,
         # Which report describes the served booster, and — precisely — how.
         "evaluation": dict(EVALUATION),
@@ -501,6 +512,48 @@ def adopt(out_dir: Path | str | None = None, cutoff: str = SERVING_CUTOFF) -> di
         manifest["model"]["booster_sha256"][:12],
     )
     return manifest
+
+
+def _carried_firms(firms_path: Path, previous: dict) -> dict:
+    """Describe a firms.json this run did not build.
+
+    ``built_at`` must say when the profiles were computed, never when they were
+    carried forward — a carried artifact that reports today's date is a false
+    provenance claim, and the whole point of leaving the file untouched is that its
+    history stays legible. Artifacts written before this field existed do not carry
+    it, so the previous manifest's generated_at stands in, labelled as the estimate
+    it is.
+    """
+    if not firms_path.is_file():
+        raise StaleBooster(
+            f"No firm profiles at {firms_path} to carry forward. Build them:\n"
+            "    python3 -m scripts.export_model_service --refit"
+        )
+    with firms_path.open(encoding="utf-8") as handle:
+        payload = json.load(handle)
+
+    carried = {
+        "count": payload.get("count"),
+        "min_bids": payload.get("min_bids", profiles.MIN_BIDS),
+        "distinct_names": len(payload.get("index") or {}),
+        "source": "carried-forward",
+    }
+    if payload.get("as_of"):
+        carried["built_at"] = payload["as_of"]
+    elif (previous.get("firms") or {}).get("built_at"):
+        carried["built_at"] = previous["firms"]["built_at"]
+        # The caveat travels with the value. Dropping it on the second carry would
+        # quietly promote a stand-in timestamp to a real build date, and nothing
+        # downstream could tell the difference afterwards.
+        if (previous["firms"] or {}).get("built_at_source"):
+            carried["built_at_source"] = previous["firms"]["built_at_source"]
+    else:
+        carried["built_at"] = previous.get("generated_at")
+        carried["built_at_source"] = (
+            "the manifest of the export that last wrote firms.json; the artifact "
+            "predates its own as_of field"
+        )
+    return carried
 
 
 def _read_manifest(directory: Path) -> dict:

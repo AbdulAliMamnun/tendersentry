@@ -60,7 +60,8 @@ excluded, because a tender closing that day must not see bids placed that day.
 ## Serving the live demo
 
 ```bash
-python3 -m scripts.export_model_service    # writes web/data/model/
+python3 -m scripts.export_model_service            # DAILY: pool only
+python3 -m scripts.export_model_service --refit    # RETRAIN: booster + firm profiles
 python3 -m unittest tests.test_service_parity tests.test_demo_rank
 ```
 
@@ -149,6 +150,46 @@ Most Ontario municipal notices sit behind portals TenderSentry monitors rather t
 republishes. An Ontario-filtered ranking can therefore be genuinely thin — at the time
 of writing, 2 open watermain notices and 2 roadwork. The widget says so on the card
 instead of padding the list to ten rows.
+
+### What `as_of` actually does to `firms.json`, and one wrong theory about it
+
+Recorded because the wrong version is more plausible than the right one and was
+believed here for a while.
+
+**The wrong theory.** `build_profiles` stamps `as_of` with today's date. `as_of` selects
+which interaction titles go into the flat list that gets embedded, and the embedding
+cache in `data/model_cache` is keyed by a hash of that list. So — the reasoning went —
+every export uses a new date, produces a different list, misses the cache, and
+re-embeds ~380k firm-history titles from scratch: ten to twenty-five minutes of the
+daily run, spent recomputing a function of frozen input.
+
+**What is actually true.** The list does not change, because there is nothing in the
+window `as_of` moves across. `bid_interactions` is written only by `model.dataset` at
+retrain, and its newest row is dated 2026-07-24. Any export runs after that, so moving
+`as_of` from 2026-08-04 to 2026-08-30 excludes nothing that the earlier date included:
+380,534 titles either way, byte-identical lists, and the cache hits. Measured,
+`build_profiles` over 11,227 firms completes in about ten seconds warm. The 557 MB
+`emb-*.npy` in `data/model_cache` is precisely that list — 380,534 × 384 × 4 bytes.
+
+The general shape is worth keeping: **a date-derived cache key only busts the cache when
+data exists in the interval the date crosses.** Frozen upstream data means a moving
+cutoff is free. It also means the cost of the wrong theory was a cost that was never
+being paid, and the fix for it would have optimised nothing.
+
+**What `as_of` does change** is the artifact's contents. Three of the fourteen shipped
+`firm_*` features — `firm_days_since_last`, `firm_active_days`, `firm_bids_per_month` —
+are measured against it, so `firms.json` genuinely differed run to run. Cheaply, not
+expensively.
+
+**Consequence of carrying the file forward** (Milestone 13C): those three features now
+freeze at the last retrain. A firm's `firm_days_since_last` stops advancing between
+`--refit` runs, so every firm looks fractionally more recently active than it is, drifting
+by exactly the time since the last retrain. That is the price of a deterministic served
+artifact and of a daily path that never opens `bid_interactions`, and it is bounded by
+retrain cadence rather than unbounded. The manifest records `firms.built_at` so the
+drift is legible instead of invisible; `profiles.serialize` now stamps `as_of` into the
+artifact itself so a future carried file carries its own build date rather than
+borrowing one from the manifest.
 
 ## Contract-scale estimation (`model/scale.py`)
 

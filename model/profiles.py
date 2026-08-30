@@ -206,12 +206,18 @@ def name_index(profiles: Iterable[FirmProfile]) -> dict[str, list[str]]:
     return index
 
 
-def serialize(profiles: list[FirmProfile]) -> dict[str, Any]:
+def serialize(profiles: list[FirmProfile], as_of: str | None = None) -> dict[str, Any]:
     """The shipped artifact.
 
     Deliberately excludes bid amounts and the list of procurements a firm bid on.
     `firm_median_bid` survives inside the feature vector because the model consumes it;
     nothing rendered attributes an amount to a named firm.
+
+    ``as_of`` is stamped into the payload so a carried-forward artifact can say when
+    it was actually computed. It matters more than it looks: three of the fourteen
+    shipped features — `firm_days_since_last`, `firm_active_days` and
+    `firm_bids_per_month` — are measured against this date, so they describe recency
+    as of the build, not as of the day the file is served.
     """
     records = []
     for profile in profiles:
@@ -233,13 +239,16 @@ def serialize(profiles: list[FirmProfile]) -> dict[str, Any]:
                 "centroid_scale": scale,
             }
         )
-    return {
+    payload = {
         "count": len(records),
         "min_bids": MIN_BIDS,
         "embedding_dim": embeddings.EMBEDDING_DIM,
         "index": name_index(profiles),
         "firms": records,
     }
+    if as_of is not None:
+        payload["as_of"] = as_of
+    return payload
 
 
 def cosine(first: np.ndarray, second: np.ndarray) -> float:
