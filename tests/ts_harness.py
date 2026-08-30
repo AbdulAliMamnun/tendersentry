@@ -35,6 +35,7 @@ MODULES = {
     "llmExtract": WEB_DIR / "lib" / "llmExtract.ts",
     "firmLookup": WEB_DIR / "lib" / "firmLookup.ts",
     "enrichment": WEB_DIR / "lib" / "enrichment.ts",
+    "freshness": WEB_DIR / "lib" / "freshness.ts",
 }
 
 #: Bare package imports the staged modules make. Resolved through Node from the site's

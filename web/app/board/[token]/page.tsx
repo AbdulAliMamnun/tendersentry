@@ -5,6 +5,7 @@ import { FirmBoard } from "@/components/FirmBoard";
 import { FirmLookup } from "@/components/FirmLookup";
 import { formatGenerated, loadBoard } from "@/lib/boards";
 import { GITHUB_URL } from "@/lib/data";
+import { dataAsOf } from "@/lib/freshness";
 
 const NOTIFY_ADDRESS = "hello@tendersentry.com";
 
@@ -51,6 +52,10 @@ export default async function BoardPage({
         </div>
         <p className="mt-2 text-sm text-body">
           Your board · updated {formatGenerated(generated_at)}
+          {/* Two different facts, and the distinction matters to a contractor: when
+              this board was built, and how current the market behind it is. They
+              diverge whenever a board is exported from an older pool. */}
+          <span className="text-muted"> · data as of {dataAsOf()}</span>
         </p>
         <p className="mt-4 text-sm leading-relaxed text-muted">
           Showing the top {board.length} of {candidate_count.toLocaleString("en-CA")}{" "}

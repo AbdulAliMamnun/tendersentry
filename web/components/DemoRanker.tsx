@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import { BoardCard } from "@/components/BoardCard";
 import { formatClosing } from "@/lib/data";
+import { dataAsOf } from "@/lib/freshness";
 
 /**
  * The live demo: describe a firm, watch the open market re-rank itself.
@@ -180,12 +181,17 @@ export function DemoRanker() {
         }}
         className="card p-5 sm:p-6"
       >
-        <label
-          htmlFor="firm-description"
-          className="text-[11px] font-semibold uppercase tracking-[0.12em] text-heading"
-        >
-          What does your firm build, and what size jobs do you want?
-        </label>
+        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+          <label
+            htmlFor="firm-description"
+            className="text-[11px] font-semibold uppercase tracking-[0.12em] text-heading"
+          >
+            What does your firm build, and what size jobs do you want?
+          </label>
+          {/* Freshness as a stated fact rather than something a visitor has to
+              assume. The same timestamp tests/test_freshness.py fails the suite over. */}
+          <span className="text-[11px] text-muted">Data as of {dataAsOf()}</span>
+        </div>
         <div className="mt-3 flex flex-col gap-3 sm:flex-row">
           <input
             id="firm-description"
