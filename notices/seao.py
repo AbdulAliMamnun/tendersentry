@@ -124,7 +124,7 @@ def fetch_weekly_file(
     return destination
 
 
-def parse_weekly_file(path: Path | str) -> list[dict]:
+def parse_weekly_file(path: Path | str, now: datetime | None = None) -> list[dict]:
     """Parse one weekly OCDS file into unified notice records."""
     try:
         with Path(path).open(encoding="utf-8") as source:
@@ -132,14 +132,20 @@ def parse_weekly_file(path: Path | str) -> list[dict]:
     except (OSError, json.JSONDecodeError) as exc:
         LOGGER.error("Could not read SEAO file %s: %s", path, exc)
         return []
-    return parse_releases(payload)
+    return parse_releases(payload, now)
 
 
-def parse_releases(payload: dict) -> list[dict]:
+def parse_releases(payload: dict, now: datetime | None = None) -> list[dict]:
     """Convert an OCDS release package into unified notice records.
 
     Releases are processed oldest first so that when one procurement appears
     several times in a file, the most recent release is the one that lands.
+
+    ``now`` is the reference the deadline is judged against, defaulting to the real
+    clock. It exists so a test can pin the reading of a fixture: whether a notice is
+    open depends on when you ask, so a fixture asserted against the wall clock stops
+    holding the day its deadline passes, which is a property of the test rather than
+    of the ingester.
     """
     releases = payload.get("releases") if isinstance(payload, dict) else None
     if not isinstance(releases, list):
@@ -150,7 +156,7 @@ def parse_releases(payload: dict) -> list[dict]:
     records: list[dict] = []
     skipped = 0
     for release in ordered:
-        record = _build_record(release)
+        record = _build_record(release, now)
         if record is None:
             skipped += 1
             continue
@@ -240,7 +246,7 @@ def _default_window(connection: sqlite3.Connection) -> int:
     return DEFAULT_WEEKS
 
 
-def _build_record(release: Any) -> dict | None:
+def _build_record(release: Any, now: datetime | None = None) -> dict | None:
     """Convert one OCDS release into a unified notice record."""
     if not isinstance(release, dict):
         return None
@@ -297,13 +303,18 @@ def _build_record(release: Any) -> dict | None:
         "posted_date": posted_date,
         "notice_url": _notice_url(tender),
         "documents_open": DOCUMENTS_OPEN,
-        "status": _release_status(release, tender, closing_date),
+        "status": _release_status(release, tender, closing_date, now),
     }
 
 
-def _release_status(release: dict, tender: dict, closing_date: str | None) -> str:
+def _release_status(
+    release: dict,
+    tender: dict,
+    closing_date: str | None,
+    now: datetime | None = None,
+) -> str:
     """Normalize the tender status, promoting to awarded when a contract exists."""
-    status = normalize_status(tender.get("status"), closing_date)
+    status = normalize_status(tender.get("status"), closing_date, now)
     tags = {str(tag).casefold() for tag in (release.get("tag") or [])}
     if status != "cancelled" and any(
         "award" in tag or "contract" in tag for tag in tags

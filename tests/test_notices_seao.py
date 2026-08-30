@@ -1,5 +1,6 @@
 import json
 import unittest
+from datetime import datetime, timezone
 from pathlib import Path
 
 from notices import db, seao
@@ -8,6 +9,12 @@ from notices import db, seao
 FIXTURES = Path(__file__).resolve().parent / "fixtures"
 RELEASES_FIXTURE = FIXTURES / "seao_releases.json"
 PACKAGE_FIXTURE = FIXTURES / "seao_package.json"
+
+#: Reference clock for reading the releases fixture, whose newest deadline is
+#: 2026-08-27T11:00:00-04:00. Whether a notice is open depends on when you ask, so
+#: without a pinned reference these assertions decay into failures on the day that
+#: deadline passes — which says nothing about the ingester. Pinned before it.
+FIXTURE_NOW = datetime(2026, 8, 20, 12, 0, tzinfo=timezone.utc)
 
 
 def _load(path: Path) -> dict:
@@ -99,7 +106,7 @@ class WeeklyResourceTests(unittest.TestCase):
 class ParseReleasesTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.records = seao.parse_releases(_load(RELEASES_FIXTURE))
+        cls.records = seao.parse_releases(_load(RELEASES_FIXTURE), now=FIXTURE_NOW)
         cls.by_id = {record["source_id"]: record for record in cls.records}
 
     def test_every_fixture_release_becomes_one_record(self) -> None:
@@ -138,6 +145,23 @@ class ParseReleasesTests(unittest.TestCase):
     def test_active_tender_releases_stay_open(self) -> None:
         self.assertEqual(self.by_id["ocds-ec9k95-20004970"]["status"], "open")
         self.assertEqual(self.by_id["ocds-ec9k95-20160595"]["status"], "open")
+
+    def test_the_reference_closes_each_notice_on_its_own_deadline(self) -> None:
+        """The clock is injectable; the closing rule it feeds is unchanged.
+
+        Pinning `now` must not turn a past deadline into a permanently open notice.
+        The fixture's two active releases close six days apart, so a reference
+        between them separates a blanket switch from a real per-notice comparison:
+        the earlier one closes, the later one is still open.
+        """
+        between = datetime(2026, 9, 1, 12, 0, tzinfo=timezone.utc)
+        records = seao.parse_releases(_load(RELEASES_FIXTURE), now=between)
+        by_id = {record["source_id"]: record for record in records}
+
+        # Closed 2026-08-27, before the reference.
+        self.assertEqual(by_id["ocds-ec9k95-20004970"]["status"], "closed")
+        # Closes 2026-09-02, after it.
+        self.assertEqual(by_id["ocds-ec9k95-20160595"]["status"], "open")
 
     def test_seao_own_municipal_flag_drives_the_buyer_type(self) -> None:
         self.assertEqual(self.by_id["ocds-ec9k95-20004970"]["buyer_type"], "municipal")
