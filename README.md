@@ -61,6 +61,34 @@ streamlit run ui/app.py
 
 Tender PDFs live in `data/tenders/<tender_id>/raw/`. The firm profile is `data/profile.json`.
 
+### What under `data/` is committed, and what regenerates
+
+Committed, because something downstream reads it and could not rebuild it:
+
+| Path | Why it is in git |
+|---|---|
+| `data/tendersentry-slim.db` | The daily refresh runs against it. A projection of the full database, rebuilt by `scripts/build_slim_db.py` after every retrain, and stamped with the source it came from. |
+| `data/statcan/bcpi-*.json` | The 4 KB price-index slice the scale estimator deflates with. |
+| `model/artifacts/scale-estimator.*` | The fitted estimators. Published band figures are unreproducible without them. |
+| `web/data/**` | The serving artifacts the site imports statically. |
+
+Gitignored, because each is a cache or a working file that regenerates on demand:
+`data/tendersentry.db` (the full database), `data/seao/` (downloaded weekly OCDS
+files), `data/model_cache/` (sentence-transformer vectors), `data/statcan/*.csv`,
+`data/rankings/`, `data/census/`.
+
+**`data/open_tender_notices.csv` was tracked and is now gitignored.**
+`docs/STATE-20260830.md` §10 left this open as UNVERIFIED; it is answered. Nothing
+reads it as data. Both references — `ingest/canadabuys.py:334` and
+`notices/canadabuys.py:130` — pass it to `fetch_notices_csv` as a *download
+destination*, and that function re-downloads whenever the file on disk is older than
+24 hours (`ingest/canadabuys.py:42`). It is a download cache, exactly like
+`data/seao/`. Keeping it tracked was actively harmful: the daily workflow stages only
+`web/data` and the slim database, so the committed copy would have frozen at its
+2026-07-29 state while the database it fed moved on — 6 MB in git disagreeing with
+everything derived from it. Regenerate with
+`python3 -m notices.ingest --source canadabuys`.
+
 ## Known limitations and roadmap
 
 - The qualification engine's deterministic field set covers certifications, bonding capacity, insurance limits, regions, and submission methods. Instrument-type checks (e.g. failing a firm whose bid security is a certified cheque against a bonds-only tender) are extracted and displayed but not yet machine-checked — next increment.

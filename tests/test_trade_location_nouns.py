@@ -43,19 +43,43 @@ MAPPING_PATH = Path(config.PROJECT_ROOT) / "matchrec" / "trade_mapping.json"
 #: conversation that produced it and nobody has to re-derive it.
 FORBIDDEN_BARE = {
     "chemin": "roadwork",
+    # Worse than `chemin`, and differently wrong. `chemin` at least named a road when
+    # roadwork was plausible. `parc` fires on municipality names — Saint-Mathieu-du-Parc
+    # — on the Montréal borough Villeray–Saint-Michel–Parc-Extension, and on the French
+    # sense meaning a fleet or an estate: `parc de véhicules`, `parc immobilier`,
+    # `parc informatique`. Those matches are not imprecise, they are about something
+    # else entirely. Measured: of 1,209 notices taking landscaping from `parc` alone,
+    # roughly 11% were park work.
+    "parc": "landscaping",
 }
 
+#: Same shape, measured misfiring, not yet fixed. Recorded with counts so the inventory
+#: survives outside the session that produced it and nobody re-derives it.
+#:
+#: The four building nouns are deliberately one question rather than four: when does a
+#: building noun mean `building_general` rather than `facility_maintenance`? That is a
+#: vocabulary design decision, not a keyword edit.
 KNOWN_UNFIXED = {
-    "ecole": "building_general",
-    "batiment": "building_general",
-    "edifice": "building_general",
-    "pavillon": "building_general",
-    "parc": "landscaping",
-    "pont": "bridge_structural",
-    "chaussee": "roadwork",
-    "voirie": "roadwork",
-    "trottoir": "concrete_flatwork",
-    "quai": "marine_shoreline",
+    "ecole": ("building_general", 382),
+    "batiment": ("building_general", 276),
+    "pavillon": ("building_general", 107),
+    "edifice": ("building_general", 68),
+    "pont": ("bridge_structural", 77),
+    "chaussee": ("roadwork", 63),
+    "voirie": ("roadwork", 41),
+    "piscine": ("building_general", 36),
+    "reservoir": ("water_wastewater", 32),
+    "toit": ("building_envelope", 32),
+    "barrage": ("water_wastewater", 30),
+    "arena": ("building_general", 28),
+    "bibliotheque": ("building_general", 28),
+    "locaux": ("building_general", 22),
+    "caserne": ("building_general", 21),
+    "quai": ("marine_shoreline", 16),
+    "sentier": ("landscaping", 15),
+    "trottoir": ("concrete_flatwork", 13),
+    "rive": ("marine_shoreline", 8),
+    "berge": ("marine_shoreline", 8),
 }
 
 
@@ -89,6 +113,98 @@ class BareLocationNounTests(unittest.TestCase):
         roadwork = _keywords("roadwork")
         for phrase in ("refection de chemin", "reconstruction du chemin", "travaux de chemin"):
             self.assertIn(phrase, roadwork, f"missing phrase form {phrase!r}")
+        landscaping = _keywords("landscaping")
+        for phrase in ("amenagement du parc", "reamenagement du parc", "refection du parc"):
+            self.assertIn(phrase, landscaping, f"missing phrase form {phrase!r}")
+
+
+class ParkNounTests(unittest.TestCase):
+    """`parc` matched municipalities, boroughs, and vehicle fleets."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.mapping = trades.load_mapping()
+
+    def _slugs(self, title: str) -> list[str]:
+        return self.mapping.classify({"title": title})["trade_slugs"]
+
+    def test_a_municipality_name_is_not_park_work(self) -> None:
+        """Saint-Mathieu-du-Parc is a town. Resurfacing its road is roadwork."""
+        slugs = self._slugs("Resurfaçage sur le chemin Principal à Saint-Mathieu-du-Parc")
+        self.assertIn("roadwork", slugs)
+        self.assertNotIn("landscaping", slugs)
+
+    def test_a_borough_name_is_not_park_work(self) -> None:
+        slugs = self._slugs(
+            "Travaux de plomberie - arrondissement de Villeray–Saint-Michel–Parc-Extension"
+        )
+        self.assertNotIn("landscaping", slugs)
+
+    def test_parc_meaning_a_fleet_or_estate_is_not_park_work(self) -> None:
+        """The French sense that has nothing to do with parks at all."""
+        for title in (
+            "Services de soutien informatique du parc de véhicules de sécurité publique",
+            "Mandat sur la réflexion stratégique du parc immobilier",
+            "Parcours de décarbonation du parc de véhicules municipaux",
+        ):
+            self.assertNotIn("landscaping", self._slugs(title), title)
+
+    def test_other_trades_at_a_park_keep_only_their_own_trade(self) -> None:
+        for title, expected in (
+            (
+                "Parc national du Mont-Tremblant - Mise à niveau et pavage de la route 3",
+                "roadwork",
+            ),
+            (
+                "Prêt de local et déneigement - Parc national de la Gaspésie",
+                "snow_ice_management",
+            ),
+        ):
+            slugs = self._slugs(title)
+            self.assertIn(expected, slugs, title)
+            self.assertNotIn("landscaping", slugs, title)
+
+    def test_work_at_a_park_with_no_trade_vocabulary_is_unmapped_not_landscaping(
+        self,
+    ) -> None:
+        """Unmapped is the honest answer when nothing in the vocabulary fits.
+
+        "Installation de lumières DEL au parc St-Noël" is electrical work, but
+        `lumiere` and `DEL` are not electrical keywords — only `eclairage` and
+        `lampadaire` are. Before this fix `parc` gave it `landscaping`, which looked
+        like knowledge and was not. It now returns nothing, which is a smaller and
+        more honest failure, and it records a real gap in the ELECTRICAL vocabulary
+        that is out of scope here.
+        """
+        slugs = self._slugs("Installation de lumières DEL au parc St-Noël")
+        self.assertNotIn("landscaping", slugs)
+        self.assertEqual([], slugs)
+
+    def test_genuine_park_work_still_classifies(self) -> None:
+        for title in (
+            "SP - Réaménagement du parc des loisirs",
+            "Réfection du parc du Poitou - Phase II",
+            "Travaux - Aménagement du parc Bella",
+            "Aménagement parc-école du Havre",
+            "Travaux de reconstruction du parc de la Citière",
+        ):
+            self.assertIn(
+                "landscaping",
+                self._slugs(title),
+                f"\ngenuine park work lost: {title}",
+            )
+
+    def test_the_recreation_vocabulary_the_bare_keyword_was_hiding(self) -> None:
+        """Only ever classified by accident of the word `parc`, as with `chemin`."""
+        for title in (
+            "Remplacement des modules de jeux - Parc Daniel-Lauzon",
+            "Travaux de reconstruction des terrains de tennis et basketball",
+            "Travaux de construction de terrains de pickleball",
+            "Construction d'un jardin communautaire",
+            "Construction d'un lien cyclable",
+            "Fourniture et installation de structures récréatives",
+        ):
+            self.assertIn("landscaping", self._slugs(title), title)
 
 
 class SnowClearingTests(unittest.TestCase):
