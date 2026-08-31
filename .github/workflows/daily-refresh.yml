@@ -56,7 +56,8 @@ permissions:
 
 env:
   SLIM_DB: data/tendersentry-slim.db
-  PYTHON_VERSION: "3.13"
+  # Matches the interpreter requirements-daily.txt pins were resolved against.
+  PYTHON_VERSION: "3.14"
   # Staged bytes above this fail the run. A normal day stages ~64 MB (slim database 58,
   # pool.json 5.2), so this is ~2.3x headroom. It is a runaway guard, not a repo-growth
   # control: growth is bounded by delta compression, measured at ~135 KB/day.
@@ -80,24 +81,44 @@ jobs:
 
     steps:
       - name: Check out
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 1
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
+          # Without this, setup-python hashes requirements.txt — the dev file, which
+          # this job does not install — so the cache key would never move when the
+          # pinned set changed, and a stale wheel cache would be restored for it.
+          cache-dependency-path: requirements-daily.txt
 
       - name: Install dependencies
         run: |
           set -euo pipefail
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          # requirements-daily.txt, not requirements.txt: fully pinned, and without
+          # streamlit/openai/pdfplumber, which this job never uses. openai especially —
+          # the daily path must make no API calls, and not installing the library is
+          # the cheapest way to keep that true.
+          # The CPU-only torch index is declared inside the file itself.
+          pip install -r requirements-daily.txt
+
+      - name: Preflight — every module the run will need
+        run: |
+          set -euo pipefail
+          # Imports the third-party names directly, before ingest downloads anything.
+          # Importing the project's own modules would not do: lightgbm is imported
+          # inside load_estimators and sentence_transformers inside embeddings.embed,
+          # so both stay invisible until the branch that needs them runs — which is how
+          # a missing lightgbm got past install and killed the job several minutes in,
+          # after three weeks of SEAO data had already been fetched.
+          python -m scripts.preflight
 
       - name: Cache the embedding model
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           # The model is pinned and never changes, so the key is fixed. A miss
           # re-downloads (~470 MB) and the run continues; it is never fatal.
@@ -396,7 +417,7 @@ jobs:
 
       - name: Upload the dry-run diff
         if: steps.stage.outputs.changed == 'true' && inputs.dry_run
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: dry-run-diff
           path: |

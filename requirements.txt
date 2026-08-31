@@ -1,6 +1,27 @@
-streamlit
-openai
-pdfplumber
+# Full development environment. Unpinned on purpose — this is the file a person
+# installs from. The unattended daily refresh installs from requirements-daily.txt
+# instead, which is fully pinned because nobody is watching it run.
+#
+# numpy, lightgbm, sentence-transformers and scikit-learn were missing from this file
+# until 2026-08-30, so it could not build a working environment for anything past
+# ingestion. lightgbm and sentence-transformers are imported inside functions rather
+# than at module top level, which is why the omission stayed invisible until a clean
+# runner actually reached those branches.
+
+# Ingestion and the site's data pipeline
 requests
 pandas
 beautifulsoup4
+
+# Model: embeddings, ranking, contract-scale estimation
+numpy
+lightgbm
+sentence-transformers
+
+# Evaluation baselines only (model/train.py fit_compact); never on the daily path
+scikit-learn
+
+# Extraction pipeline and the superseded Streamlit demo
+streamlit
+openai
+pdfplumber

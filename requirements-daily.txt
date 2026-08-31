@@ -1,0 +1,93 @@
+# Dependencies for the unattended daily refresh (.github/workflows/daily-refresh.yml).
+#
+# Separate from requirements.txt, and FULLY PINNED, for one reason: this is the file a
+# job installs from every morning while nobody is watching. An unpinned transitive
+# release is a cron that breaks on a day the data quietly stops refreshing — the exact
+# failure the freshness conditions exist to detect and this file exists to prevent.
+# requirements.txt stays unpinned; the constraint is about the automated path.
+#
+# The whole resolved closure is pinned, not only the six direct dependencies. Pinning
+# direct deps alone leaves every transitive package free to move, which is where this
+# class of breakage actually comes from.
+#
+# Contents are derived from a static import walk of the daily path — ingest, matchrec
+# schema/trades/rank, model.scale --backfill, export_model_service, export_demo_board,
+# export_firm_boards — and tests/test_daily_dependencies.py re-runs that walk and fails
+# if an import appears here that this file does not cover. Two of the six were invisible
+# to inspection because they are imported inside functions rather than at module top
+# level: lightgbm (model/scale.py load_estimators) and sentence-transformers
+# (model/embeddings.py). That is why the daily refresh died mid-run rather than at
+# import time.
+#
+# Deliberately ABSENT, because the daily path never uses them: streamlit (the superseded
+# ui/app.py), openai and pdfplumber (the extraction path, which makes API calls the cron
+# must never make).
+#
+# torch comes from PyTorch's CPU index below: 183 MB against 502 MB for the default
+# wheel, on a runner with no GPU. `torch==2.13.0` matches `2.13.0+cpu` — PEP 440 ignores
+# the local version segment when matching.
+#
+# To re-resolve after changing a direct dependency:
+#     pip install --dry-run --ignore-installed \
+#       --extra-index-url https://download.pytorch.org/whl/cpu \
+#       --report report.json -r <direct deps>
+#
+# Resolved 2026-08-30 against Python 3.14.6, which is what the repo's own
+# interpreter runs and what the workflow now installs. Resolving pins on one minor
+# version and installing them on another is a way to discover, unattended, that a
+# pinned version has no wheel for the runner's Python.
+
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+# --- direct: imported by the daily path itself -------------------------------------
+beautifulsoup4==4.15.0
+lightgbm==4.7.0
+numpy==2.5.2
+pandas==3.0.5
+requests==2.34.2
+sentence-transformers==6.0.0
+
+# --- transitive closure ------------------------------------------------------------
+annotated-doc==0.0.5
+anyio==4.14.2
+certifi==2026.7.22
+charset-normalizer==3.5.1
+click==8.5.0
+filelock==3.32.4
+fsspec==2026.7.0
+h11==0.16.0
+hf-xet==1.6.0
+httpcore==1.0.9
+httpx==0.28.1
+huggingface_hub==1.29.0
+idna==3.19
+jinja2==3.1.6
+joblib==1.5.3
+markdown-it-py==4.2.0
+markupsafe==3.0.3
+mdurl==0.1.2
+mpmath==1.3.0
+narwhals==2.25.0
+networkx==3.6.1
+packaging==26.3
+pygments==2.21.0
+python-dateutil==2.9.0.post0
+pyyaml==6.0.3
+regex==2026.8.31
+rich==15.0.0
+safetensors==0.8.0
+scikit-learn==1.9.0
+scipy==1.18.1
+setuptools==84.0.0
+shellingham==1.5.4
+six==1.17.0
+soupsieve==2.9.2
+sympy==1.14.0
+threadpoolctl==3.6.0
+tokenizers==0.23.1
+torch==2.13.0
+tqdm==4.70.0
+transformers==5.16.1
+typer==0.27.2
+typing_extensions==4.16.0
+urllib3==2.7.0
