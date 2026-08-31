@@ -36,6 +36,14 @@ on:
         description: "Run everything, show the diff, commit nothing"
         type: boolean
         default: true
+      max_new_notices:
+        description: "Row-delta cap for this run. Raising it is a one-off catch-up."
+        type: string
+        default: "5000"
+      catch_up_reason:
+        description: "REQUIRED when raising the cap. Recorded in the summary and commit."
+        type: string
+        default: ""
 
 concurrency:
   # Two refreshes writing the same database would interleave commits. Never cancel a
@@ -53,8 +61,15 @@ env:
   # pool.json 5.2), so this is ~2.3x headroom. It is a runaway guard, not a repo-growth
   # control: growth is bounded by delta compression, measured at ~135 KB/day.
   MAX_STAGED_MB: "150"
-  # More notices than this in one run means the ingest window or the dedup key broke.
-  MAX_NEW_NOTICES: "5000"
+  # More notices than this in one run means the ingest window or the dedup key broke —
+  # or a genuine backlog after an outage, which is a different thing and is handled by
+  # raising the cap for one manual run rather than by weakening the permanent gate.
+  #
+  # `inputs` is empty on a scheduled run, so a cron ALWAYS gets 5000. The raised cap is
+  # structurally unavailable to the schedule, not merely unused by it.
+  DEFAULT_MAX_NEW_NOTICES: "5000"
+  MAX_NEW_NOTICES: ${{ inputs.max_new_notices || '5000' }}
+  CATCH_UP_REASON: ${{ inputs.catch_up_reason || '' }}
 
 jobs:
   refresh:
@@ -89,6 +104,45 @@ jobs:
           path: ~/.cache/huggingface
           key: hf-paraphrase-multilingual-MiniLM-L12-v2-v1
           restore-keys: hf-paraphrase-multilingual-MiniLM-L12-v2-
+
+      - name: Check the row-delta cap
+        id: cap
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os, sys
+
+          cap = os.environ["MAX_NEW_NOTICES"].strip()
+          default = os.environ["DEFAULT_MAX_NEW_NOTICES"].strip()
+          reason = os.environ.get("CATCH_UP_REASON", "").strip()
+
+          try:
+              value = int(cap)
+          except ValueError:
+              sys.exit(f"::error::max_new_notices must be an integer, got {cap!r}")
+          if value < 1:
+              sys.exit(f"::error::max_new_notices must be positive, got {value}")
+
+          raised = cap != default
+          # A raised cap without a stated reason fails BEFORE ingesting, so the cost of
+          # the exception is paid up front. This is the whole anti-habit mechanism:
+          # "just bump it" becomes "say why", and the why lands in the commit.
+          if raised and not reason:
+              sys.exit(
+                  f"::error::max_new_notices was raised to {value} (default {default}) "
+                  "with no catch_up_reason. Raising the cap is a one-off catch-up after "
+                  "an outage and has to be justified in writing — the reason is recorded "
+                  "in the job summary and in the commit message. Re-run with "
+                  "catch_up_reason filled in.\n"
+                  "If this is not a catch-up, the right move is to leave the cap alone "
+                  "and find out why the delta is large."
+              )
+          if raised:
+              print(f"::warning::Row-delta cap RAISED to {value} (default {default}): {reason}")
+          with open(os.environ["GITHUB_ENV"], "a") as fh:
+              fh.write(f"CAP_RAISED={'true' if raised else 'false'}\n")
+          print(f"row-delta cap: {value}" + (f" (RAISED from {default})" if raised else ""))
+          PY
 
       - name: Record the starting state
         id: before
@@ -142,7 +196,12 @@ jobs:
               sys.exit(f"::error::notice count DECREASED: {before} -> {after}")
           cap = int(os.environ["MAX_NEW_NOTICES"])
           if added > cap:
-              sys.exit(f"::error::{added} new notices exceeds the {cap} cap")
+              sys.exit(
+                  f"::error::{added} new notices exceeds the {cap} cap. If this is a "
+                  "backlog after an outage, catch up locally against the full database "
+                  "and rebuild the slim one — or re-run manually with max_new_notices "
+                  "raised and catch_up_reason filled in. Do not raise the permanent cap."
+              )
           if added == 0:
               # Normal. Recorded so the summary distinguishes it from a dead step.
               print("no new notices this run (a normal outcome, not a failure)")
@@ -230,6 +289,22 @@ jobs:
           import json, os, pathlib, datetime
           root = pathlib.Path("web/data/model")
           print("## Daily refresh\n")
+
+          # Above everything else, because an exception nobody notices is not an
+          # exception. A default run prints nothing here at all.
+          if os.environ.get("CAP_RAISED") == "true":
+              print("> ### ⚠️ Row-delta cap was RAISED for this run")
+              print(f"> Cap **{os.environ.get('MAX_NEW_NOTICES','?')}**, "
+                    f"default {os.environ.get('DEFAULT_MAX_NEW_NOTICES','?')}. "
+                    f"Triggered by **{os.environ.get('GITHUB_ACTOR','?')}**.")
+              print(f"> Reason: {os.environ.get('CATCH_UP_REASON','(none)')}")
+              added = os.environ.get("NOTICES_ADDED")
+              if added is not None:
+                  default = int(os.environ.get("DEFAULT_MAX_NEW_NOTICES", "5000"))
+                  needed = "yes" if int(added) > default else "NO — the default would have passed"
+                  print(f"> Actual delta **{added}**. Raise actually needed: {needed}")
+              print()
+
           print(f"- Run started (runner local): `{os.environ.get('RUN_LOCAL_START','?')}`")
           print(f"- Run started (UTC): `{datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds')}`\n")
 
@@ -337,8 +412,16 @@ jobs:
           set -euo pipefail
           git config user.name "tendersentry-bot"
           git config user.email "noreply@users.noreply.github.com"
+          # A raised cap goes into permanent history, not only into a summary that
+          # expires. `git log` months from now should show which data arrived under an
+          # exception and why.
+          if [ "${CAP_RAISED}" = "true" ]; then
+            CAP_NOTE=$'\n\nRow-delta cap RAISED to '"${MAX_NEW_NOTICES}"' (default '"${DEFAULT_MAX_NEW_NOTICES}"') for this run.'$'\n'"Reason: ${CATCH_UP_REASON}"$'\n'"Triggered by ${GITHUB_ACTOR}."
+          else
+            CAP_NOTE=""
+          fi
           git commit -m "data: daily refresh $(date -u +%Y-%m-%d)" \
-                     -m "Notices ${NOTICES_BEFORE} -> ${NOTICES_AFTER} (${NOTICES_ADDED} new). Model carried forward; no retrain." \
+                     -m "Notices ${NOTICES_BEFORE} -> ${NOTICES_AFTER} (${NOTICES_ADDED} new). Model carried forward; no retrain.${CAP_NOTE}" \
                      -m "Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>"
           # Rebase rather than force: a human commit landing mid-run must survive.
           git pull --rebase --autostash origin "${GITHUB_REF_NAME}"
@@ -370,7 +453,12 @@ jobs:
             -d "$(python3 -c "
           import json, os
           print(json.dumps({
-            'from': 'TenderSentry <onboarding@resend.dev>',
+            # Must be on a domain the API key is verified for. resend.dev is Resend's
+            # shared sandbox sender and would be rejected by a key scoped to
+            # tendersentry.com — failing the notification for a second, independent
+            # reason on exactly the runs where it matters. Same address the app sends
+            # from (DEFAULT_FROM in web/app/api/check/route.ts).
+            'from': 'TenderSentry <notifications@tendersentry.com>',
             'to': [os.environ['NOTIFY_EMAIL']],
             'subject': 'TenderSentry daily refresh FAILED',
             'text': (
