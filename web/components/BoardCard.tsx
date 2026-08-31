@@ -1,4 +1,5 @@
 import { board, formatClosing } from "@/lib/data";
+import { dataAsOf, maxIngestedAt } from "@/lib/freshness";
 
 /**
  * The showpiece: a real ranked board, shown as an example before the visitor ranks
@@ -31,7 +32,16 @@ export function BoardCard() {
             {firm.name}, a demo firm
           </p>
         </div>
-        <span className="text-xs text-muted">updated 6:00 AM</span>
+        {/* Derived, not asserted. This read "updated 6:00 AM" — a hardcoded string
+            that claimed a freshness nothing produced, and claimed it over the red row
+            too, whose evidence is from July. It now comes from the same manifest field
+            as the "data as of" line on the ranker, so the two surfaces cannot state
+            different things. Date only: the refresh is daily, and a clock time would
+            promise a precision the pipeline does not have. Nothing renders when the
+            field is absent, rather than a fallback that would be a guess. */}
+        {maxIngestedAt() ? (
+          <span className="text-xs text-muted">updated {dataAsOf()}</span>
+        ) : null}
       </div>
 
       <ul>
@@ -64,8 +74,11 @@ export function BoardCard() {
           <p className="mt-2 text-sm font-medium text-brand-red">{blocker.reason}</p>
           <p className="mt-2 text-sm italic leading-relaxed text-body">
             &ldquo;{blocker.quote}&rdquo;{" "}
+            {/* The date belongs with the evidence it qualifies. Green rows above are
+                live; this quote was checked against the source PDF on a fixed date and
+                without it a point-in-time example reads as current. */}
             <span className="whitespace-nowrap not-italic text-muted">
-              · p.{blocker.page}
+              · p.{blocker.page} · verified {dataAsOf(blocker.extracted_at)}
             </span>
           </p>
         </li>

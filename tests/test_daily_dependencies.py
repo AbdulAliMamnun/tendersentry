@@ -59,11 +59,23 @@ DISTRIBUTION = {
     "sklearn": "scikit-learn",
 }
 
-#: Reached through `model.train`, which the exporter imports for LEAKY_FEATURES and
-#: Split, but only ever *called* under --refit — which the daily job cannot run, because
-#: the slim database has no corpus to refit from. Excluded deliberately rather than
-#: silently: it is a real import edge that no daily run can traverse.
-NOT_ON_THE_DAILY_PATH = {"sklearn"}
+#: Real import edges that no daily run traverses. Excluded deliberately and with a
+#: reason each, rather than silently — the walk is static and cannot know which
+#: functions get called, so this is the one place that judgement is written down.
+#:
+#: * `sklearn` — reached through `model.train`, which the exporter imports for
+#:   LEAKY_FEATURES and Split, but only ever *called* from `fit_compact`, an
+#:   evaluation baseline. Not even `--refit` calls it, and the daily job cannot run
+#:   `--refit` at all: the slim database has no corpus to refit from.
+#: * `pdfplumber` — reached through `extract.pages`, imported inside
+#:   `export_demo_board.build_blocker_artifact`, which only `--refresh-blocker` calls.
+#:   That is a local operation by design: it re-reads source PDFs from `data/tenders/`,
+#:   a gitignored directory the runner does not have. The workflow never passes the
+#:   flag, and installing pdfplumber on the runner would imply it might.
+#:
+#: The cost of being wrong here is bounded: a daily step that did reach one of these
+#: fails immediately on ModuleNotFoundError, loudly, at the step that needs it.
+NOT_ON_THE_DAILY_PATH = {"sklearn", "pdfplumber"}
 
 
 def _module_path(dotted: str) -> Path | None:

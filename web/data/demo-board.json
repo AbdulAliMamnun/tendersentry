@@ -20,13 +20,22 @@
     }
   ],
   "blocker": {
+    "artifact_version": 1,
+    "generated_at": "2026-08-31T02:04:44+00:00",
+    "verified_at": "2026-08-31T02:04:44+00:00",
+    "extracted_at": "2026-07-19T22:07:29+00:00",
     "tender_id": "cb-757-46105229",
+    "title": "RFSO 5P300-26-0001",
+    "buyer": "",
+    "requirement_id": "cb-757-46105229-R009",
     "requirement_text": "Submit offers by fax to 1-877-558-2349.",
     "quote": "The only acceptable facsimile for responses to the RFSO is 1-877-558-2349.",
     "page": 2,
+    "source_file": "rfso-5p300-26-0001-a.pdf",
+    "source_sha256": "8fa861bb9d5ecfaa5c7662c3116cad8fb3463f4b2372b7c399737acf0582646f",
     "check_field": "submission_method",
     "check_value": "1-877-558-2349",
-    "title": "RFSO 5P300-26-0001",
+    "verification": "exact substring, re-read from the source PDF at generation",
     "reason": "Requires fax submission — this firm submits electronically only."
   },
   "candidate_count": 149

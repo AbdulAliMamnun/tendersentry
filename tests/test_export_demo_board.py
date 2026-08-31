@@ -252,15 +252,21 @@ class ExportTests(unittest.TestCase):
             )
 
     def test_a_board_is_never_emitted_without_verified_evidence(self) -> None:
-        (self.root / "cb-757-46105229" / "decision.json").write_text(
-            json.dumps({**DECISION, "verdict": "review", "blockers": []}),
-            encoding="utf-8",
-        )
+        """The invariant is unchanged; where the evidence comes from is not.
 
-        with self.assertRaises(RuntimeError):
-            export_demo_board.export(
-                firm_id=self.firm_id, out_dir=self.root / "out", db_path=self.db_path
-            )
+        This used to blank the decision file, because `build_board` globbed
+        `data/tenders/`. It no longer does — that directory is gitignored and absent
+        on every runner, which is why the daily job failed here every time. The
+        evidence is now the committed artifact, so removing *that* is what must refuse.
+        """
+        with patch.object(
+            export_demo_board, "BLOCKER_PATH", self.root / "no-such-blocker.json"
+        ):
+            with self.assertRaises(RuntimeError) as caught:
+                export_demo_board.export(
+                    firm_id=self.firm_id, out_dir=self.root / "out", db_path=self.db_path
+                )
+        self.assertIn("--refresh-blocker", str(caught.exception))
 
 
 if __name__ == "__main__":

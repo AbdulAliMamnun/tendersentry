@@ -28,6 +28,17 @@ export type Board = {
     page: number;
     title: string;
     reason: string;
+    /**
+     * When the quote was extracted and checked against the source PDF.
+     *
+     * Displayed beside the page number, because the red row is a point-in-time
+     * example and an undated one reads as current. The green rows beside it are
+     * live; this one cites a tender that has never been in the pool.
+     */
+    extracted_at: string;
+    source_file: string;
+    /** sha256 of the PDF the quote was verified against. */
+    source_sha256: string;
   };
 };
 

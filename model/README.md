@@ -151,6 +151,24 @@ republishes. An Ontario-filtered ranking can therefore be genuinely thin — at 
 of writing, 2 open watermain notices and 2 roadwork. The widget says so on the card
 instead of padding the list to ten rows.
 
+### Known limit: `decision.json` carries no timestamp
+
+The extraction pipeline writes `data/tenders/<id>/decision.json` and
+`requirements.json` with no record of when it ran. There is no `extracted_at`,
+`generated_at`, or model version inside either file.
+
+So `web/data/demo-blocker.json` — the curated blocker the homepage displays, and the
+one artifact that dates a verified quote for a visitor — takes its `extracted_at` from
+the **file's mtime**. That is a weak provenance source: it survives a copy but not a
+`git checkout`, a re-clone, or a `touch`, and it records when the file last changed
+rather than when the extraction happened. The date shown beside the quote on the
+homepage rests on it.
+
+Not fixed. The fix is to stamp `generated_at` and the model identity inside
+`decision.json` at write time in `extract/pipeline.py`, which means re-running
+extraction over the existing tenders to backfill — an API-spend decision, not a code
+one. Recorded so the displayed date is known to be softer than it looks.
+
 ### Known limit: one rule, two implementations — and the one still unguarded
 
 Three rules in this codebase exist twice, because the pipeline is Python and the

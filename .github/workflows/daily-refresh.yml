@@ -260,7 +260,7 @@ jobs:
               sys.exit("::error::backfill reported no estimator provenance")
           PY
 
-      - name: Re-rank and re-export
+      - name: Re-rank every firm
         run: |
           set -euo pipefail
           for firm in $(python -c "
@@ -270,10 +270,28 @@ jobs:
           "); do
             python -m matchrec.rank --firm "$firm" --top 5 --db "$SLIM_DB"
           done
+
+      - name: Export the serving artifacts
+        run: |
+          set -euo pipefail
           # No --refit. It would fail on the missing corpus if it were here.
           python -m scripts.export_model_service --db "$SLIM_DB"
-          python -m scripts.export_demo_board --db "$SLIM_DB"
+
+      # The three exports are separate steps, in this order, on purpose. They used to be
+      # &&-chained in one step with the demo board first, so when the demo board failed
+      # it took the real firm boards down with it — boards that matter more, and that
+      # would have exported fine. Real customer output does not wait on the showpiece.
+      - name: Export the firm boards
+        run: |
+          set -euo pipefail
           python -m scripts.export_firm_boards --db "$SLIM_DB"
+
+      - name: Export the demo board
+        run: |
+          set -euo pipefail
+          # Reads web/data/demo-blocker.json, which is committed. It no longer globs
+          # data/tenders/ — that directory is gitignored and has never existed here.
+          python -m scripts.export_demo_board --db "$SLIM_DB"
 
       - name: Assert the exported artifacts are sane
         run: |

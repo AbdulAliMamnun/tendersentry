@@ -14,6 +14,7 @@ while the suite that guards it looks somewhere else — worse than showing nothi
 from __future__ import annotations
 
 import json
+import re
 import unittest
 from datetime import datetime, timezone
 from pathlib import Path
@@ -122,6 +123,93 @@ class DisplaySurfaceTests(unittest.TestCase):
         ):
             source = path.read_text(encoding="utf-8")
             self.assertIn('from "@/lib/freshness"', source, f"{path.name}")
+
+
+#: Every surface that states how current the data is. They make one claim between them,
+#: so they must read one field.
+FRESHNESS_SURFACES = (
+    WEB / "components" / "DemoRanker.tsx",
+    WEB / "components" / "BoardCard.tsx",
+    WEB / "app" / "board" / "[token]" / "page.tsx",
+)
+
+
+class FreshnessAgreementTests(unittest.TestCase):
+    """Two surfaces, one claim — and nothing else keeping them in step.
+
+    The board card said `updated 6:00 AM`: a hardcoded literal, describing no field,
+    sitting above a quote extracted in July. The ranker said "Data as of {date}" from
+    the manifest. Both told a visitor how current the data was, and they could disagree
+    by any amount without anything noticing.
+
+    This is the same defect class as `scaleLabel`, which is recorded as open in
+    model/README.md: one rule implemented twice with nothing asserting the two agree.
+    The remedy here is stronger than a comparison — both surfaces call the same
+    function, so agreement is structural — and these tests keep it that way.
+    """
+
+    def test_every_freshness_surface_reads_the_shared_module(self) -> None:
+        for path in FRESHNESS_SURFACES:
+            source = path.read_text(encoding="utf-8")
+            self.assertIn(
+                'from "@/lib/freshness"',
+                source,
+                f"{path.name} states freshness without reading lib/freshness",
+            )
+            self.assertIn("dataAsOf", source, f"{path.name} does not call dataAsOf")
+
+    def test_no_surface_reads_the_manifest_directly(self) -> None:
+        """A second reader of the same file is a second thing that can drift."""
+        for path in FRESHNESS_SURFACES:
+            source = path.read_text(encoding="utf-8")
+            self.assertNotIn(
+                "data/model/manifest.json",
+                source,
+                f"{path.name} imports the manifest instead of going through freshness",
+            )
+
+    def test_the_card_no_longer_hardcodes_a_time(self) -> None:
+        """The literal that started this. A clock time also promises a precision the
+        daily refresh does not have.
+
+        Comments are stripped first: the assertion is about what renders, and the code
+        explains the old literal by quoting it.
+        """
+        source = (WEB / "components" / "BoardCard.tsx").read_text(encoding="utf-8")
+        rendered = re.sub(r"/\*.*?\*/", "", source, flags=re.DOTALL)
+        self.assertNotIn("6:00 AM", rendered)
+        self.assertNotRegex(
+            rendered.replace("dataAsOf", ""),
+            r"updated \d",
+            "the card states a literal date or time again",
+        )
+
+    def test_the_card_and_the_ranker_render_the_same_value(self) -> None:
+        """The claim itself, not only the wiring."""
+        if not ts_harness.available() or not MANIFEST.is_file():
+            self.skipTest("toolchain or manifest unavailable")
+        result = ts_harness.run(
+            """
+import { dataAsOf, maxIngestedAt } from './freshness.mjs';
+process.stdout.write(JSON.stringify({ shared: dataAsOf(), stamp: maxIngestedAt() }));
+"""
+        )
+        manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+        self.assertEqual(manifest["max_ingested_at"], result["stamp"])
+        # Both surfaces call dataAsOf() with no argument, so this is the string each
+        # renders. Asserting it against the manifest field closes the loop.
+        self.assertEqual(_readable(manifest["max_ingested_at"]), result["shared"])
+
+    def test_the_card_renders_nothing_when_the_field_is_absent(self) -> None:
+        """Ruled: render nothing rather than a fallback, which would be a guess."""
+        source = (WEB / "components" / "BoardCard.tsx").read_text(encoding="utf-8")
+        self.assertIn("maxIngestedAt()", source)
+        self.assertIn(": null", source, "the card has no absent-field branch")
+
+    def test_the_blocker_date_is_the_extraction_date_not_the_refresh_date(self) -> None:
+        """The red row is a point-in-time example; dating it from today would lie."""
+        source = (WEB / "components" / "BoardCard.tsx").read_text(encoding="utf-8")
+        self.assertIn("dataAsOf(blocker.extracted_at)", source)
 
 
 if __name__ == "__main__":
