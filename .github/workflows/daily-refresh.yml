@@ -58,10 +58,39 @@ env:
   SLIM_DB: data/tendersentry-slim.db
   # Matches the interpreter requirements-daily.txt pins were resolved against.
   PYTHON_VERSION: "3.14"
-  # Staged bytes above this fail the run. A normal day stages ~64 MB (slim database 58,
-  # pool.json 5.2), so this is ~2.3x headroom. It is a runaway guard, not a repo-growth
-  # control: growth is bounded by delta compression, measured at ~135 KB/day.
-  MAX_STAGED_MB: "150"
+  # Staged bytes above this fail the run. Steady state is ~78.7 MB — the slim database
+  # at 72.3 and pool.json at 6.3 — so this is ~2.5x headroom. A runaway guard, not a
+  # repo-growth control: growth in git is bounded by delta compression, measured at
+  # ~61 KB/day for the slim database on a day with realistic churn.
+  #
+  # The slim database ships with the two matchrec side tables EMPTY, because their rows
+  # are outputs of a run rather than inputs to it. So the first run on a fresh checkout
+  # fills firm_notice_exclusions with ~119k rows and takes the file 43.5 -> 72.3 MB.
+  # That is one-time and bounded: measured over three further runs it moved by exactly
+  # zero bytes, and freelist_count stays at 0. There is nothing for a VACUUM to reclaim
+  # — measured, it recovers 0.6% of the file and costs 4.7x more git space per day,
+  # because rewriting the page layout is what defeats delta compression.
+  #
+  # THE CONSTRAINT THAT WILL BE MET, and it is firms, not days. Exclusions run at ~99%
+  # of tenders per firm: ~59k rows and ~14.2 MB each. Staged bytes are therefore
+  # roughly 43.5 (base, side tables empty) + 6.3 (pool.json) + 14.2 x firms, and the
+  # per-firm term scales with the pool as well:
+  #
+  #     firms       3        4        6       10       11
+  #     staged   92.4 MB  106.6   135.0    191.8    206.0  <- trips
+  #
+  # So at today's 59,705 tenders this gate binds at the ELEVENTH firm. Double the pool
+  # and per-firm cost doubles to ~28 MB, moving it to the sixth; triple it and it is
+  # the fourth. The cliff is not fixed, it slides toward us as the pool grows.
+  #
+  # This is the same wall as the blocking rule at web/README.md:38 — real firms' board
+  # JSON must move to Blob-backed storage before firm 3 — arriving from the other side.
+  # That rule is about privacy; this is about bytes. THE PRIVACY RULE BINDS FIRST, at
+  # firm 3 against firm 11, and it binds absolutely rather than on a threshold. This
+  # ceiling is the backstop for the case where per-firm data is still in the repository
+  # when it should not be. Whichever is hit first the answer is the same: per-firm data
+  # stops living here. Raising this number is not the fix and would only defer it.
+  MAX_STAGED_MB: "200"
   # More notices than this in one run means the ingest window or the dedup key broke —
   # or a genuine backlog after an outage, which is a different thing and is handled by
   # raising the cap for one manual run rather than by weakening the permanent gate.

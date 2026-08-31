@@ -49,6 +49,25 @@ Tokens themselves are already safe: board files are named `sha256(token)`, so th
 repository holds a value nothing can be derived from. The token exists only in the
 database and in the link you send.
 
+**The same wall is arriving from a second direction, and it is measured.** The daily
+refresh commits `data/tendersentry-slim.db`, whose `firm_notice_exclusions` table
+holds one row per firm per notice — ~99% of tenders, so **~59k rows and ~14.2 MB per
+firm**. Staged bytes per run are roughly `43.5 + 6.3 + 14.2 × firms` MB, against the
+200 MB ceiling in `.github/workflows/daily-refresh.yml`:
+
+| firms | 3 | 4 | 6 | 10 | 11 |
+|---|---|---|---|---|---|
+| staged | 92.4 MB | 106.6 | 135.0 | 191.8 | **206.0 — trips** |
+
+The per-firm term scales with the pool too: double the notices and it is ~28 MB per
+firm, which moves the ceiling to the sixth firm; triple them and it is the fourth.
+
+**The privacy rule above binds first — firm 3 against firm 11 — and it binds
+absolutely rather than on a threshold.** The size ceiling is the backstop for the case
+where per-firm data is still in the repository when it should not be. They are one
+limit counted two ways: per-firm data cannot keep living here. Raising the ceiling is
+not the fix.
+
 ### The flow
 
 1. **A contractor submits the beta form.** It arrives as an email with subject
