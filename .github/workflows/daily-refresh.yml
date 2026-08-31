@@ -155,6 +155,23 @@ jobs:
           key: hf-paraphrase-multilingual-MiniLM-L12-v2-v1
           restore-keys: hf-paraphrase-multilingual-MiniLM-L12-v2-
 
+      - name: Resolve the run mode
+        id: flags
+        env:
+          # Passed as a raw string on purpose. `type: boolean` does not guarantee a
+          # boolean reaches an expression, and every non-empty string is truthy in
+          # GitHub's expression language — so `inputs.dry_run` was true even when the
+          # box was unchecked, because the value was the string "false". Resolving it
+          # in Python removes the guesswork from YAML.
+          DRY_RUN_RAW: ${{ inputs.dry_run }}
+        run: |
+          set -euo pipefail
+          # Emits BOTH flags from one boolean. The workflow never negates anything, so
+          # the dry-run and commit branches cannot drift apart: they are two spellings
+          # of one decision made once, in a function tests/test_workflow_inputs.py
+          # exercises directly.
+          python -m scripts.workflow_inputs
+
       - name: Check the row-delta cap
         id: cap
         run: |
@@ -450,7 +467,7 @@ jobs:
           PY
 
       - name: Show the diff without committing (dry run)
-        if: steps.stage.outputs.changed == 'true' && inputs.dry_run
+        if: steps.stage.outputs.changed == 'true' && steps.flags.outputs.dry_run == 'true'
         run: |
           set -euo pipefail
           echo "::notice::dry run — nothing will be committed"
@@ -463,7 +480,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload the dry-run diff
-        if: steps.stage.outputs.changed == 'true' && inputs.dry_run
+        if: steps.stage.outputs.changed == 'true' && steps.flags.outputs.dry_run == 'true'
         uses: actions/upload-artifact@v7
         with:
           name: dry-run-diff
@@ -475,7 +492,7 @@ jobs:
 
       - name: Commit and push
         id: commit
-        if: steps.stage.outputs.changed == 'true' && !inputs.dry_run
+        if: steps.stage.outputs.changed == 'true' && steps.flags.outputs.commit == 'true'
         run: |
           set -euo pipefail
           git config user.name "tendersentry-bot"
