@@ -129,6 +129,91 @@ class OriginalDataTests(unittest.TestCase):
                 self.assertNotIn(phrase, body, f"{path.name} contains {phrase!r}")
 
 
+#: Language that would turn a bid-fit score into a claim about the future.
+#:
+#: The model predicts bid PROPENSITY — how likely a notice is to be work a firm like
+#: this one goes after. It says nothing about whether they would win it, and it was
+#: never trained to. A contractor who reads a fit score as a chance of winning is being
+#: told something we do not know, which is the one thing this product must not do.
+#:
+#: The rule has existed since the ranking model shipped and was enforced by convention
+#: alone: stated in the serving manifest and in prose, asserted nowhere. This makes it
+#: structural for rendered copy.
+WIN_LANGUAGE = (
+    "win rate",
+    "win probability",
+    "probability of winning",
+    "chance of winning",
+    "likelihood of winning",
+    "odds of winning",
+)
+
+#: The only permitted uses, matched case-insensitively as complete substrings and
+#: removed from the text BEFORE the banned phrases are searched for.
+#:
+#: Both are the site disclaiming the thing, which is the usage the rule exists to
+#: encourage. The list is deliberately literal rather than a "negator within N words"
+#: pattern: a looser rule would also pass constructions nobody vetted. Rewording one of
+#: these therefore requires editing this list, which for copy of this kind is the point.
+#:
+#: What it lets through, exactly: "never a chance of winning" and "not a chance of
+#: winning". Nothing else. A bare "a chance of winning" elsewhere in the same file
+#: still fails, because only the longer phrase is stripped.
+PERMITTED_WIN_LANGUAGE = (
+    "never a chance of winning",
+    "not a chance of winning",
+)
+
+
+class WinLanguageTests(unittest.TestCase):
+    """Scores are bid fit. Rendered copy may not imply they are anything else."""
+
+    @staticmethod
+    def _rendered() -> list[Path]:
+        return sorted([*ARTICLES.glob("*.tsx"), *PRODUCT_BODIES.glob("*.tsx")])
+
+    def test_no_rendered_copy_promises_a_win(self) -> None:
+        offenders: list[str] = []
+        for path in self._rendered():
+            body = re.sub(r"\s+", " ", path.read_text(encoding="utf-8")).lower()
+            for allowed in PERMITTED_WIN_LANGUAGE:
+                body = body.replace(allowed, " ")
+            for phrase in WIN_LANGUAGE:
+                if phrase in body:
+                    offenders.append(f"  {path.name}: {phrase!r}")
+        self.assertFalse(
+            offenders,
+            "\nRendered copy implies a chance of winning:\n" + "\n".join(offenders)
+            + "\n\nThe model predicts bid propensity and was never trained on whether a "
+              "firm won. If the sentence disclaims the idea, add its exact wording to "
+              "PERMITTED_WIN_LANGUAGE; do not widen the banned list.",
+        )
+
+    def test_every_exemption_is_actually_exercised(self) -> None:
+        """An exemption nobody uses is one nobody notices going stale.
+
+        Without this the allowlist becomes a place to park permissions — each one a
+        hole that outlives the sentence it was added for.
+        """
+        corpus = " ".join(
+            re.sub(r"\s+", " ", path.read_text(encoding="utf-8")).lower()
+            for path in self._rendered()
+        )
+        for allowed in PERMITTED_WIN_LANGUAGE:
+            self.assertIn(
+                allowed,
+                corpus,
+                f"PERMITTED_WIN_LANGUAGE carries {allowed!r}, which no rendered copy "
+                "uses any more. Remove it rather than leaving a standing exemption.",
+            )
+
+    def test_the_guard_covers_product_bodies_and_not_only_guides(self) -> None:
+        """The gap this closed: the fabricated-attribution guard scans guides alone."""
+        names = {path.parent.name for path in self._rendered()}
+        self.assertIn("guides", names)
+        self.assertIn("product", names)
+
+
 class HomepageTests(unittest.TestCase):
     """The homepage says what the company does, and stops."""
 

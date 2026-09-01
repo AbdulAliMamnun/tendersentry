@@ -169,6 +169,27 @@ Not fixed. The fix is to stamp `generated_at` and the model identity inside
 extraction over the existing tenders to backfill — an API-spend decision, not a code
 one. Recorded so the displayed date is known to be softer than it looks.
 
+### Known limit: the win-language guard does not scan the serving manifest
+
+`tests/test_guides.py::WinLanguageTests` enforces the standing rule that a bid-fit
+score is never presented as a chance of winning. It scans **rendered copy only** —
+`web/components/guides/*.tsx` and `web/components/product/*.tsx`.
+
+`web/data/model/manifest.json` is not scanned, and it carries the same rule in prose:
+note 4 reads *"Scores are bid propensity, never a probability of winning."* That note
+travels with the artifact to anyone who reads it, so it is copy in every sense that
+matters — it is simply not copy this test can see, because scanning JSON notes for
+prose rules needs a different reader than globbing `.tsx`.
+
+Two consequences, both currently harmless and both worth knowing. A future manifest
+note could state the rule wrongly and nothing would catch it. And the manifest's
+negation is not in `PERMITTED_WIN_LANGUAGE`, so if the manifest ever *is* brought into
+scope, that phrase has to be added — the allowlist deliberately holds only exemptions
+something actually exercises.
+
+Not fixed. Recorded so "the manifest is unscanned" is written down rather than
+remembered.
+
 ### Known limit: one rule, two implementations — and the one still unguarded
 
 Three rules in this codebase exist twice, because the pipeline is Python and the
