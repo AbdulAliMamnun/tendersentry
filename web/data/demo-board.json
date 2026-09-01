@@ -9,14 +9,18 @@
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-09-09",
       "source": "canadabuys",
-      "score": 85
+      "score": 85,
+      "scale_band": "$100–500K",
+      "scale_source": "estimated_model"
     },
     {
       "title": "APN_FIRE HYDRANT INSPECTION, TESTING AND MAINTENANCE (ITM) GARRISON PETAWAWA",
       "buyer": "Defence Construction Canada - Ontario Region",
       "closing_date": "2026-09-09",
       "source": "canadabuys",
-      "score": 85
+      "score": 85,
+      "scale_band": "<$100K",
+      "scale_source": "estimated_model"
     }
   ],
   "blocker": {

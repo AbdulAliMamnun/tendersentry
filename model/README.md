@@ -216,7 +216,7 @@ something actually exercises.
 Not fixed. Recorded so "the manifest is unscanned" is written down rather than
 remembered.
 
-### Known limit: one rule, two implementations — and the one still unguarded
+### One rule, two implementations — the pattern, and where it stands
 
 Three rules in this codebase exist twice, because the pipeline is Python and the
 serving path is TypeScript. Duplication is the right call each time — a serverless
@@ -232,18 +232,18 @@ Two are guarded by a parity test that runs the *real shipped* TypeScript through
 | Firm-name normalization | `model/dataset.normalize_name` | `web/lib/firmLookup.normalizeName` | `tests/test_firm_lookup.py` |
 | Region eligibility | `scripts/export_model_service.region_allows` | `web/lib/demoRank.regionAllows` | `tests/test_freshness_regions.py` |
 
-**The third is open.** `scaleLabel()` is implemented independently in
-`web/components/DemoRanker.tsx` and `web/components/FirmLookup.tsx`, and nothing keeps
-them in agreement — recorded in `docs/STATE-20260830.md` §9 and still true. Both turn
-a `scale_band` plus its `scale_source` into the text a contractor reads, and the whole
-point of shipping `scale_source` is that an estimate is never displayed as though the
-buyer had published it. So the failure mode is not cosmetic: if one copy stops
-distinguishing `published` from `estimated_model`, one surface starts presenting an
-inference as a stated fact, and the other keeps labelling it correctly.
+**The third was `scaleLabel`, and it is now resolved — after it had already drifted.**
+`DemoRanker` and `FirmLookup` each carried a copy, and by the time anyone compared
+them they disagreed: the lookup rendered `~$100–500K (estimated)` where the ranker
+rendered `~$100–500K (estimated from similar contracts)`. The same notice described
+its own certainty differently depending on which surface you were on. Both now import
+`web/lib/scale.ts`, which is one implementation rather than a tested pair — possible
+here because both sides are TypeScript, unlike the two above.
 
-Unlike the two above, this pair is TypeScript on both sides, so the fix is smaller
-than a parity test — lift `scaleLabel` into `web/lib/` and have both components import
-it. Not done here. Recorded so it survives outside the conversation that found it.
+The lesson worth keeping is the timing. The duplication was recorded as a known limit
+and left; the drift happened anyway, and was only found because a third surface needed
+the same function and adding a third copy would have been indefensible. A recorded
+duplication is not a contained one.
 
 ### What `as_of` actually does to `firms.json`, and one wrong theory about it
 

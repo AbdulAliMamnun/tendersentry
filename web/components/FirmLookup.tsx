@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { formatClosing } from "@/lib/data";
+import { scaleLabel } from "@/lib/scale";
 
 /**
  * Look up a firm's board from its public bidding record. **Beta surface only.**
@@ -57,12 +58,6 @@ function basisLine(profile: Profile): string {
   if (trades) parts.push(`mostly ${trades.toLowerCase()}`);
   if (profile.regions.length) parts.push(`in ${profile.regions.join(", ")}`);
   return parts.join(" · ");
-}
-
-function scaleLabel(row: Row): string {
-  if (row.scaleSource === "published") return `${row.scaleBand} (published)`;
-  if (row.scaleBand === "unknown" || row.scaleSource === "unknown") return "size unknown";
-  return `~${row.scaleBand} (estimated)`;
 }
 
 export function FirmLookup({ betaKey }: { betaKey: string }) {
@@ -204,7 +199,19 @@ export function FirmLookup({ betaKey }: { betaKey: string }) {
                     {row.region ? ` · ${row.region}` : ""} · Closes{" "}
                     {formatClosing(row.closingDate)}
                   </p>
-                  <p className="mt-1 text-xs italic text-muted">{scaleLabel(row)}</p>
+                  {(() => {
+                    const scale = scaleLabel(row);
+                    if (!scale) return null;
+                    return (
+                      <p
+                        className={`mt-1 text-xs ${
+                          scale.estimated ? "italic text-muted" : "text-body"
+                        }`}
+                      >
+                        {scale.text}
+                      </p>
+                    );
+                  })()}
                 </div>
                 <span className="shrink-0 rounded-pill bg-fit-greenSoft px-2.5 py-1 text-xs font-semibold text-fit-green">
                   {Math.round(row.fit)} fit

@@ -25,6 +25,7 @@ from typing import Any
 import config
 from census import schema as census_schema
 from matchrec import schema as matchrec_schema
+from notices import db as notices_db
 from profiles import schema as profiles_schema
 
 
@@ -70,7 +71,8 @@ def board_rows(
 ) -> list[dict]:
     """Return the firm's highest-scoring notices for the board's green rows."""
     rows = connection.execute(
-        "SELECT t.title, t.buyer_name, t.closing_date_utc, t.source, s.final_score "
+        "SELECT t.title, t.buyer_name, t.closing_date_utc, t.source, s.final_score, "
+        "       t.scale_band, t.scale_source "
         "FROM firm_notice_scores s JOIN tenders t ON t.id = s.tender_id "
         "WHERE s.firm_id = ? "
         "ORDER BY s.final_score DESC, t.closing_date_utc, t.id LIMIT ?",
@@ -83,6 +85,11 @@ def board_rows(
             "closing_date": str(row["closing_date_utc"] or "")[:10],
             "source": str(row["source"]),
             "score": round(float(row["final_score"])),
+            # Size travels with its provenance or not at all. The example board
+            # demonstrates the arc the homepage promises, and the range behind a
+            # number is a third of it; a band shown bare would read as the buyer's.
+            "scale_band": row["scale_band"] or "unknown",
+            "scale_source": row["scale_source"] or "unknown",
         }
         for row in rows
     ]
@@ -421,6 +428,10 @@ def export(
     # both keeps the export working on a database where one stage has never run.
     connection = matchrec_schema.connect(db_path)
     census_schema.create_schema(connection)
+    # The rows now carry scale_band/scale_source, which arrive by additive
+    # migration. Applying it here keeps the stated property of this block: the
+    # export works on a database where one stage has never run.
+    notices_db.migrate_scale_columns(connection)
     try:
         board = build_board(connection, firm_id, rows)
         stats = build_stats(connection)

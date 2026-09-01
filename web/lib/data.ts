@@ -15,6 +15,9 @@ export type BoardRow = {
   closing_date: string;
   source: string;
   score: number;
+  /** Always paired with its source; see lib/scale.ts. */
+  scale_band: string;
+  scale_source: string;
 };
 
 export type Board = {

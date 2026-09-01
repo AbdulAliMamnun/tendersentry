@@ -1,5 +1,6 @@
 import { board, formatClosing } from "@/lib/data";
 import { dataAsOf, maxIngestedAt } from "@/lib/freshness";
+import { scaleLabel } from "@/lib/scale";
 
 /**
  * The showpiece: a real ranked board, shown as an example before the visitor ranks
@@ -28,8 +29,12 @@ export function BoardCard() {
               Example — what a ranked board looks like
             </span>
           </div>
+          {/* "a demo firm" left a reader to work out which half was invented. It
+              matters more now that a row carries a size: the firm is made up, the
+              notices and the quoted clause are not. Say which is which. */}
           <p className="mt-1 pl-[18px] text-xs text-muted">
-            {firm.name}, a demo firm
+            <span className="font-medium">{firm.name}</span> is a fictional firm.
+            The notices, sizes and the quoted clause are real.
           </p>
         </div>
         {/* Derived, not asserted. This read "updated 6:00 AM" — a hardcoded string
@@ -55,6 +60,25 @@ export function BoardCard() {
               <p className="mt-1 text-xs text-muted">
                 Closes {formatClosing(row.closing_date)}
               </p>
+              {/* The range behind the number — step 3 of the arc the hero promises.
+                  Same function the live ranker uses, so the example cannot describe a
+                  band differently from the thing it is an example of. */}
+              {(() => {
+                const scale = scaleLabel({
+                  scaleBand: row.scale_band,
+                  scaleSource: row.scale_source,
+                });
+                if (!scale) return null;
+                return (
+                  <p
+                    className={`mt-1 text-xs ${
+                      scale.estimated ? "italic text-muted" : "text-body"
+                    }`}
+                  >
+                    {scale.text}
+                  </p>
+                );
+              })()}
             </div>
             <span className="shrink-0 rounded-pill bg-fit-greenSoft px-2.5 py-1 text-xs font-semibold text-fit-green">
               {row.score} fit

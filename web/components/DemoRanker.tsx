@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import { BoardCard } from "@/components/BoardCard";
 import { formatClosing } from "@/lib/data";
+import { scaleLabel } from "@/lib/scale";
 import { dataAsOf } from "@/lib/freshness";
 
 /**
@@ -30,25 +31,6 @@ type Row = {
   scaleSource: string;
   scaleConfidence: number;
 };
-
-/**
- * Size, with where it came from — always. An estimate rendered like a published
- * figure is the pipeline telling a contractor the buyer said something the buyer
- * never said.
- */
-function scaleLabel(row: Row): { text: string; estimated: boolean } | null {
-  if (row.scaleSource === "published") {
-    return { text: `${row.scaleBand} (published)`, estimated: false };
-  }
-  if (row.scaleBand === "unknown" || row.scaleSource === "unknown") {
-    return { text: "size unknown", estimated: false };
-  }
-  const basis =
-    row.scaleSource === "estimated_pattern"
-      ? "estimated from the wording"
-      : "estimated from similar contracts";
-  return { text: `~${row.scaleBand} (${basis})`, estimated: true };
-}
 
 type Response = {
   reading: string;
