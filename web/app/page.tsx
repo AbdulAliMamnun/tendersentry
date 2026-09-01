@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Nav } from "@/components/Nav";
+import { BetaForm } from "@/components/BetaForm";
 import { Footer } from "@/components/Footer";
 import { DemoRanker } from "@/components/DemoRanker";
 import { formatNumber, stats } from "@/lib/data";
@@ -113,9 +114,12 @@ export default function HomePage() {
           Footer. Its three `#join` links land exactly where they always did; the
           difference is that the target is stated here instead of arriving with a
           shared component and colliding on pages that declare their own. */}
-      <div id="join">
-        <Footer />
+      {/* Declared here, not inherited. Footer used to bring a form to every
+          page, which collided with the one this route already had. */}
+      <div id="join" className="shell pb-14">
+        <BetaForm />
       </div>
+      <Footer />
     </>
   );
 }

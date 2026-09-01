@@ -1,8 +1,12 @@
 import { GITHUB_URL } from "@/lib/data";
-import { BetaForm } from "@/components/BetaForm";
 
 /**
- * Light footer: attribution on the left, the beta form on the right.
+ * Light footer: attribution and sources. No form, no anchor.
+ *
+ * It used to render a `BetaForm` as well, and because guide and product routes
+ * render one too, nine pages shipped the same form twice — identical heading,
+ * sub-line and button, within a screen of scrolling. Visible to every reader, and
+ * in no single source file.
  *
  * Carries NO `id="join"`. It used to, and because every page renders a Footer while
  * guide and product routes declare their own `id="join"` too, nine pages shipped the
@@ -10,14 +14,14 @@ import { BetaForm } from "@/components/BetaForm";
  * the footer's copy was unreachable. Neither file was wrong on its own, which is why
  * nothing caught it.
  *
- * A page that wants a `#join` target now declares one. Inheriting an anchor from a
- * shared component is the property that caused the collision, so the property is gone
- * rather than made conditional.
+ * A page that wants a `#join` target or a form now declares one. Inheriting either
+ * from a shared component is the property that caused both collisions, so the
+ * property is gone rather than made conditional.
  */
 export function Footer() {
   return (
     <footer className="border-t border-hairline bg-page">
-      <div className="shell grid gap-10 py-14 md:grid-cols-2 md:gap-16">
+      <div className="shell py-14">
         <div>
           <p className="text-[15px] font-semibold text-heading">Free while in beta</p>
           <p className="mt-2 max-w-sm text-sm leading-relaxed text-body">
@@ -47,10 +51,6 @@ export function Footer() {
               StatCan
             </a>
           </p>
-        </div>
-
-        <div className="md:justify-self-end md:text-right">
-          <BetaForm />
         </div>
       </div>
     </footer>

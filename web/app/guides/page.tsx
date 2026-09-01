@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { BetaForm } from "@/components/BetaForm";
 import { Footer } from "@/components/Footer";
 import { SlimNav } from "@/components/Nav";
 import { GUIDES, SITE_URL } from "@/lib/guides";
@@ -55,6 +56,11 @@ export default function GuidesIndex() {
           ))}
         </div>
       </main>
+      {/* Declared here, not inherited. Footer used to bring a form to every
+          page, which collided with the one this route already had. */}
+      <div id="join" className="shell pb-14">
+        <BetaForm />
+      </div>
       <Footer />
     </>
   );

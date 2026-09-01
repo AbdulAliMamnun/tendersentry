@@ -97,6 +97,56 @@ class RenderedPageTests(unittest.TestCase):
             "is the usual cause, and neither file looks wrong on its own.",
         )
 
+    def test_no_page_renders_two_email_inputs(self) -> None:
+        """Same class as the duplicate id, same cause, and visible to a reader.
+
+        Nine pages rendered the beta form twice — once mid-article and again in the
+        footer, with the same heading, sub-line and button within a screen of
+        scrolling. `/check` and `/product/bid-confidence` did it differently: each had
+        its own funnel and inherited the footer's form on top, which is two different
+        asks on one page rather than the same one twice.
+
+        No source file contained either. A shared component contributed one and the
+        route contributed the other.
+        """
+        offenders: list[str] = []
+        for page in self.pages:
+            found = len(_EMAIL_INPUT.findall(page.read_text(encoding="utf-8")))
+            if found > 1:
+                offenders.append(f"  {_route(page)}: {found} email inputs")
+        self.assertFalse(
+            offenders,
+            "\nPages asking for an email address more than once:\n"
+            + "\n".join(offenders)
+            + "\n\nA page makes one ask. If a route needs a form it declares one; "
+            "Footer deliberately provides none, so a second input means something "
+            "started inheriting again.",
+        )
+
+    def test_the_footer_contributes_no_form_to_any_page(self) -> None:
+        """The property, not the symptom.
+
+        `ownCapture` was added to stop the product route rendering a second form, and
+        it only solved half the problem: it guarded the page-level one while the
+        footer's arrived from somewhere the flag could not see. Asserting the footer
+        stays empty is what keeps the other half fixed.
+        """
+        source = (
+            Path(config.PROJECT_ROOT) / "web" / "components" / "Footer.tsx"
+        ).read_text(encoding="utf-8")
+        # Comments stripped first: the file explains why the form was removed, and the
+        # assertion is about what it renders, not what it says about its own history.
+        code = re.sub(r"/\*.*?\*/", "", source, flags=re.DOTALL)
+        code = re.sub(r"//.*", "", code)
+        for marker in ("<BetaForm", 'from "@/components/BetaForm"'):
+            self.assertNotIn(
+                marker,
+                code,
+                "Footer renders a form again. Every page gets a Footer, so this puts "
+                "one on pages that declare their own and on pages that deliberately "
+                "have none.",
+            )
+
     def test_every_page_that_declares_a_join_anchor_has_exactly_one(self) -> None:
         """The specific instance, kept alongside the general rule.
 

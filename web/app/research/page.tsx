@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SlimNav } from "@/components/Nav";
+import { BetaForm } from "@/components/BetaForm";
 import { Footer } from "@/components/Footer";
 import { MunicipalityLookup } from "@/components/MunicipalityLookup";
 import { DistributionBar } from "@/components/DistributionBar";
@@ -251,6 +252,11 @@ export default async function CensusPage({
         </section>
       </main>
 
+      {/* Declared here, not inherited. Footer used to bring a form to every
+          page, which collided with the one this route already had. */}
+      <div id="join" className="shell pb-14">
+        <BetaForm />
+      </div>
       <Footer />
     </>
   );
