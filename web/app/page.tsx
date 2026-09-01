@@ -5,6 +5,7 @@ import { Footer } from "@/components/Footer";
 import { DemoRanker } from "@/components/DemoRanker";
 import { formatNumber, stats } from "@/lib/data";
 import { PRODUCTS } from "@/lib/products";
+import { spelledThousands } from "@/lib/freshness";
 
 /**
  * The homepage says what the company does, and then gets out of the way.
@@ -17,25 +18,78 @@ import { PRODUCTS } from "@/lib/products";
  *
  * Target: understand the product without scrolling past the demo.
  */
+const HERO_STEPS: { n: number; text: string; pending?: boolean }[] = [
+  {
+    n: 1,
+    text: "We rank every open tender against the work your firm actually bids.",
+  },
+  { n: 2, text: "We show the range behind your number.", pending: true },
+  {
+    n: 3,
+    text: "We quote the clause that would disqualify you, with its page.",
+  },
+];
+
+/** Sentence case for a spelled number opening a sentence. */
+function capitalise(word: string): string {
+  return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
 export default function HomePage() {
   return (
     <>
       <Nav />
 
       <main>
-        {/* Hero */}
+        {/* Hero: the problem, then the solution big, then the three things.
+            The type scale used to run 11px eyebrow -> 38px headline -> 15px sub-line:
+            a 2.5x jump with nothing between it, so the sentence carrying the whole
+            offer read as a caption under the headline. The ladder is now
+            1.4rem -> 6rem -> 1.2rem -> 0.875rem, and each step has a job. */}
         <section className="shell pb-14 pt-16 text-center sm:pt-24">
           <p className="eyebrow">For Ontario &amp; Québec contractors</p>
-          <h1 className="mx-auto mt-5 max-w-3xl text-[30px] font-semibold leading-[1.2] sm:text-[38px]">
+
+          {/* The problem, before the claim. `rankable.count` from the manifest, not a
+              hardcoded figure: it is what a visitor can actually be shown today, and
+              spelling it keeps the sentence prose. */}
+          <p className="mx-auto mt-5 max-w-[46ch] text-[clamp(1.2rem,2.4vw,1.4rem)] leading-snug text-muted">
+            {capitalise(spelledThousands())} thousand tenders are open across Ontario
+            and Québec. Finding the few that fit takes hours you don&rsquo;t have.
+            Pricing them is a guess. And one clause on page 75 throws the bid out
+            anyway.
+          </p>
+
+          <h1 className="mx-auto mt-7 max-w-[14ch] text-[clamp(3rem,7.2vw,6rem)] font-black leading-[0.95] tracking-[-0.04em] text-heading">
             Bid the right tenders. Skip the wrong ones.
           </h1>
-          {/* One sentence. The arc is the cards' job below — a hero that recites all
-              four steps is a paragraph, and this one promised "four things" and then
-              listed three. */}
-          <p className="mx-auto mt-5 max-w-2xl text-[15px] leading-relaxed text-body sm:text-base">
-            Every open tender in Ontario and Québec, ranked for your firm — and read
-            for what would throw your bid out.
+
+          {/* Left-aligned inside a centred section on purpose: a numbered sequence
+              needs a left edge to scan down, and centred the numbers stop doing their
+              job. The cards below expand these three; the hero previews them. */}
+          <ol className="mx-auto mt-8 max-w-[38rem] space-y-2 text-left text-[clamp(1.05rem,1.9vw,1.2rem)] leading-snug text-body">
+            {HERO_STEPS.map((step) => (
+              <li key={step.n} className="flex gap-3">
+                <span className="shrink-0 font-bold tabular-nums text-muted">
+                  {step.n}
+                </span>
+                <span>
+                  {step.text}
+                  {step.pending ? (
+                    <span className="ml-2 whitespace-nowrap rounded-pill border border-hairline px-2 py-0.5 align-middle text-[11px] font-semibold text-muted">
+                      In development
+                    </span>
+                  ) : null}
+                </span>
+              </li>
+            ))}
+          </ol>
+
+          {/* Not a fourth item. It is the step we do not do, and numbering it would
+              claim it. */}
+          <p className="mx-auto mt-4 max-w-[38rem] text-left text-sm text-muted">
+            The pricing itself is yours.
           </p>
+
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <a href="#join" className="btn-primary w-full sm:w-auto">
               Join the beta
@@ -43,11 +97,10 @@ export default function HomePage() {
             <Link href="/check" className="btn-outline w-full sm:w-auto">
               Check a tender free
             </Link>
+            <span className="text-sm font-medium text-heading sm:ml-1">
+              Free while in beta.
+            </span>
           </div>
-          {/* A term of the offer, so it sits where the offer is taken. In the sentence
-              it blunted the ending and needed a weight change mid-line to separate two
-              unrelated ideas. */}
-          <p className="mt-4 text-sm font-medium text-heading">Free while in beta.</p>
         </section>
 
         {/* The demo — the strongest thing on the page, so nothing sits above it. */}

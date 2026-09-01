@@ -73,3 +73,54 @@ export function ageInDays(
   if (Number.isNaN(when.getTime())) return Number.POSITIVE_INFINITY;
   return Math.max(0, Math.floor((now.getTime() - when.getTime()) / 86_400_000));
 }
+
+/**
+ * How many notices a visitor can actually be shown right now.
+ *
+ * `rankable.count`, not `pool.count`. The pool is everything exported; rankable is
+ * what survives the ranker dropping notices whose closing date has passed, which is
+ * the number the demo serves. A hero that says tenders "are open" must use the one
+ * that means open.
+ */
+export function rankableCount(): number {
+  const rankable = (manifest as { rankable?: { count?: number } }).rankable;
+  return typeof rankable?.count === "number" ? rankable.count : 0;
+}
+
+/**
+ * "two thousand" — a count rounded down to thousands and spelled, for prose.
+ *
+ * **Throws below one thousand, deliberately.** The sentence this feeds says finding
+ * the few that fit "takes hours you don't have", and that premise rests on there
+ * being too many to sift by hand. If the count fell under a thousand the claim would
+ * have stopped being true, and quietly switching to a numeral would keep the sentence
+ * grammatical while it stopped being honest — a page rewriting itself to survive its
+ * own claim weakening is the exact failure this site exists not to commit.
+ *
+ * The build fails instead. `tests/test_freshness.py` catches it earlier and with the
+ * actual number.
+ */
+const THOUSANDS = [
+  "one",
+  "two",
+  "three",
+  "four",
+  "five",
+  "six",
+  "seven",
+  "eight",
+  "nine",
+] as const;
+
+export function spelledThousands(count: number = rankableCount()): string {
+  const thousands = Math.floor(count / 1000);
+  if (thousands < 1) {
+    throw new Error(
+      `Only ${count} rankable notices. The hero says finding the few that fit takes ` +
+        "hours you don't have, which assumes there are thousands to sift. Below one " +
+        "thousand that premise is false and the sentence needs rewriting, not " +
+        "reformatting.",
+    );
+  }
+  return THOUSANDS[Math.min(thousands, THOUSANDS.length) - 1];
+}

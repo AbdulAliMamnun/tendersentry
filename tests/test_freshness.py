@@ -301,6 +301,33 @@ class RankableVolumeTests(unittest.TestCase):
         )
 
 
+class HeroPremiseTests(unittest.TestCase):
+    """The homepage's opening sentence rests on a fact, and the fact can move.
+
+    It says thousands of tenders are open and that finding the few that fit "takes
+    hours you don't have". That premise assumes there are too many to sift by hand.
+    `spelledThousands()` throws below a thousand rather than switching to a numeral,
+    because a page that reformats itself to stay grammatical while its claim stops
+    being true is worse than one that breaks. This catches it earlier, and with the
+    number.
+    """
+
+    def test_the_pool_still_supports_the_hero_sentence(self) -> None:
+        if not MANIFEST_PATH.is_file():
+            self.skipTest(f"no manifest at {MANIFEST_PATH}")
+        rankable = (_load(MANIFEST_PATH).get("rankable") or {}).get("count")
+        self.assertIsNotNone(rankable, "manifest carries no rankable count")
+        self.assertGreaterEqual(
+            rankable,
+            1000,
+            f"\nOnly {rankable} rankable notices. The homepage opens with "
+            f"'{rankable // 1000} thousand tenders are open' and argues that sifting "
+            "them by hand costs hours. Below a thousand that argument is gone.\n"
+            "spelledThousands() will throw and fail the build. Rewrite the sentence "
+            "rather than reformatting the number.",
+        )
+
+
 class ThresholdIntegrityTests(unittest.TestCase):
     """Guard the guard.
 
