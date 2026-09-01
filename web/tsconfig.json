@@ -5,6 +5,11 @@
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
+    // A computed value that is never read is how the Bid Confidence captions
+    // shipped overlapping: the opacity array was correct and never passed to
+    // anything. Legal TypeScript, invisible to a build, caught by this.
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",

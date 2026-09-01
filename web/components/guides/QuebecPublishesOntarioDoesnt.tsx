@@ -1,5 +1,5 @@
 import { A, Caveat, H2, LI, P, Stat, Table, UL } from "@/components/guides/Prose";
-import { census, formatNumber } from "@/lib/data";
+import { census } from "@/lib/data";
 
 /**
  * Original data point: the 199,644-vs-9 split, which is the sharpest single number we
