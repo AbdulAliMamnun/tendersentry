@@ -21,6 +21,24 @@ export type Product = {
   description: string;
   target: string;
   updated: string;
+  /**
+   * Whether the page belongs in the sitemap and in search.
+   *
+   * A product that does not exist yet should not be competing for search traffic:
+   * the honest answer to anyone arriving from a query is "not built yet". The page
+   * still exists and is linkable — it is how we ask people what they want from it —
+   * but `sitemap.ts` filters on this and the route sets `robots: index: false` from
+   * the same field, so the two can never say different things.
+   */
+  indexed: boolean;
+  /**
+   * True when the page body carries its own capture form.
+   *
+   * The shared route appends `BetaForm` ("request a board") to every product page.
+   * A page asking a different question needs to ask it once, not beside a second
+   * form asking something else.
+   */
+  ownCapture?: boolean;
 };
 
 export const PRODUCTS: Product[] = [
@@ -36,6 +54,7 @@ export const PRODUCTS: Product[] = [
       "trades, regions and job sizes. Describe your firm or look up your bidding record.",
     target: "tender matching software canada",
     updated: "2026-08-04",
+    indexed: true,
   },
   {
     slug: "compliance",
@@ -49,6 +68,7 @@ export const PRODUCTS: Product[] = [
       "with its page number, and the clauses that would disqualify your firm flagged.",
     target: "bid compliance check",
     updated: "2026-08-04",
+    indexed: true,
   },
   {
     slug: "board",
@@ -62,6 +82,24 @@ export const PRODUCTS: Product[] = [
       "disqualifying clauses surfaced before you spend estimating time.",
     target: "government bid tracking ontario",
     updated: "2026-08-04",
+    indexed: true,
+  },
+  {
+    slug: "bid-confidence",
+    cardTitle: "Know what you're risking",
+    cardLine:
+      "The range behind your number, and what your contingency is actually buying you.",
+    title: "Know what you're risking",
+    seoTitle: "Bid Confidence — In Development",
+    description:
+      "A single bid price is one number standing in for a range of possible costs. " +
+      "Bid Confidence shows that range and where your contingency actually sits on " +
+      "it. In development — this page explains the idea and asks what you need.",
+    target: "",
+    updated: "2026-08-31",
+    // Not built. Not indexed, and the route reads the same field for robots.
+    indexed: false,
+    ownCapture: true,
   },
 ];
 

@@ -11,12 +11,14 @@ import { Resend } from "resend";
  */
 
 type Payload = {
-  kind?: "check" | "beta" | "board";
+  kind?: "check" | "beta" | "board" | "bid-confidence";
   email?: string;
   firm?: string | null;
   noticeUrl?: string | null;
   documentUrl?: string | null;
   documentName?: string | null;
+  /** Free text. The Bid Confidence page asks where estimates go wrong. */
+  notes?: string | null;
   trades?: string | null;
   regions?: string | null;
   jobSize?: string | null;
@@ -26,6 +28,7 @@ const SUBJECTS = {
   check: "Tender check",
   board: "Board request",
   beta: "Beta signup",
+  "bid-confidence": "Bid Confidence interest",
 } as const;
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -51,7 +54,11 @@ export async function POST(request: Request) {
   }
 
   const kind =
-    payload.kind === "beta" || payload.kind === "board" ? payload.kind : "check";
+    payload.kind === "beta" ||
+    payload.kind === "board" ||
+    payload.kind === "bid-confidence"
+      ? payload.kind
+      : "check";
   if (kind === "check" && !payload.documentUrl && !payload.noticeUrl) {
     return NextResponse.json(
       { error: "Add a tender PDF or a link to the notice." },
@@ -77,6 +84,7 @@ export async function POST(request: Request) {
     payload.trades ? `Trades: ${payload.trades}` : null,
     payload.regions ? `Regions: ${payload.regions}` : null,
     payload.jobSize ? `Typical job size: ${payload.jobSize}` : null,
+    payload.notes ? `Notes: ${String(payload.notes).slice(0, 2000)}` : null,
     payload.noticeUrl ? `Notice URL: ${payload.noticeUrl}` : null,
     payload.documentUrl
       ? `Document: ${payload.documentName ?? "upload"} — ${payload.documentUrl}`

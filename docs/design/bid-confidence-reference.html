@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bid Confidence — TenderSentry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#E6E5E0; --ink:#141719; --soft:#5E6367;
+    --rule:#C2C2BA; --plate:#DCDBD5; --accent:#1F5C3D; --alarm:#C1352A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:'Archivo',system-ui,sans-serif;
+    font-size:clamp(16px,1.05vw,18px);line-height:1.5;
+    font-variant-numeric:tabular-nums;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
+
+  /* ---------- opening ---------- */
+  .masthead{min-height:92vh;display:flex;flex-direction:column;padding:clamp(28px,5vh,56px) 0}
+  .mark{font-weight:800;font-size:1.02rem;letter-spacing:-.02em}
+  .mark span{color:var(--soft);font-weight:500}
+  .lede{margin-top:auto;font-weight:900;font-size:clamp(2.5rem,7.2vw,6.2rem);line-height:.93;letter-spacing:-.038em;max-width:14ch}
+  .lede em{font-style:normal;position:relative;z-index:0;white-space:nowrap}
+  .lede em::after{content:"";position:absolute;left:-.04em;right:-.04em;bottom:.05em;height:.12em;background:var(--accent);z-index:-1}
+  .sub{margin-top:1.4rem;max-width:54ch;font-size:clamp(1.05rem,1.6vw,1.28rem);color:var(--soft);font-weight:500}
+  .cue{margin-top:clamp(24px,5vh,52px);font-size:.84rem;font-weight:700;color:var(--soft);display:flex;align-items:center;gap:.6rem}
+  .cue i{display:block;width:1px;height:2.4rem;background:var(--rule)}
+
+  /* ---------- the three states: one full-screen composition ---------- */
+  .story{position:relative;background:#14171A;color:#EDEDE6}
+  .runway{height:340vh}
+  .frame{
+    position:sticky;top:0;height:100vh;overflow:hidden;
+    display:block;
+  }
+  #scene{position:absolute;inset:0;width:100%;height:100%}
+
+  .caption{
+    position:absolute;left:0;right:0;top:0;
+    padding:clamp(26px,7vh,72px) clamp(20px,5vw,64px) 0;
+    max-width:1180px;margin:0 auto;
+    pointer-events:none;
+  }
+  .card{
+    position:absolute;
+    left:clamp(20px,5vw,64px);right:clamp(20px,5vw,64px);
+    top:clamp(26px,7vh,72px);
+    opacity:0;
+  }
+  .card h2{
+    font-weight:900;font-size:clamp(2.1rem,6.4vw,5rem);
+    line-height:.95;letter-spacing:-.038em;max-width:13ch;
+  }
+  .card p{
+    margin-top:1rem;max-width:44ch;
+    font-size:clamp(1rem,1.5vw,1.22rem);
+    color:#9AA1A4;font-weight:500;
+  }
+  .card .hl{color:#F0BE00}
+  .card .rd{color:#E4573D}
+
+  .counter{
+    position:absolute;bottom:clamp(18px,3.5vh,32px);
+    left:clamp(20px,5vw,64px);
+    font-size:.8rem;font-weight:700;color:#6C7376;
+  }
+
+  /* ---------- the arc ---------- */
+  .arc{padding:clamp(56px,11vh,120px) 0 clamp(40px,7vh,80px)}
+  .arc h2{font-weight:900;font-size:clamp(1.8rem,4.2vw,3rem);letter-spacing:-.03em;line-height:1.05;max-width:22ch}
+  .arc>.wrap>p{margin-top:1rem;max-width:54ch;color:var(--soft);font-weight:500}
+  .steps{margin-top:clamp(30px,5vh,54px);border-top:2px solid var(--ink)}
+  .row{display:grid;grid-template-columns:1fr auto;gap:1rem 2rem;align-items:baseline;padding:1.5rem 0;border-bottom:1px solid var(--rule)}
+  .row h3{font-weight:900;font-size:clamp(1.25rem,2.6vw,1.9rem);letter-spacing:-.025em}
+  .row p{margin-top:.35rem;max-width:52ch;color:var(--soft);font-weight:500;font-size:.98rem}
+  .tag{font-size:.78rem;font-weight:700;padding:.28em .7em;border:1.5px solid currentColor;white-space:nowrap}
+  .tag.now{background:#F0BE00;border-color:#F0BE00;color:#14171A}
+  .tag.yours{border-style:dashed;color:var(--soft)}
+
+  /* ---------- dial ---------- */
+  .dialwrap{padding:clamp(46px,8vh,96px) 0}
+  .dialwrap h2{font-weight:900;font-size:clamp(1.7rem,4vw,2.8rem);letter-spacing:-.03em;line-height:1.05;max-width:20ch}
+  .model{margin-top:1.8rem;background:var(--plate);padding:clamp(22px,3.5vw,40px)}
+  .dial{display:flex;align-items:baseline;gap:1rem;flex-wrap:wrap}
+  .dial-val{font-weight:900;font-size:clamp(3rem,7.5vw,5rem);line-height:.85;letter-spacing:-.045em;color:var(--accent)}
+  .dial-cap{color:var(--soft);font-weight:600;max-width:24ch;font-size:.94rem}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;margin-top:1.3rem;background:transparent;cursor:grab}
+  input[type=range]::-webkit-slider-runnable-track{height:6px;background:var(--ink)}
+  input[type=range]::-moz-range-track{height:6px;background:var(--ink)}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:32px;height:32px;margin-top:-13px;background:var(--accent);border:2.5px solid var(--ink);border-radius:0}
+  input[type=range]::-moz-range-thumb{width:32px;height:32px;background:var(--accent);border:2.5px solid var(--ink);border-radius:0}
+  input[type=range]:focus-visible{outline:3px solid var(--accent);outline-offset:6px}
+  .ticks{display:flex;justify-content:space-between;margin-top:.5rem;font-size:.84rem;color:var(--soft);font-weight:600}
+  .out{margin-top:1.8rem;display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule)}
+  @media(min-width:640px){.out{grid-template-columns:repeat(3,1fr)}}
+  .cell{background:var(--plate);padding:1.05rem 1.15rem 1.25rem}
+  .cell b{display:block;font-weight:900;font-size:clamp(2.4rem,5.2vw,3.4rem);line-height:.9;letter-spacing:-.04em}
+  .cell.bad b{color:var(--alarm)}
+  .cell span{display:block;margin-top:.5rem;font-size:.92rem;font-weight:600;color:var(--soft);max-width:22ch}
+  .verdict{margin-top:1.6rem;font-weight:800;font-size:clamp(1.08rem,1.9vw,1.45rem);letter-spacing:-.02em;max-width:34ch;line-height:1.2}
+  .assumptions{margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--rule);font-size:.86rem;color:var(--soft);max-width:70ch;line-height:1.6}
+  .assumptions strong{color:var(--ink);font-weight:700}
+
+  /* ---------- capture ---------- */
+  .capture{padding:clamp(44px,8vh,96px) 0 clamp(52px,9vh,104px);border-top:2px solid var(--ink)}
+  .capture h2{font-weight:900;font-size:clamp(1.7rem,4.2vw,3rem);letter-spacing:-.03em;line-height:1.05;max-width:18ch}
+  .capture p{margin-top:1rem;max-width:54ch;color:var(--soft);font-weight:500}
+  form{margin-top:1.8rem;max-width:36rem;display:grid;gap:.8rem}
+  label{font-weight:700;font-size:.92rem}
+  input[type=email],textarea{width:100%;font:inherit;font-size:1rem;padding:.8rem .9rem;background:var(--bg);border:2px solid var(--ink);border-radius:0;color:var(--ink)}
+  textarea{min-height:6.5rem;resize:vertical}
+  input[type=email]:focus-visible,textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  button{justify-self:start;font:inherit;font-weight:800;font-size:1rem;padding:.8rem 1.6rem;background:var(--ink);color:var(--bg);border:2px solid var(--ink);cursor:pointer}
+  button:hover{background:var(--accent);color:#fff}
+  footer{border-top:1px solid var(--rule);padding:1.4rem 0 3rem;font-size:.86rem;color:var(--soft);font-weight:500}
+
+  @media(prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="masthead">
+    <div class="mark">TenderSentry <span>· for Ontario &amp; Québec contractors</span></div>
+    <h1 class="lede">You already price with a <em>gut-feel</em> number.</h1>
+    <p class="sub">Here is what that number is hiding.</p>
+    <p class="cue"><i></i>Scroll</p>
+  </header>
+</div>
+
+<!-- ============ three states, one composition ============ -->
+<section class="story" id="story">
+  <div class="frame">
+    <svg id="scene" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMax slice" role="img" aria-labelledby="tl">
+      <title id="tl">A single vertical bar representing one bid price widens into a bell-shaped range of possible job costs, and then a marker appears showing how much of that range a fixed contingency actually covers, with everything beyond it shaded red.</title>
+      <g id="g"></g>
+    </svg>
+
+    <div class="card" id="c1">
+      <h2>You bid one number.</h2>
+      <p>Takeoff, subs, quotes, and a contingency you picked because it felt about right.</p>
+    </div>
+
+    <div class="card" id="c2">
+      <h2>It was always a range.</h2>
+      <p>Every line could land high or low, and some move together — the wet spring that hurts earthworks hurts drainage too.</p>
+    </div>
+
+    <div class="card" id="c3">
+      <h2>Your contingency covers <span class="hl">this much</span> of it.</h2>
+      <p><span class="rd">Everything past the marker</span> is a job that costs more than you bid. We show you where that marker actually sits, on a tender you're already looking at.</p>
+    </div>
+
+    <div class="counter" id="cnt">1 / 3</div>
+  </div>
+  <div class="runway"></div>
+</section>
+
+<!-- ============ the arc ============ -->
+<section class="arc">
+  <div class="wrap">
+    <h2>Four things happen between finding a job and winning one worth having.</h2>
+    <p>We do three of them. The one we don't is the one you're best at.</p>
+
+    <div class="steps">
+      <div class="row">
+        <div>
+          <h3>Find the work</h3>
+          <p>Every open tender in Ontario and Québec, ranked against the work your firm actually bids — not keyword alerts you delete unread.</p>
+        </div>
+        <span class="tag">Live today</span>
+      </div>
+      <div class="row">
+        <div>
+          <h3>Price it</h3>
+          <p>Yours. Your takeoff, your subs, your read of the site. We don't estimate jobs and won't pretend we can.</p>
+        </div>
+        <span class="tag yours">You already do this</span>
+      </div>
+      <div class="row">
+        <div>
+          <h3>Know what you're risking</h3>
+          <p>The range behind your number, and what your contingency is actually buying you on this job.</p>
+        </div>
+        <span class="tag now">Building this now</span>
+      </div>
+      <div class="row">
+        <div>
+          <h3>Don't get thrown out</h3>
+          <p>Mandatory requirements pulled from the tender document, quoted word for word with the page number. If we can't point at the line, we don't show it.</p>
+        </div>
+        <span class="tag">Live today</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dialwrap">
+  <div class="wrap">
+    <h2>One contingency, twenty jobs</h2>
+    <div class="model">
+      <div class="dial">
+        <div class="dial-val"><span id="pct">8</span>%</div>
+        <div class="dial-cap">added to every estimate, on twenty $1M jobs you bid this year</div>
+      </div>
+      <input type="range" id="slider" min="5" max="15" step="1" value="8" aria-label="Contingency percentage" aria-describedby="assump">
+      <div class="ticks"><span>5% — lean</span><span>15% — cautious</span></div>
+      <div class="out">
+        <div class="cell"><b id="won">7</b><span>jobs you win, of twenty bid</span></div>
+        <div class="cell bad"><b id="lost">2</b><span>of those, cost more than you bid</span></div>
+        <div class="cell"><b id="priced">2</b><span>jobs a leaner number would have won</span></div>
+      </div>
+      <p class="verdict" id="verdict">No setting here is right for all twenty jobs.</p>
+      <p class="assumptions" id="assump"><strong>These numbers are illustrative, not a forecast.</strong> They assume twenty $1M jobs, estimates landing within about 12% of true cost either way, and a win rate that falls as you price higher. Nothing here comes from your firm or a real tender — it shows the shape of the trade-off, not a price.</p>
+    </div>
+  </div>
+</section>
+
+<section class="capture">
+  <div class="wrap">
+    <h2>What would you want it to tell you?</h2>
+    <p>We're building this now, and the defaults matter more than the math. If you price civil work in Ontario or Québec, tell us how far off your numbers usually run and on which trades. We'll use it, and you'll get it first.</p>
+    <form id="form">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="you@yourfirm.ca" required>
+      <label for="note">Where do your estimates go wrong?</label>
+      <textarea id="note" name="note" placeholder="Earthworks, every time. Rock we didn't know about."></textarea>
+      <button type="submit">Send it</button>
+    </form>
+  </div>
+</section>
+
+<div class="wrap"><footer>Bid Confidence is in development. Tender discovery and compliance checking are live at tendersentry.com.</footer></div>
+
+<script>
+(function(){
+  var NS='http://www.w3.org/2000/svg';
+  function el(n,a){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);return e;}
+  function cl(v,a,b){return v<a?a:v>b?b:v;}
+  function win(p,a,b){return cl((p-a)/(b-a),0,1);}
+  function ez(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
+
+  var CX=600, FLOOR=640, AMP=430, g=document.getElementById('g');
+
+  var base =el('rect',{x:60,y:FLOOR,width:1080,height:2,fill:'#333A3E'}),
+      body =el('path',{'stroke-width':3}),
+      tail =el('path',{fill:'#C1352A','fill-opacity':.55}),
+      mark =el('rect',{width:3,height:AMP,fill:'#EDEDE6'}),
+      cap  =el('text',{'font-size':22,'font-weight':900,fill:'#EDEDE6','text-anchor':'middle'}),
+      note =el('text',{'font-size':17,'font-weight':700,fill:'#E4573D'});
+  cap.textContent='$1,000,000';
+  note.textContent='costs more than you bid';
+  [base,body,tail,mark,cap,note].forEach(function(n){g.appendChild(n);});
+
+  function gz(x,s){return Math.exp(-Math.pow(x-CX,2)/(2*s*s));}
+  function shape(s,a,b){
+    var d='M '+a+' '+FLOOR;
+    for(var x=a;x<=b;x+=4) d+=' L '+x+' '+(FLOOR-AMP*gz(x,s));
+    return d+' L '+b+' '+FLOOR+' Z';
+  }
+
+  var cards=[document.getElementById('c1'),document.getElementById('c2'),document.getElementById('c3')],
+      cnt=document.getElementById('cnt');
+
+  function draw(p){
+    /* one shape the whole way: sigma 7 is a single bid, sigma 175 is the range */
+    var s = 7 + ez(win(p,.18,.62))*168;
+    body.setAttribute('d',shape(s,60,1140));
+    body.setAttribute('fill','#F0BE00');
+    body.setAttribute('fill-opacity',.16+ .06*win(p,.18,.62));
+    body.setAttribute('stroke','#F0BE00');
+
+    /* state 3: the marker and what sits beyond it */
+    var m=win(p,.68,.86), q=CX+0.842*s;
+    tail.setAttribute('d',shape(s,q,1140));
+    tail.setAttribute('opacity',m);
+    mark.setAttribute('x',q);mark.setAttribute('y',FLOOR-AMP);mark.setAttribute('opacity',m);
+    note.setAttribute('x',cl(q+14,0,940));note.setAttribute('y',FLOOR-AMP+22);
+    note.setAttribute('opacity',m);
+
+    /* the number stays put and becomes the middle of the range */
+    cap.setAttribute('x',CX);
+    cap.setAttribute('y',FLOOR+42);
+    cap.setAttribute('opacity',win(p,.04,.12));
+
+    /* captions crossfade — never two loud at once */
+    var o=[
+      1-win(p,.20,.30),
+      Math.min(win(p,.26,.36),1-win(p,.58,.68)),
+      win(p,.66,.76)
+    ];
+    cards.forEach(function(c,i){c.style.opacity=o[i];});
+    cnt.textContent=(p<.30?1:p<.66?2:3)+' / 3';
+  }
+
+  var story=document.getElementById('story'), tick=false, last=-1;
+  function measure(){
+    var r=story.getBoundingClientRect(), run=r.height-window.innerHeight;
+    var p=cl(-r.top/(run||1),0,1);
+    if(Math.abs(p-last)>.0004){last=p;draw(p);}
+    tick=false;
+  }
+  function onScroll(){if(!tick){tick=true;requestAnimationFrame(measure);}}
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',onScroll);
+  draw(0);onScroll();
+
+  /* dial */
+  var sl=document.getElementById('slider'),pct=document.getElementById('pct'),
+      won=document.getElementById('won'),lost=document.getElementById('lost'),
+      pr=document.getElementById('priced'),vd=document.getElementById('verdict');
+  var JOBS=20,SPREAD=12,LEAN=5;
+  function tl2(c){
+    var z=c/SPREAD,t=1/(1+.2316419*Math.abs(z)),d=.3989423*Math.exp(-z*z/2),
+        q=d*t*(1.330274*Math.pow(t,5)-1.821256*Math.pow(t,4)+1.781478*Math.pow(t,3)-.356538*t*t+.3193815*t);
+    return z>0?q:1-q;
+  }
+  function wins(c){return JOBS*.45*Math.exp(-.09*(c-LEAN));}
+  function render(){
+    var c=+sl.value,w=wins(c);
+    pct.textContent=c;won.textContent=Math.round(w);
+    lost.textContent=Math.round(w*tl2(c));pr.textContent=Math.round(wins(LEAN)-w);
+    vd.textContent=c<=6?'Lean enough to win work you lose money on.'
+                 :c>=13?'Safe enough that the jobs go to someone else.'
+                 :'No setting here is right for all twenty jobs.';
+  }
+  sl.addEventListener('input',render);render();
+
+  document.getElementById('form').addEventListener('submit',function(e){
+    e.preventDefault();var b=e.target.querySelector('button');
+    b.textContent='Thanks — we\u2019ll be in touch';b.disabled=true;
+  });
+})();
+</script>
+
+</body>
+</html>

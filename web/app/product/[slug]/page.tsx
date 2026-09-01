@@ -28,6 +28,8 @@ export async function generateMetadata({
     title: product.seoTitle,
     description: product.description,
     alternates: { canonical: url },
+    // Same field the sitemap filters on, so the page and the sitemap state one thing.
+    robots: product.indexed ? undefined : { index: false, follow: true },
     openGraph: {
       title: product.seoTitle,
       description: product.description,
@@ -80,9 +82,13 @@ export default async function ProductPage({
             </div>
           </div>
 
-          <div id="join" className="mt-12">
-            <BetaForm />
-          </div>
+          {/* A page carrying its own capture asks its own question; appending the
+              board request beside it would put two different asks in one column. */}
+          {product.ownCapture ? null : (
+            <div id="join" className="mt-12">
+              <BetaForm />
+            </div>
+          )}
         </article>
       </main>
       <Footer />

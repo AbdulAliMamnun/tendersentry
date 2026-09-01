@@ -27,7 +27,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.9,
     },
-    ...PRODUCTS.map((product) => ({
+    // `indexed` filters, rather than a hand-maintained exclusion list: a product that
+    // does not exist yet should not compete for search traffic, and the route reads
+    // the same field for `robots`, so the page and the sitemap cannot disagree.
+    ...PRODUCTS.filter((product) => product.indexed).map((product) => ({
       url: `${SITE_URL}/product/${product.slug}`,
       lastModified: new Date(product.updated),
       changeFrequency: "monthly" as const,

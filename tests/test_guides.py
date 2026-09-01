@@ -88,7 +88,10 @@ class SitemapTests(unittest.TestCase):
             self.assertIn(path, self.source)
 
     def test_products_are_expanded_from_the_registry(self) -> None:
-        self.assertIn("PRODUCTS.map", self.source)
+        """Still generated, not hand-listed — now filtered on `indexed` first, so an
+        unbuilt product is excluded by a field rather than by being forgotten."""
+        self.assertIn("PRODUCTS.filter", self.source)
+        self.assertIn(").map((product) =>", self.source)
 
     def test_guides_are_expanded_from_the_registry(self) -> None:
         """Hand-listing them would let a new guide ship unindexed."""
@@ -255,17 +258,31 @@ class ProductTests(unittest.TestCase):
         cls.source = PRODUCTS_TS.read_text(encoding="utf-8")
         cls.slugs = re.findall(r'^\s*slug: "([a-z-]+)",', cls.source, re.M)
 
-    def test_three_products_are_defined(self) -> None:
-        self.assertEqual(["discovery", "compliance", "board"], self.slugs)
+    def test_the_products_are_defined_in_order(self) -> None:
+        self.assertEqual(
+            ["discovery", "compliance", "board", "bid-confidence"], self.slugs
+        )
+
+    def test_only_shipped_products_are_indexed(self) -> None:
+        """bid-confidence is not built, so it does not compete for search traffic.
+
+        The sitemap filters on this same field and the route reads it for robots, so
+        an unindexed page cannot be listed and a listed page cannot be noindex.
+        """
+        flags = re.findall(r"indexed: (true|false)", self.source)
+        self.assertEqual(["true", "true", "true", "false"], flags)
+        self.assertIn("PRODUCTS.filter", SITEMAP_TS.read_text(encoding="utf-8"))
 
     def test_each_has_a_distinct_seo_title_within_search_result_length(self) -> None:
         titles = re.findall(r'seoTitle:\s*\n?\s*"([^"]+)"', self.source)
-        self.assertEqual(3, len(titles))
+        self.assertEqual(4, len(titles))
         self.assertEqual(len(set(titles)), len(titles))
         for title in titles:
             self.assertLessEqual(len(title), 70, title)
 
     def test_each_records_the_phrase_it_targets(self) -> None:
+        # bid-confidence targets nothing: an unbuilt product has no phrase it could
+        # honestly compete for, and its empty target does not match this pattern.
         targets = re.findall(r'target: "([^"]+)"', self.source)
         self.assertEqual(
             ["tender matching software canada", "bid compliance check",

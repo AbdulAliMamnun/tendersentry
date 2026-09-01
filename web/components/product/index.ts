@@ -1,3 +1,4 @@
+import { BidConfidence } from "@/components/product/BidConfidence";
 import { Board } from "@/components/product/Board";
 import { Compliance } from "@/components/product/Compliance";
 import { Discovery } from "@/components/product/Discovery";
@@ -7,4 +8,5 @@ export const PRODUCT_BODIES: Record<string, () => React.JSX.Element> = {
   discovery: Discovery,
   compliance: Compliance,
   board: Board,
+  "bid-confidence": BidConfidence,
 };
