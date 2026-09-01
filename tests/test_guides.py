@@ -143,12 +143,34 @@ class OriginalDataTests(unittest.TestCase):
 #: alone: stated in the serving manifest and in prose, asserted nowhere. This makes it
 #: structural for rendered copy.
 WIN_LANGUAGE = (
+    # Noun forms.
     "win rate",
     "win probability",
     "probability of winning",
     "chance of winning",
     "likelihood of winning",
     "odds of winning",
+    # Modal and predictive forms. The homepage hero read "ranks the ones your firm can
+    # actually win" — the exact claim the rule forbids, phrased as a verb, so a list of
+    # nouns walked straight past it.
+    #
+    # Bare "win" is deliberately NOT banned. It would catch "jobs you win" and "win
+    # work you lose money on" in the Bid Confidence dial, which describe an explicitly
+    # illustrative model, and "winning one worth having" in the arc. The rule is about
+    # predicting the reader's outcome, not about the word.
+    "can actually win",
+    "can win",
+    "could win",
+    "will win",
+    "would win",
+    "likely to win",
+    "expect to win",
+    "help you win",
+    "helps you win",
+    "chance to win",
+    "chances of winning",
+    "going to win",
+    "win more",
 )
 
 #: The only permitted uses, matched case-insensitively as complete substrings and
@@ -165,6 +187,8 @@ WIN_LANGUAGE = (
 PERMITTED_WIN_LANGUAGE = (
     "never a chance of winning",
     "not a chance of winning",
+    "says nothing about whether you would win",
+    "not a prediction that you will win",
 )
 
 
@@ -173,7 +197,18 @@ class WinLanguageTests(unittest.TestCase):
 
     @staticmethod
     def _rendered() -> list[Path]:
-        return sorted([*ARTICLES.glob("*.tsx"), *PRODUCT_BODIES.glob("*.tsx")])
+        """Every file that renders copy a visitor reads.
+
+        This used to be guides and product bodies only — eleven files. The homepage
+        was not among them, so the hero could say "ranks the ones your firm can
+        actually win" and pass. Widening the phrase list would have changed nothing;
+        the file was never opened. The scope hole mattered more than the wording.
+        """
+        return sorted(
+            path
+            for root in (WEB / "app", WEB / "components")
+            for path in root.rglob("*.tsx")
+        )
 
     def test_no_rendered_copy_promises_a_win(self) -> None:
         offenders: list[str] = []
@@ -210,11 +245,23 @@ class WinLanguageTests(unittest.TestCase):
                 "uses any more. Remove it rather than leaving a standing exemption.",
             )
 
-    def test_the_guard_covers_product_bodies_and_not_only_guides(self) -> None:
-        """The gap this closed: the fabricated-attribution guard scans guides alone."""
-        names = {path.parent.name for path in self._rendered()}
-        self.assertIn("guides", names)
-        self.assertIn("product", names)
+    def test_the_guard_covers_every_surface_that_renders_copy(self) -> None:
+        """Named files, because "the scope was too narrow" is the failure that happened.
+
+        Twice. The fabricated-attribution guard scans guides alone; this one scanned
+        guides and product bodies and missed the homepage, which is the single page
+        most visitors read.
+        """
+        scanned = {path.relative_to(WEB).as_posix() for path in self._rendered()}
+        for required in (
+            "app/page.tsx",
+            "components/Nav.tsx",
+            "components/DemoRanker.tsx",
+            "components/guides/HowWeRankTenders.tsx",
+            "components/product/Discovery.tsx",
+        ):
+            self.assertIn(required, scanned, f"{required} is not being scanned")
+        self.assertGreater(len(scanned), 25, "scope shrank; it should be the whole site")
 
 
 class HomepageTests(unittest.TestCase):
