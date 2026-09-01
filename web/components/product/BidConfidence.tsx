@@ -154,9 +154,23 @@ function Scene({ p, hidden }: { p: number; hidden: boolean }) {
   );
 }
 
-function Caption({ state, className }: { state: State; className?: string }) {
+function Caption({
+  state,
+  className,
+  opacity,
+}: {
+  state: State;
+  className?: string;
+  /**
+   * Required, not optional. It was omitted at the call site once already, and an
+   * optional prop lets that happen silently — the captions are pinned to the same
+   * coordinates, so a missing opacity renders all three on top of each other.
+   * `undefined` is the "always visible" case and has to be written out.
+   */
+  opacity: number | undefined;
+}) {
   return (
-    <div className={className}>
+    <div className={className} style={opacity === undefined ? undefined : { opacity }}>
       <h2 className="max-w-[13ch] text-[clamp(1.6rem,5vw,2.6rem)] font-extrabold leading-[0.98] tracking-[-0.03em] text-[#EDEDE6]">
         {state.heading}
       </h2>
@@ -173,18 +187,24 @@ function Caption({ state, className }: { state: State; className?: string }) {
 function ScrollStory() {
   const storyRef = useRef<HTMLElement | null>(null);
   const [p, setP] = useState(0);
-  const [reduced, setReduced] = useState(true);
+  const [animate, setAnimate] = useState(false);
 
+  // Only decides whether to ATTACH THE SCROLL LISTENER — never which layout shows.
+  // Layout is a CSS media query below, so a first paint is correct for everyone and
+  // there is no swap in either direction. Deciding it here in state meant the server
+  // rendered one branch and the client replaced it on mount: a wrong-layout flash for
+  // whichever group lost the coin toss. Seeding it the other way would only have moved
+  // that flash onto the people who asked not to have one.
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const apply = () => setReduced(query.matches);
+    const apply = () => setAnimate(!query.matches);
     apply();
     query.addEventListener("change", apply);
     return () => query.removeEventListener("change", apply);
   }, []);
 
   useEffect(() => {
-    if (reduced) return;
+    if (!animate) return;
     let queued = false;
     const measure = () => {
       queued = false;
@@ -206,27 +226,11 @@ function ScrollStory() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
-  }, [reduced]);
+  }, [animate]);
 
-  // Reduced motion: three figures, each beside the caption written for it. Not one
-  // frame with three captions stacked on it — at the end state "You bid one number"
-  // sits next to a picture of a range, which is the opposite of what it says. The
-  // argument is three steps, so it stays three steps.
-  if (reduced) {
-    return (
-      <div className={`${archivo.className} mt-10 space-y-px overflow-hidden rounded-lg bg-[#14171A]`}>
-        {STATES.map((state, index) => (
-          <div key={index} className="px-5 py-7 sm:px-7">
-            <Caption state={state} />
-            <div className="mt-5 h-[240px] w-full sm:h-[280px]">
-              <Scene p={state.at} hidden />
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
+  // Never two loud at once. tests/test_bid_confidence_render.py asserts exactly one
+  // caption is visible at 0.15, 0.5 and 0.9 — the crossfade was computed correctly
+  // here once before and never reached the elements.
   const opacity = [
     1 - window01(p, 0.2, 0.3),
     Math.min(window01(p, 0.26, 0.36), 1 - window01(p, 0.58, 0.68)),
@@ -234,28 +238,56 @@ function ScrollStory() {
   ];
 
   return (
-    <section ref={storyRef} data-story className="relative mt-10 h-[300vh]">
-      <div className={`${archivo.className} sticky top-0 h-screen overflow-hidden rounded-lg bg-[#14171A]`}>
-        <div className="absolute inset-0">
-          <Scene p={p} hidden />
-        </div>
-        {STATES.map((state, index) => (
-          <Caption
-            key={index}
-            state={state}
-            className="pointer-events-none absolute left-5 right-5 top-7 transition-opacity duration-150 sm:left-7 sm:right-7"
-            // Opacity alone never hides text from a screen reader, which is what we
-            // want: all three captions are announced, in order, regardless of scroll.
-          />
-        ))}
+    <>
+      {/* Both branches ship; CSS picks one. `hidden` is display:none, so the branch
+          that loses is out of the accessibility tree too and exactly one set of
+          captions is announced. Costs about a kilobyte of duplicated caption text. */}
+      <section
+        ref={storyRef}
+        data-story
+        className={`relative mt-10 h-[300vh] motion-reduce:hidden`}
+      >
         <div
-          aria-hidden="true"
-          className="absolute bottom-5 left-5 text-xs font-bold text-[#6C7376] sm:left-7"
+          className={`${archivo.className} sticky top-0 h-screen overflow-hidden rounded-lg bg-[#14171A]`}
         >
-          {p < 0.3 ? 1 : p < 0.66 ? 2 : 3} / 3
+          <div className="absolute inset-0">
+            <Scene p={p} hidden />
+          </div>
+          {STATES.map((state, index) => (
+            <Caption
+              key={index}
+              state={state}
+              opacity={opacity[index]}
+              className="pointer-events-none absolute left-5 right-5 top-7 transition-opacity duration-150 sm:left-7 sm:right-7"
+            />
+          ))}
+          <div
+            aria-hidden="true"
+            className="absolute bottom-5 left-5 text-xs font-bold text-[#6C7376] sm:left-7"
+          >
+            {p < 0.3 ? 1 : p < 0.66 ? 2 : 3} / 3
+          </div>
         </div>
+      </section>
+
+      {/* Reduced motion: three figures, each beside the caption written for it. Not
+          one frame with three captions on it — at the end state "You bid one number"
+          would sit next to a picture of a range, saying the opposite of what it shows.
+          The argument is three steps, so it stays three steps. */}
+      <div
+        data-static-story
+        className={`${archivo.className} mt-10 hidden space-y-px overflow-hidden rounded-lg bg-[#14171A] motion-reduce:block`}
+      >
+        {STATES.map((state, index) => (
+          <div key={index} className="px-5 py-7 sm:px-7">
+            <Caption state={state} opacity={undefined} />
+            <div className="mt-5 h-[240px] w-full sm:h-[280px]">
+              <Scene p={state.at} hidden />
+            </div>
+          </div>
+        ))}
       </div>
-    </section>
+    </>
   );
 }
 

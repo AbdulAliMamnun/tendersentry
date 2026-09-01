@@ -71,8 +71,9 @@ await flush();
 // headings outside it. Find them by their text so the query does not depend on
 // class names, which are exactly what a refactor changes.
 const HEADINGS = ['You bid one number.', 'It was always a range.', 'Your contingency covers'];
-function captions() {{
-  return Array.from(document.querySelectorAll('h2')).filter((node) =>
+function captions(root) {{
+  if (!root) return [];
+  return Array.from(root.querySelectorAll('h2')).filter((node) =>
     HEADINGS.some((text) => (node.textContent || '').startsWith(text)));
 }}
 
@@ -87,7 +88,11 @@ function opacityOf(node) {{
   return 1;
 }}
 
+// Both branches now render always; CSS picks which one paints, and jsdom does not
+// evaluate media queries. So each is queried by its own container rather than by
+// whatever happens to be 'showing'.
 const story = document.querySelector('[data-story]');
+const staticStory = document.querySelector('[data-static-story]');
 
 async function at(p) {{
   if (story) {{
@@ -100,14 +105,21 @@ async function at(p) {{
     await frame();
     await flush();
   }}
-  return captions().map((node) => Number(opacityOf(node).toFixed(3)));
+  return captions(story).map((node) => Number(opacityOf(node).toFixed(3)));
 }}
 
 const result = {{
-  captionCount: captions().length,
-  svgCount: document.querySelectorAll('svg').length,
+  animatedCaptions: captions(story).length,
+  staticCaptions: captions(staticStory).length,
+  animatedSvgs: story ? story.querySelectorAll('svg').length : 0,
+  staticSvgs: staticStory ? staticStory.querySelectorAll('svg').length : 0,
   storyFound: Boolean(story),
-  initial: captions().map((n) => Number(opacityOf(n).toFixed(3))),
+  staticFound: Boolean(staticStory),
+  staticOpacities: captions(staticStory).map((n) => Number(opacityOf(n).toFixed(3))),
+  animatedHidesUnderReducedMotion: story ? story.className.includes('motion-reduce:hidden') : false,
+  staticShowsUnderReducedMotion: staticStory
+    ? staticStory.className.includes('hidden') && staticStory.className.includes('motion-reduce:block')
+    : false,
   byPosition: {{}},
 }};
 for (const p of POSITIONS) result.byPosition[String(p)] = await at(p);
@@ -127,7 +139,7 @@ class AnimatedBranchTests(unittest.TestCase):
 
     def test_the_scroll_story_mounts_with_three_captions(self) -> None:
         self.assertTrue(self.result["storyFound"], "no [data-story] element to drive")
-        self.assertEqual(3, self.result["captionCount"])
+        self.assertEqual(3, self.result["animatedCaptions"])
 
     def test_exactly_one_caption_is_visible_at_every_position(self) -> None:
         """The invariant the crossfade exists for. This is what shipped broken."""
@@ -160,20 +172,48 @@ class ReducedMotionBranchTests(unittest.TestCase):
         cls.result = ts_harness.run(_script(True, []), dom=True)
 
     def test_three_figures_and_three_captions_render(self) -> None:
-        self.assertEqual(3, self.result["captionCount"])
-        self.assertGreaterEqual(
-            self.result["svgCount"],
+        self.assertTrue(self.result["staticFound"], "no [data-static-story] element")
+        self.assertEqual(3, self.result["staticCaptions"])
+        self.assertEqual(
             3,
-            "the static branch must draw its own figure per state, not one shared frame",
+            self.result["staticSvgs"],
+            "the static branch draws its own figure per state, not one shared frame",
         )
 
     def test_all_three_captions_are_readable_at_once(self) -> None:
         """Stacked and static: nothing is faded, because nothing crossfades."""
-        self.assertEqual([1.0, 1.0, 1.0], self.result["initial"])
+        self.assertEqual([1.0, 1.0, 1.0], self.result["staticOpacities"])
 
-    def test_the_animated_runway_is_not_rendered(self) -> None:
-        """No sticky scroll machinery for someone who asked not to have it."""
-        self.assertFalse(self.result["storyFound"])
+
+class BranchVisibilityTests(unittest.TestCase):
+    """Which branch paints is decided by CSS, not by JavaScript state.
+
+    It used to be `useState(true)`, so the server always rendered the static branch
+    and the client swapped it on mount — a wrong-layout flash on first paint for every
+    visitor without the OS preference. Seeding it the other way would only have moved
+    the flash onto the people who asked not to have one. Both branches now ship and a
+    media query picks; `hidden` is display:none, so the losing branch is out of the
+    accessibility tree and exactly one set of captions is announced.
+    """
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        ts_harness.require(cls)
+        cls.result = ts_harness.run(_script(False, []), dom=True)
+
+    def test_both_branches_are_present_regardless_of_preference(self) -> None:
+        self.assertTrue(self.result["storyFound"])
+        self.assertTrue(self.result["staticFound"])
+
+    def test_the_media_query_and_not_state_decides_which_paints(self) -> None:
+        self.assertTrue(
+            self.result["animatedHidesUnderReducedMotion"],
+            "the animated branch must carry motion-reduce:hidden",
+        )
+        self.assertTrue(
+            self.result["staticShowsUnderReducedMotion"],
+            "the static branch must be hidden by default and motion-reduce:block",
+        )
 
 
 if __name__ == "__main__":
