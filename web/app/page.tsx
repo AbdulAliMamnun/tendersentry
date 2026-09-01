@@ -30,9 +30,10 @@ export default function HomePage() {
             Bid the right tenders. Skip the wrong ones.
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-[15px] leading-relaxed text-body sm:text-base">
-            TenderSentry watches every open public tender in Ontario and Québec, ranks
-            the ones your firm can actually win, and shows you the clauses that would
-            disqualify your bid — quoted, with page numbers.{" "}
+            Four things stand between a tender and a job worth having. We find the
+            work, show you the range behind your number, and catch the clause that
+            throws you out — quoted, with the page. The pricing is yours; we don&rsquo;t
+            pretend otherwise.{" "}
             <span className="font-medium text-heading">Free while in beta.</span>
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -57,24 +58,62 @@ export default function HomePage() {
           </p>
         </section>
 
-        {/* Three product cards. One line each; the depth lives on the pages. */}
+        {/* The arc, in order, not a menu.
+            These read as an unordered list of features before. They are a sequence: we
+            find the work, you price it, we show the range, we catch the clause. Step 2
+            is a line rather than a card on purpose — a card implies something to click,
+            and the one part we do not do should not look like the three we do.
+            Ordered by arcPosition rather than array order, so sitemap.ts and the
+            target-phrase test keep the registry sequence they depend on. */}
         <section className="border-t border-hairline">
-          <div className="shell grid gap-4 py-16 md:grid-cols-3">
-            {PRODUCTS.map((product) => (
+          <div className="shell py-16">
+            <div className="grid gap-4 md:grid-cols-3">
+              {PRODUCTS.filter((product) => product.arcPosition)
+                .sort((a, b) => a.arcPosition! - b.arcPosition!)
+                .map((product) => (
+                  <Link
+                    key={product.slug}
+                    href={`/product/${product.slug}`}
+                    className="card block px-5 py-6 transition hover:border-brand-red"
+                  >
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-[13px] font-bold tabular-nums text-muted">
+                        {product.arcPosition}
+                      </span>
+                      <h2 className="text-[17px] font-semibold leading-snug text-heading">
+                        {product.cardTitle}
+                      </h2>
+                    </div>
+                    <p className="mt-2 text-[15px] leading-relaxed text-body">
+                      {product.cardLine}
+                    </p>
+                    <p className="mt-4 text-sm font-medium text-brand-red">
+                      {product.indexed ? "Learn more →" : "In development →"}
+                    </p>
+                  </Link>
+                ))}
+            </div>
+
+            {/* Step 2. Full width, no border, no link — it is what makes the other
+                three credible, and it is not something we sell. */}
+            <p className="mt-4 flex items-baseline gap-2 border-l-2 border-hairline pl-4 text-[15px] leading-relaxed text-body">
+              <span className="text-[13px] font-bold tabular-nums text-muted">2</span>
+              <span>
+                <span className="font-semibold text-heading">Price it.</span> Yours. Your
+                takeoff, your subs, your read of the site. We don&rsquo;t estimate jobs
+                and won&rsquo;t pretend we can.
+              </span>
+            </p>
+
+            <p className="mt-8 text-center text-[15px] leading-relaxed text-body">
               <Link
-                key={product.slug}
-                href={`/product/${product.slug}`}
-                className="card block px-5 py-6 transition hover:border-brand-red"
+                href="/product/board"
+                className="font-semibold text-heading hover:text-brand-red"
               >
-                <h2 className="text-[17px] font-semibold leading-snug text-heading">
-                  {product.cardTitle}
-                </h2>
-                <p className="mt-2 text-[15px] leading-relaxed text-body">
-                  {product.cardLine}
-                </p>
-                <p className="mt-4 text-sm font-medium text-brand-red">Learn more →</p>
-              </Link>
-            ))}
+                Your firm&rsquo;s board
+              </Link>{" "}
+              — where the three arrive together, updated weekly.
+            </p>
           </div>
         </section>
 

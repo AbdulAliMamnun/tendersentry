@@ -285,12 +285,28 @@ class HomepageTests(unittest.TestCase):
         self.assertIn("DemoRanker", self.source)
         self.assertLess(
             self.source.index("DemoRanker"),
-            self.source.index("PRODUCTS.map"),
+            self.source.index("PRODUCTS.filter"),
         )
 
-    def test_the_three_product_cards_come_from_the_registry(self) -> None:
-        """Hand-listing them would let a card drift from the page it links to."""
-        self.assertIn("PRODUCTS.map", self.source)
+    def test_the_product_cards_come_from_the_registry(self) -> None:
+        """Hand-listing them would let a card drift from the page it links to.
+
+        Filtered and sorted now rather than mapped straight: the cards are the arc in
+        order, and step 2 has no registry entry because it is not something we sell.
+        """
+        self.assertIn("PRODUCTS.filter", self.source)
+        self.assertIn("arcPosition", self.source)
+
+    def test_the_cards_are_numbered_in_arc_order(self) -> None:
+        """A menu invites picking one. A sequence says what happens in what order."""
+        self.assertIn("a.arcPosition! - b.arcPosition!", self.source)
+        # Step 2 is a line, not a card, and carries its own number.
+        self.assertIn("Price it.", self.source)
+        self.assertIn("won&rsquo;t pretend we can", self.source)
+
+    def test_an_unbuilt_product_is_labelled_on_its_card(self) -> None:
+        """"Learn more" on a page for something that does not exist is a small lie."""
+        self.assertIn("In development", self.source)
 
     def test_the_credibility_line_points_at_the_research_rather_than_reciting_it(
         self,

@@ -39,6 +39,19 @@ export type Product = {
    * form asking something else.
    */
   ownCapture?: boolean;
+  /**
+   * Where this product sits in the arc the homepage tells, or absent if it is not a
+   * step in it.
+   *
+   * A separate field rather than a reordering of PRODUCTS: `sitemap.ts` emits in array
+   * order and `test_each_records_the_phrase_it_targets` asserts the array's exact
+   * sequence, so shuffling for the homepage's benefit would ripple into both. The
+   * homepage sorts on this; nothing else reads it.
+   *
+   * Step 2 — pricing — has no entry here or anywhere else. It is the contractor's
+   * work, not ours, and the homepage says so in a line rather than a card.
+   */
+  arcPosition?: 1 | 3 | 4;
 };
 
 export const PRODUCTS: Product[] = [
@@ -55,6 +68,7 @@ export const PRODUCTS: Product[] = [
     target: "tender matching software canada",
     updated: "2026-08-04",
     indexed: true,
+    arcPosition: 1,
   },
   {
     slug: "compliance",
@@ -69,6 +83,7 @@ export const PRODUCTS: Product[] = [
     target: "bid compliance check",
     updated: "2026-08-04",
     indexed: true,
+    arcPosition: 4,
   },
   {
     slug: "board",
@@ -100,6 +115,7 @@ export const PRODUCTS: Product[] = [
     // Not built. Not indexed, and the route reads the same field for robots.
     indexed: false,
     ownCapture: true,
+    arcPosition: 3,
   },
 ];
 
