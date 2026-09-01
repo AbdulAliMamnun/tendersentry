@@ -42,5 +42,5 @@
     "verification": "exact substring, re-read from the source PDF at generation",
     "reason": "Requires fax submission — this firm submits electronically only."
   },
-  "candidate_count": 149
+  "candidate_count": 154
 }
