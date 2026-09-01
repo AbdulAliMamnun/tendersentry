@@ -1,10 +1,22 @@
 import { GITHUB_URL } from "@/lib/data";
 import { BetaForm } from "@/components/BetaForm";
 
-/** Light footer: attribution on the left, the beta form on the right. */
+/**
+ * Light footer: attribution on the left, the beta form on the right.
+ *
+ * Carries NO `id="join"`. It used to, and because every page renders a Footer while
+ * guide and product routes declare their own `id="join"` too, nine pages shipped the
+ * id twice — invalid HTML, and a browser resolves a fragment to the first match, so
+ * the footer's copy was unreachable. Neither file was wrong on its own, which is why
+ * nothing caught it.
+ *
+ * A page that wants a `#join` target now declares one. Inheriting an anchor from a
+ * shared component is the property that caused the collision, so the property is gone
+ * rather than made conditional.
+ */
 export function Footer() {
   return (
-    <footer id="join" className="border-t border-hairline bg-page">
+    <footer className="border-t border-hairline bg-page">
       <div className="shell grid gap-10 py-14 md:grid-cols-2 md:gap-16">
         <div>
           <p className="text-[15px] font-semibold text-heading">Free while in beta</p>

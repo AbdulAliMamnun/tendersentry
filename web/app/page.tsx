@@ -109,7 +109,13 @@ export default function HomePage() {
         </section>
       </main>
 
-      <Footer />
+      {/* The homepage declares its own anchor rather than inheriting one from
+          Footer. Its three `#join` links land exactly where they always did; the
+          difference is that the target is stated here instead of arriving with a
+          shared component and colliding on pages that declare their own. */}
+      <div id="join">
+        <Footer />
+      </div>
     </>
   );
 }
