@@ -312,16 +312,16 @@ function normalCdf(z: number): number {
   return z > 0 ? q : 1 - q;
 }
 
-const takenAt = (c: number) => JOBS * 0.45 * Math.exp(-0.09 * (c - LEAN));
+const winsAt = (c: number) => JOBS * 0.45 * Math.exp(-0.09 * (c - LEAN));
 
 function Dial() {
   const [pct, setPct] = useState(8);
-  const taken = takenAt(pct);
-  const over = Math.round(taken * normalCdf(pct / SPREAD));
-  const foregone = Math.round(takenAt(LEAN) - taken);
+  const won = winsAt(pct);
+  const over = Math.round(won * normalCdf(pct / SPREAD));
+  const foregone = Math.round(winsAt(LEAN) - won);
   const verdict =
     pct <= 6
-      ? "Lean enough to take on work you lose money on."
+      ? "Lean enough to win work you lose money on."
       : pct >= 13
         ? "Safe enough that the jobs go to someone else."
         : "No setting here is right for all twenty jobs.";
@@ -361,9 +361,9 @@ function Dial() {
 
       <div className="mt-6 grid gap-px overflow-hidden rounded-md border border-hairline bg-hairline sm:grid-cols-3">
         {[
-          { value: Math.round(taken), label: "jobs you take on, of twenty bid", bad: false },
+          { value: Math.round(won), label: "jobs you win, of twenty bid", bad: false },
           { value: over, label: "of those, cost more than you bid", bad: true },
-          { value: foregone, label: "jobs a leaner number would have taken", bad: false },
+          { value: foregone, label: "jobs a leaner number would have won", bad: false },
         ].map((cell) => (
           <div key={cell.label} className="bg-white px-4 pb-5 pt-4">
             <b
