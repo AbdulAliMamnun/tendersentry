@@ -46,25 +46,25 @@ export default function HomePage() {
             a 2.5x jump with nothing between it, so the sentence carrying the whole
             offer read as a caption under the headline. The ladder is now
             1.4rem -> 6rem -> 1.2rem -> 0.875rem, and each step has a job. */}
-        <section className="shell pb-14 pt-16 sm:pt-24">
+        <section className="shell pb-8 pt-10 sm:pb-14 sm:pt-24">
           <p className="eyebrow">For Ontario &amp; Québec contractors</p>
 
           {/* The problem, before the claim. `rankable.count` from the manifest, not a
               hardcoded figure: it is what a visitor can actually be shown today, and
               spelling it keeps the sentence prose. */}
-          <p className="mt-5 max-w-[46ch] text-[clamp(1.2rem,2.4vw,1.4rem)] leading-snug text-muted">
+          <p className="mt-4 max-w-[46ch] text-[clamp(1.2rem,2.4vw,1.4rem)] sm:mt-5 leading-snug text-muted">
             {capitalise(spelledThousands())} thousand tenders are open across Ontario
             and Québec, and one clause on page 75 throws the bid out anyway.
           </p>
 
-          <h1 className="mt-7 max-w-[14ch] text-[clamp(2.4rem,4.4vw,3.6rem)] font-extrabold leading-[1.02] tracking-[-0.03em] text-heading">
+          <h1 className="mt-5 max-w-[14ch] sm:mt-7 text-[clamp(2.4rem,4.4vw,3.6rem)] font-extrabold leading-[1.02] tracking-[-0.03em] text-heading">
             Bid the right tenders. Skip the wrong ones.
           </h1>
 
           {/* Left-aligned inside a centred section on purpose: a numbered sequence
               needs a left edge to scan down, and centred the numbers stop doing their
               job. The cards below expand these three; the hero previews them. */}
-          <ol className="mt-8 max-w-[38rem] space-y-2 text-[clamp(1.05rem,1.9vw,1.2rem)] leading-snug text-body">
+          <ol className="mt-6 max-w-[38rem] space-y-2 sm:mt-8 text-[clamp(1.05rem,1.9vw,1.2rem)] leading-snug text-body">
             {HERO_STEPS.map((step) => (
               <li key={step.n} className="flex gap-3">
                 <span className="shrink-0 font-bold tabular-nums text-muted">
@@ -84,15 +84,15 @@ export default function HomePage() {
 
           {/* Not a fourth item. It is the step we do not do, and numbering it would
               claim it. */}
-          <p className="mt-4 max-w-[38rem] text-sm text-muted">
+          <p className="mt-3 max-w-[38rem] text-sm text-muted sm:mt-4">
             The pricing itself is yours.
           </p>
 
-          <div className="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
-            <a href="#join" className="btn-primary w-full sm:w-auto">
+          <div className="mt-6 flex flex-wrap items-center gap-3 sm:mt-8">
+            <a href="#join" className="btn-primary">
               Join the beta
             </a>
-            <Link href="/check" className="btn-outline w-full sm:w-auto">
+            <Link href="/check" className="btn-outline">
               Check a tender free
             </Link>
             <span className="text-sm font-medium text-heading sm:ml-1">
