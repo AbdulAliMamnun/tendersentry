@@ -46,27 +46,25 @@ export default function HomePage() {
             a 2.5x jump with nothing between it, so the sentence carrying the whole
             offer read as a caption under the headline. The ladder is now
             1.4rem -> 6rem -> 1.2rem -> 0.875rem, and each step has a job. */}
-        <section className="shell pb-14 pt-16 text-center sm:pt-24">
+        <section className="shell pb-14 pt-16 sm:pt-24">
           <p className="eyebrow">For Ontario &amp; Québec contractors</p>
 
           {/* The problem, before the claim. `rankable.count` from the manifest, not a
               hardcoded figure: it is what a visitor can actually be shown today, and
               spelling it keeps the sentence prose. */}
-          <p className="mx-auto mt-5 max-w-[46ch] text-[clamp(1.2rem,2.4vw,1.4rem)] leading-snug text-muted">
+          <p className="mt-5 max-w-[46ch] text-[clamp(1.2rem,2.4vw,1.4rem)] leading-snug text-muted">
             {capitalise(spelledThousands())} thousand tenders are open across Ontario
-            and Québec. Finding the few that fit takes hours you don&rsquo;t have.
-            Pricing them is a guess. And one clause on page 75 throws the bid out
-            anyway.
+            and Québec, and one clause on page 75 throws the bid out anyway.
           </p>
 
-          <h1 className="mx-auto mt-7 max-w-[14ch] text-[clamp(3rem,7.2vw,6rem)] font-black leading-[0.95] tracking-[-0.04em] text-heading">
+          <h1 className="mt-7 max-w-[14ch] text-[clamp(2.4rem,4.4vw,3.6rem)] font-extrabold leading-[1.02] tracking-[-0.03em] text-heading">
             Bid the right tenders. Skip the wrong ones.
           </h1>
 
           {/* Left-aligned inside a centred section on purpose: a numbered sequence
               needs a left edge to scan down, and centred the numbers stop doing their
               job. The cards below expand these three; the hero previews them. */}
-          <ol className="mx-auto mt-8 max-w-[38rem] space-y-2 text-left text-[clamp(1.05rem,1.9vw,1.2rem)] leading-snug text-body">
+          <ol className="mt-8 max-w-[38rem] space-y-2 text-[clamp(1.05rem,1.9vw,1.2rem)] leading-snug text-body">
             {HERO_STEPS.map((step) => (
               <li key={step.n} className="flex gap-3">
                 <span className="shrink-0 font-bold tabular-nums text-muted">
@@ -86,11 +84,11 @@ export default function HomePage() {
 
           {/* Not a fourth item. It is the step we do not do, and numbering it would
               claim it. */}
-          <p className="mx-auto mt-4 max-w-[38rem] text-left text-sm text-muted">
+          <p className="mt-4 max-w-[38rem] text-sm text-muted">
             The pricing itself is yours.
           </p>
 
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <div className="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
             <a href="#join" className="btn-primary w-full sm:w-auto">
               Join the beta
             </a>
