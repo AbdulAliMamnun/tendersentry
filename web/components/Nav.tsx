@@ -75,9 +75,13 @@ export function SlimNav() {
           <Link href="/check" className="text-body hover:text-heading">
             Check a tender
           </Link>
-          <a href="/#join" className="font-semibold text-brand-red hover:opacity-80">
+          {/* A route change, not a same-page fragment: from /product/* or /guides/*
+              this leaves the current page. As an <a> it forced a full reload. The
+              bare "#join" anchors on the homepage are correctly plain <a>, because
+              they scroll rather than navigate. */}
+          <Link href="/#join" className="font-semibold text-brand-red hover:opacity-80">
             Join the beta
-          </a>
+          </Link>
         </div>
       </nav>
     </header>

@@ -169,6 +169,32 @@ Not fixed. The fix is to stamp `generated_at` and the model identity inside
 extraction over the existing tenders to backfill — an API-spend decision, not a code
 one. Recorded so the displayed date is known to be softer than it looks.
 
+### Known cost: /product/bid-confidence ships both scroll branches
+
+The Bid Confidence scroll story renders **twice** in the HTML — once as the animated
+sticky version and once as three stacked static figures — with a CSS media query
+deciding which one paints (`motion-reduce:hidden` on one, `hidden
+motion-reduce:block` on the other). A reader inspecting that page will find two sets
+of the same three captions and two sets of SVGs, and it is not a bug.
+
+It was a JavaScript branch first, and that was worse. `useState` decided the layout,
+so the server rendered one branch and the client replaced it on mount: a wrong-layout
+flash on first paint for whichever group the seed did not favour. Seeding it the other
+way only moves the flash onto the people who set `prefers-reduced-motion` — the ones
+who asked for less visual disruption. There is no seed that is right for both, because
+the server cannot know the preference.
+
+So the duplication buys a correct first paint in both directions and no swap in
+either. The costs, stated rather than hidden: roughly a kilobyte of duplicated caption
+text and two `<svg>` sets in the DOM. `hidden` is `display:none`, so the branch that
+loses leaves the accessibility tree and exactly one set of captions is announced —
+that part is not a compromise.
+
+`tests/test_bid_confidence_render.py::BranchVisibilityTests` asserts both branches are
+present and that the media-query classes are the thing selecting between them, so a
+future change back to a JavaScript branch fails rather than quietly reintroducing the
+flash.
+
 ### Known limit: the win-language guard does not scan the serving manifest
 
 `tests/test_guides.py::WinLanguageTests` enforces the standing rule that a bid-fit
