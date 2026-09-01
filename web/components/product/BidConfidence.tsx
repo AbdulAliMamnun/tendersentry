@@ -234,7 +234,7 @@ function ScrollStory() {
   ];
 
   return (
-    <section ref={storyRef} className="relative mt-10 h-[300vh]">
+    <section ref={storyRef} data-story className="relative mt-10 h-[300vh]">
       <div className={`${archivo.className} sticky top-0 h-screen overflow-hidden rounded-lg bg-[#14171A]`}>
         <div className="absolute inset-0">
           <Scene p={p} hidden />
