@@ -104,7 +104,7 @@ export default function HomePage() {
         {/* The demo — the strongest thing on the page, so nothing sits above it. */}
         <section className="shell pb-16">
           <DemoRanker />
-          <p className="mt-4 text-center text-sm text-muted">
+          <p className="mt-4 text-sm text-muted">
             Rankings run against today&rsquo;s open notices.{" "}
             <a href="#join" className="font-medium text-brand-red hover:opacity-80">
               Want yours? Join the beta
@@ -160,7 +160,7 @@ export default function HomePage() {
               </span>
             </p>
 
-            <p className="mt-8 text-center text-[15px] leading-relaxed text-body">
+            <p className="mt-8 text-[15px] leading-relaxed text-body">
               <Link
                 href="/product/board"
                 className="font-semibold text-heading hover:text-brand-red"
@@ -174,7 +174,7 @@ export default function HomePage() {
 
         {/* One line of credibility, pointing at the research rather than reciting it. */}
         <section className="border-t border-hairline">
-          <div className="shell py-10 text-center">
+          <div className="shell py-10">
             <p className="text-sm leading-relaxed text-body">
               Built on {formatNumber(stats.notices_tracked)} tracked notices, 950,000
               historical bids, and a survey of all {stats.municipalities_mapped} Ontario
@@ -189,11 +189,12 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Free check */}
+        {/* Free check. Left-aligned like everything else: the page reads as one
+            document rather than a left hero with centred punctuation under it. */}
         <section className="border-t border-hairline">
-          <div className="shell py-16 text-center">
+          <div className="shell py-16">
             <h2 className="text-2xl font-semibold">Check one tender, free</h2>
-            <p className="mx-auto mt-4 max-w-2xl text-[15px] leading-relaxed text-body">
+            <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-body">
               Upload any Canadian tender package. Get the full compliance brief — every
               mandatory requirement, cited to its page — within 24 hours.
             </p>
