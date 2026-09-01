@@ -1,25 +1,9 @@
 "use client";
 
-import { Archivo } from "next/font/google";
 import { useEffect, useRef, useState } from "react";
 
 import { H2, P } from "@/components/guides/Prose";
 
-/**
- * Loaded through next/font, not a stylesheet link: the file is self-hosted at build
- * time, so there is no render-blocking request to a third party and no layout shift
- * from a late swap.
- *
- * Scoped to the dark scroll story alone. Archivo's display weights are what carry that
- * composition, but the page sits inside the shared product shell — nav, H1 and footer
- * in the site face — and running a second font through the whole body would make this
- * page look broken beside the other three rather than deliberate.
- */
-const archivo = Archivo({
-  subsets: ["latin"],
-  weight: ["500", "800"],
-  display: "swap",
-});
 
 /**
  * Bid Confidence — a product that does not exist yet.
@@ -41,6 +25,20 @@ const archivo = Archivo({
  * in order, and each carries a visually-hidden description of its own figure, so the
  * screen-reader path gets the same three-step argument the reduced-motion path does.
  */
+
+/**
+ * Palette, from tailwind.config.ts. SVG paints with attributes rather than classes,
+ * so the tokens are spelled out here and nowhere else in the file.
+ *
+ * fit-green for the curve and brand-red for the tail is the pair the demo board
+ * already uses — green for what fits, red for the clause that disqualifies you. The
+ * curve and its tail are the same sentence: what you can work with, and what costs
+ * you.
+ */
+const INK = "#292524"; // heading
+const RULE = "#a8a29e"; // muted
+const ACCENT = "#477054"; // fit-green
+const ALERT = "#A32D2D"; // brand-red
 
 /** Geometry, matching the reference composition. */
 const CX = 600;
@@ -92,12 +90,12 @@ const STATES: State[] = [
   {
     heading: (
       <>
-        Your contingency covers <span className="text-[#F0BE00]">this much</span> of it.
+        Your contingency covers <span className="text-fit-green">this much</span> of it.
       </>
     ),
     body: (
       <>
-        <span className="text-[#E4573D]">Everything past the marker</span> is a job that
+        <span className="text-brand-red">Everything past the marker</span> is a job that
         costs more than you bid. We show you where that marker actually sits, on a tender
         you&rsquo;re already looking at.
       </>
@@ -119,22 +117,25 @@ function Scene({ p, hidden }: { p: number; hidden: boolean }) {
       aria-hidden={hidden ? "true" : undefined}
       role={hidden ? undefined : "img"}
     >
-      <rect x={60} y={FLOOR} width={1080} height={2} fill="#333A3E" />
+      <rect x={60} y={FLOOR} width={1080} height={2} fill={RULE} />
       <path
         d={shape(sigma, 60, 1140)}
-        fill="#F0BE00"
-        fillOpacity={0.16 + 0.06 * window01(p, 0.18, 0.62)}
-        stroke="#F0BE00"
+        fill={ACCENT}
+        // .16 suited a dark ground; on #faf9f7 it renders #DDE3DD, 1.24:1 against
+        // the page — a wash, not a shape. The 3px stroke at 5.37:1 does the
+        // legibility work; the fill is a tint behind it.
+        fillOpacity={0.22 + 0.06 * window01(p, 0.18, 0.62)}
+        stroke={ACCENT}
         strokeWidth={3}
       />
-      <path d={shape(sigma, quantile, 1140)} fill="#C1352A" fillOpacity={0.55} opacity={marker} />
-      <rect x={quantile} y={FLOOR - AMP} width={3} height={AMP} fill="#EDEDE6" opacity={marker} />
+      <path d={shape(sigma, quantile, 1140)} fill={ALERT} fillOpacity={0.35} opacity={marker} />
+      <rect x={quantile} y={FLOOR - AMP} width={3} height={AMP} fill={INK} opacity={marker} />
       <text
         x={clamp(quantile + 14, 0, 940)}
         y={FLOOR - AMP + 22}
         fontSize={17}
         fontWeight={700}
-        fill="#E4573D"
+        fill={ALERT}
         opacity={marker}
       >
         costs more than you bid
@@ -144,7 +145,7 @@ function Scene({ p, hidden }: { p: number; hidden: boolean }) {
         y={FLOOR + 42}
         fontSize={22}
         fontWeight={900}
-        fill="#EDEDE6"
+        fill={INK}
         textAnchor="middle"
         opacity={window01(p, 0.04, 0.12)}
       >
@@ -171,10 +172,10 @@ function Caption({
 }) {
   return (
     <div className={className} style={opacity === undefined ? undefined : { opacity }}>
-      <h2 className="max-w-[13ch] text-[clamp(1.6rem,5vw,2.6rem)] font-extrabold leading-[0.98] tracking-[-0.03em] text-[#EDEDE6]">
+      <h2 className="max-w-[13ch] text-[clamp(1.6rem,5vw,2.6rem)] font-extrabold leading-[0.98] tracking-[-0.03em] text-heading">
         {state.heading}
       </h2>
-      <p className="mt-3 max-w-[40ch] text-[15px] font-medium leading-relaxed text-[#9AA1A4]">
+      <p className="mt-3 max-w-[40ch] text-[15px] font-medium leading-relaxed text-body">
         {state.body}
       </p>
       {/* The figure, in words, per state — the screen-reader path gets the same three
@@ -245,10 +246,10 @@ function ScrollStory() {
       <section
         ref={storyRef}
         data-story
-        className={`relative mt-10 h-[300vh] motion-reduce:hidden`}
+        className="relative mt-10 h-[300vh] motion-reduce:hidden"
       >
         <div
-          className={`${archivo.className} sticky top-0 h-screen overflow-hidden rounded-lg bg-[#14171A]`}
+          className="sticky top-0 h-screen overflow-hidden"
         >
           <div className="absolute inset-0">
             <Scene p={p} hidden />
@@ -263,7 +264,7 @@ function ScrollStory() {
           ))}
           <div
             aria-hidden="true"
-            className="absolute bottom-5 left-5 text-xs font-bold text-[#6C7376] sm:left-7"
+            className="absolute bottom-5 left-5 text-xs font-bold text-muted sm:left-7"
           >
             {p < 0.3 ? 1 : p < 0.66 ? 2 : 3} / 3
           </div>
@@ -276,7 +277,7 @@ function ScrollStory() {
           The argument is three steps, so it stays three steps. */}
       <div
         data-static-story
-        className={`${archivo.className} mt-10 hidden space-y-px overflow-hidden rounded-lg bg-[#14171A] motion-reduce:block`}
+        className="mt-10 hidden divide-y divide-hairline border-y border-hairline motion-reduce:block"
       >
         {STATES.map((state, index) => (
           <div key={index} className="px-5 py-7 sm:px-7">
@@ -321,7 +322,7 @@ const ARC = [
 const TAG_CLASS = {
   live: "border-hairline text-muted",
   yours: "border-dashed border-hairline text-muted",
-  now: "border-[#F0BE00] bg-[#F0BE00] text-heading",
+  now: "border-fit-green bg-fit-greenSoft text-fit-green",
 };
 
 /** Illustrative model. Not a forecast, and not drawn from any real data. */
@@ -516,10 +517,10 @@ export function BidConfidence() {
     <>
       <style>{`
         .bc-range{-webkit-appearance:none;appearance:none;background:transparent;cursor:grab}
-        .bc-range::-webkit-slider-runnable-track{height:6px;background:var(--bc-track,#141719)}
-        .bc-range::-moz-range-track{height:6px;background:#141719}
-        .bc-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:28px;height:28px;margin-top:-11px;background:#1F5C3D;border:2.5px solid #141719;border-radius:2px}
-        .bc-range::-moz-range-thumb{width:28px;height:28px;background:#1F5C3D;border:2.5px solid #141719;border-radius:2px}
+        .bc-range::-webkit-slider-runnable-track{height:6px;background:var(--bc-track,#292524)}
+        .bc-range::-moz-range-track{height:6px;background:#292524}
+        .bc-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:28px;height:28px;margin-top:-11px;background:#477054;border:2.5px solid #292524;border-radius:2px}
+        .bc-range::-moz-range-thumb{width:28px;height:28px;background:#477054;border:2.5px solid #292524;border-radius:2px}
       `}</style>
 
       <P>
