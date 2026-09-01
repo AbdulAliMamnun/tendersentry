@@ -29,12 +29,12 @@ export default function HomePage() {
           <h1 className="mx-auto mt-5 max-w-3xl text-[30px] font-semibold leading-[1.2] sm:text-[38px]">
             Bid the right tenders. Skip the wrong ones.
           </h1>
+          {/* One sentence. The arc is the cards' job below — a hero that recites all
+              four steps is a paragraph, and this one promised "four things" and then
+              listed three. */}
           <p className="mx-auto mt-5 max-w-2xl text-[15px] leading-relaxed text-body sm:text-base">
-            Four things stand between a tender and a job worth having. We find the
-            work, show you the range behind your number, and catch the clause that
-            throws you out — quoted, with the page. The pricing is yours; we don&rsquo;t
-            pretend otherwise.{" "}
-            <span className="font-medium text-heading">Free while in beta.</span>
+            Every open tender in Ontario and Québec, ranked for your firm — and read
+            for what would throw your bid out.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <a href="#join" className="btn-primary w-full sm:w-auto">
@@ -44,6 +44,10 @@ export default function HomePage() {
               Check a tender free
             </Link>
           </div>
+          {/* A term of the offer, so it sits where the offer is taken. In the sentence
+              it blunted the ending and needed a weight change mid-line to separate two
+              unrelated ideas. */}
+          <p className="mt-4 text-sm font-medium text-heading">Free while in beta.</p>
         </section>
 
         {/* The demo — the strongest thing on the page, so nothing sits above it. */}
