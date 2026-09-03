@@ -29,10 +29,10 @@ export default function GuidesIndex() {
       <SlimNav />
       <main className="shell py-14 sm:py-20">
         <p className="eyebrow">Guides</p>
-        <h1 className="mt-4 max-w-2xl text-[28px] font-semibold leading-tight text-heading sm:text-[34px]">
+        <h1 className="mt-4 max-w-2xl text-[28px] font-semibold leading-tight text-ink sm:text-[34px]">
           What we learned building this, written down
         </h1>
-        <p className="mt-5 max-w-2xl text-[15px] leading-relaxed text-body sm:text-base">
+        <p className="mt-5 max-w-2xl text-[15px] leading-relaxed text-grey sm:text-base">
           Every guide here carries at least one number that does not exist anywhere else
           — measured from our own pipeline, sourced, and dated. Where a figure is
           uncertain, it says so.
@@ -43,13 +43,13 @@ export default function GuidesIndex() {
             <Link
               key={guide.slug}
               href={`/guides/${guide.slug}`}
-              className="card block px-5 py-5 transition hover:border-brand-red sm:px-6"
+              className="card block px-5 py-5 transition hover:border-teal sm:px-6"
             >
-              <h2 className="text-[17px] font-semibold leading-snug text-heading">
+              <h2 className="text-[17px] font-semibold leading-snug text-ink">
                 {guide.title}
               </h2>
-              <p className="mt-2 text-[15px] leading-relaxed text-body">{guide.summary}</p>
-              <p className="mt-3 text-xs text-muted">
+              <p className="mt-2 text-[15px] leading-relaxed text-grey">{guide.summary}</p>
+              <p className="mt-3 text-xs text-grey-light">
                 {guide.readingMinutes} min read · updated {guide.updated}
               </p>
             </Link>

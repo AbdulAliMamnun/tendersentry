@@ -4,11 +4,11 @@ import { useMemo, useState } from "react";
 import type { Municipality } from "@/lib/data";
 
 const PILL_STYLES: Record<string, string> = {
-  own_site_open: "bg-fit-greenSoft text-fit-green",
-  own_site_notices: "bg-[#f5f1e8] text-[#6b5f4b]",
-  bids_and_tenders: "bg-brand-redSoft text-brand-red",
-  biddingo: "bg-brand-redSoft text-brand-red",
-  bidnet_or_other_platform: "bg-brand-redSoft text-brand-red",
+  own_site_open: "bg-teal-wash text-teal",
+  own_site_notices: "bg-teal-wash text-teal-mid",
+  bids_and_tenders: "bg-mist text-grey",
+  biddingo: "bg-mist text-grey",
+  bidnet_or_other_platform: "bg-mist text-grey",
 };
 
 const TIER_LABELS: Record<string, string> = {
@@ -18,7 +18,7 @@ const TIER_LABELS: Record<string, string> = {
 };
 
 function pillClass(classification: string): string {
-  return PILL_STYLES[classification] ?? "bg-page text-muted";
+  return PILL_STYLES[classification] ?? "bg-white text-grey";
 }
 
 /** Client-side search across all 444 municipalities. */
@@ -45,10 +45,10 @@ export function MunicipalityLookup({
 
   return (
     <div className="card p-6 sm:p-7">
-      <label htmlFor="lookup" className="block text-sm font-medium text-heading">
+      <label htmlFor="lookup" className="block text-sm font-medium text-ink">
         Look up a municipality
       </label>
-      <p className="mt-1.5 text-sm text-body">
+      <p className="mt-1.5 text-sm text-grey">
         All {municipalities.length} Ontario municipalities, searchable by name or county.
       </p>
       <input
@@ -64,21 +64,21 @@ export function MunicipalityLookup({
       {query.trim() ? (
         <div className="mt-5">
           {results.length === 0 ? (
-            <p className="text-sm text-muted">
+            <p className="text-sm text-grey">
               No municipality matches &ldquo;{query.trim()}&rdquo;.
             </p>
           ) : (
-            <ul className="divide-y divide-hairline">
+            <ul className="divide-y divide-rule">
               {results.map((item) => (
                 <li
                   key={item.slug}
                   className="flex flex-wrap items-center gap-x-3 gap-y-2 py-3"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-heading">
+                    <p className="truncate text-sm font-medium text-ink">
                       {item.name}
                     </p>
-                    <p className="mt-0.5 text-xs text-muted">
+                    <p className="mt-0.5 text-xs text-grey-light">
                       {TIER_LABELS[item.tier] ?? item.tier}
                       {item.area ? ` · ${item.area}` : ""}
                       {item.population

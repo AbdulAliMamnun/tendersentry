@@ -52,28 +52,28 @@ export default function HomePage() {
           {/* The problem, before the claim. `rankable.count` from the manifest, not a
               hardcoded figure: it is what a visitor can actually be shown today, and
               spelling it keeps the sentence prose. */}
-          <p className="mt-4 max-w-[46ch] text-[clamp(1.2rem,2.4vw,1.4rem)] sm:mt-5 leading-snug text-muted">
+          <p className="mt-4 max-w-[46ch] text-[clamp(1.2rem,2.4vw,1.4rem)] sm:mt-5 leading-snug text-grey">
             {capitalise(spelledThousands())} thousand tenders are open across Ontario
             and Québec, and one clause on page 75 throws the bid out anyway.
           </p>
 
-          <h1 className="mt-5 max-w-[14ch] sm:mt-7 text-[clamp(2.4rem,4.4vw,3.6rem)] font-extrabold leading-[1.02] tracking-[-0.03em] text-heading">
+          <h1 className="mt-5 max-w-[14ch] sm:mt-7 text-[clamp(2.4rem,4.4vw,3.6rem)] font-extrabold leading-[1.02] tracking-[-0.03em] text-ink">
             Bid the right tenders. Skip the wrong ones.
           </h1>
 
           {/* Left-aligned inside a centred section on purpose: a numbered sequence
               needs a left edge to scan down, and centred the numbers stop doing their
               job. The cards below expand these three; the hero previews them. */}
-          <ol className="mt-6 max-w-[38rem] space-y-2 sm:mt-8 text-[clamp(1.05rem,1.9vw,1.2rem)] leading-snug text-body">
+          <ol className="mt-6 max-w-[38rem] space-y-2 sm:mt-8 text-[clamp(1.05rem,1.9vw,1.2rem)] leading-snug text-grey">
             {HERO_STEPS.map((step) => (
               <li key={step.n} className="flex gap-3">
-                <span className="shrink-0 font-bold tabular-nums text-muted">
+                <span className="shrink-0 font-bold tabular-nums text-grey">
                   {step.n}
                 </span>
                 <span>
                   {step.text}
                   {step.pending ? (
-                    <span className="ml-2 whitespace-nowrap rounded-pill border border-hairline px-2 py-0.5 align-middle text-[11px] font-semibold text-muted">
+                    <span className="ml-2 whitespace-nowrap rounded-pill border border-rule px-2 py-0.5 align-middle text-[11px] font-semibold text-grey-light">
                       In development
                     </span>
                   ) : null}
@@ -84,7 +84,7 @@ export default function HomePage() {
 
           {/* Not a fourth item. It is the step we do not do, and numbering it would
               claim it. */}
-          <p className="mt-3 max-w-[38rem] text-sm text-muted sm:mt-4">
+          <p className="mt-3 max-w-[38rem] text-sm text-grey sm:mt-4">
             The pricing itself is yours.
           </p>
 
@@ -95,7 +95,7 @@ export default function HomePage() {
             <Link href="/check" className="btn-outline">
               Check a tender free
             </Link>
-            <span className="text-sm font-medium text-heading sm:ml-1">
+            <span className="text-sm font-medium text-ink sm:ml-1">
               Free while in beta.
             </span>
           </div>
@@ -104,9 +104,9 @@ export default function HomePage() {
         {/* The demo — the strongest thing on the page, so nothing sits above it. */}
         <section className="shell pb-16">
           <DemoRanker />
-          <p className="mt-4 text-sm text-muted">
+          <p className="mt-4 text-sm text-grey">
             Rankings run against today&rsquo;s open notices.{" "}
-            <a href="#join" className="font-medium text-brand-red hover:opacity-80">
+            <a href="#join" className="font-medium text-teal hover:opacity-80">
               Want yours? Join the beta
             </a>{" "}
             — free for Ontario &amp; Québec contractors.
@@ -120,7 +120,7 @@ export default function HomePage() {
             and the one part we do not do should not look like the three we do.
             Ordered by arcPosition rather than array order, so sitemap.ts and the
             target-phrase test keep the registry sequence they depend on. */}
-        <section className="border-t border-hairline">
+        <section className="border-t border-rule">
           <div className="shell py-16">
             <div className="grid gap-4 md:grid-cols-3">
               {PRODUCTS.filter((product) => product.arcPosition)
@@ -129,20 +129,20 @@ export default function HomePage() {
                   <Link
                     key={product.slug}
                     href={`/product/${product.slug}`}
-                    className="card block px-5 py-6 transition hover:border-brand-red"
+                    className="card block px-5 py-6 transition hover:border-teal"
                   >
                     <div className="flex items-baseline gap-2">
-                      <span className="text-[13px] font-bold tabular-nums text-muted">
+                      <span className="text-[13px] font-bold tabular-nums text-grey-light">
                         {product.arcPosition}
                       </span>
-                      <h2 className="text-[17px] font-semibold leading-snug text-heading">
+                      <h2 className="text-[17px] font-semibold leading-snug text-ink">
                         {product.cardTitle}
                       </h2>
                     </div>
-                    <p className="mt-2 text-[15px] leading-relaxed text-body">
+                    <p className="mt-2 text-[15px] leading-relaxed text-grey">
                       {product.cardLine}
                     </p>
-                    <p className="mt-4 text-sm font-medium text-brand-red">
+                    <p className="mt-4 text-sm font-medium text-teal">
                       {product.indexed ? "Learn more →" : "In development →"}
                     </p>
                   </Link>
@@ -151,19 +151,19 @@ export default function HomePage() {
 
             {/* Step 2. Full width, no border, no link — it is what makes the other
                 three credible, and it is not something we sell. */}
-            <p className="mt-4 flex items-baseline gap-2 border-l-2 border-hairline pl-4 text-[15px] leading-relaxed text-body">
-              <span className="text-[13px] font-bold tabular-nums text-muted">2</span>
+            <p className="mt-4 flex items-baseline gap-2 border-l-2 border-rule pl-4 text-[15px] leading-relaxed text-grey">
+              <span className="text-[13px] font-bold tabular-nums text-grey-light">2</span>
               <span>
-                <span className="font-semibold text-heading">Price it.</span> Yours. Your
+                <span className="font-semibold text-ink">Price it.</span> Yours. Your
                 takeoff, your subs, your read of the site. We don&rsquo;t estimate jobs
                 and won&rsquo;t pretend we can.
               </span>
             </p>
 
-            <p className="mt-8 text-[15px] leading-relaxed text-body">
+            <p className="mt-8 text-[15px] leading-relaxed text-grey">
               <Link
                 href="/product/board"
-                className="font-semibold text-heading hover:text-brand-red"
+                className="font-semibold text-ink hover:text-teal"
               >
                 Your firm&rsquo;s board
               </Link>{" "}
@@ -173,15 +173,15 @@ export default function HomePage() {
         </section>
 
         {/* One line of credibility, pointing at the research rather than reciting it. */}
-        <section className="border-t border-hairline">
+        <section className="border-t border-rule">
           <div className="shell py-10">
-            <p className="text-sm leading-relaxed text-body">
+            <p className="text-sm leading-relaxed text-grey">
               Built on {formatNumber(stats.notices_tracked)} tracked notices, 950,000
               historical bids, and a survey of all {stats.municipalities_mapped} Ontario
               municipalities.{" "}
               <Link
                 href="/research"
-                className="font-medium text-brand-red hover:opacity-80"
+                className="font-medium text-teal hover:opacity-80"
               >
                 See the research →
               </Link>
@@ -191,14 +191,14 @@ export default function HomePage() {
 
         {/* Free check. Left-aligned like everything else: the page reads as one
             document rather than a left hero with centred punctuation under it. */}
-        <section className="border-t border-hairline">
+        <section className="border-t border-rule">
           <div className="shell py-16">
             <h2 className="text-2xl font-semibold">Check one tender, free</h2>
-            <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-body">
+            <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-grey">
               Upload any Canadian tender package. Get the full compliance brief — every
               mandatory requirement, cited to its page — within 24 hours.
             </p>
-            <Link href="/check" className="btn-red mt-8">
+            <Link href="/check" className="btn-accent mt-8">
               Check a tender free
             </Link>
           </div>

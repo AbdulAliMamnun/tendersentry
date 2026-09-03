@@ -43,21 +43,21 @@ export default async function BoardPage({
 
   return (
     <main className="shell py-12">
-      <header className="border-b border-hairline pb-7">
+      <header className="border-b border-rule pb-7">
         <div className="flex flex-wrap items-center gap-3">
           <h1 className="text-2xl font-semibold">{firm.name}</h1>
-          <span className="rounded-pill bg-page px-2.5 py-1 text-xs font-medium text-muted">
+          <span className="rounded-pill bg-white px-2.5 py-1 text-xs font-medium text-grey-light">
             Beta — updated weekly
           </span>
         </div>
-        <p className="mt-2 text-sm text-body">
+        <p className="mt-2 text-sm text-grey">
           Your board · updated {formatGenerated(generated_at)}
           {/* Two different facts, and the distinction matters to a contractor: when
               this board was built, and how current the market behind it is. They
               diverge whenever a board is exported from an older pool. */}
-          <span className="text-muted"> · data as of {dataAsOf()}</span>
+          <span className="text-grey"> · data as of {dataAsOf()}</span>
         </p>
-        <p className="mt-4 text-sm leading-relaxed text-muted">
+        <p className="mt-4 text-sm leading-relaxed text-grey">
           Showing the top {board.length} of {candidate_count.toLocaleString("en-CA")}{" "}
           opportunities that passed your filters
           {firm.trades.length > 0
@@ -75,14 +75,14 @@ export default async function BoardPage({
       </section>
 
       <section className="card mt-8 p-6">
-        <p className="text-sm font-medium text-heading">Is this board useful?</p>
-        <p className="mt-2 text-sm leading-relaxed text-body">
+        <p className="text-sm font-medium text-ink">Is this board useful?</p>
+        <p className="mt-2 text-sm leading-relaxed text-grey">
           Reply to your welcome email, or{" "}
           <a
             href={`mailto:${NOTIFY_ADDRESS}?subject=${encodeURIComponent(
               `Board feedback — ${firm.name}`,
             )}`}
-            className="font-medium text-brand-red hover:opacity-80"
+            className="font-medium text-teal hover:opacity-80"
           >
             tell us what&rsquo;s missing
           </a>
@@ -92,11 +92,11 @@ export default async function BoardPage({
       </section>
 
       <section className="card mt-4 p-6">
-        <p className="text-sm font-medium text-heading">
+        <p className="text-sm font-medium text-ink">
           Deciding on one of these?
         </p>
-        <p className="mt-2 text-sm leading-relaxed text-body">
-          <Link href="/check" className="font-medium text-brand-red hover:opacity-80">
+        <p className="mt-2 text-sm leading-relaxed text-grey">
+          <Link href="/check" className="font-medium text-teal hover:opacity-80">
             Get the full compliance brief free
           </Link>{" "}
           — every mandatory requirement, cited to the page it appears on, within 24
@@ -104,25 +104,25 @@ export default async function BoardPage({
         </p>
       </section>
 
-      <footer className="mt-10 border-t border-hairline pt-6">
-        <p className="text-xs leading-relaxed text-muted">
-          <Link href="/" className="underline underline-offset-2 hover:text-body">
+      <footer className="mt-10 border-t border-rule pt-6">
+        <p className="text-xs leading-relaxed text-grey-light">
+          <Link href="/" className="underline underline-offset-2 hover:text-grey">
             tendersentry.com
           </Link>{" "}
           ·{" "}
-          <Link href="/research" className="underline underline-offset-2 hover:text-body">
+          <Link href="/research" className="underline underline-offset-2 hover:text-grey">
             The Ontario tender access census
           </Link>{" "}
           ·{" "}
           <a
             href={`${GITHUB_URL}/blob/main/census/README.md`}
             rel="noreferrer"
-            className="underline underline-offset-2 hover:text-body"
+            className="underline underline-offset-2 hover:text-grey"
           >
             Methodology
           </a>
         </p>
-        <p className="mt-3 text-xs text-muted">
+        <p className="mt-3 text-xs text-grey-light">
           This board is private to your firm. The link is the access — please don&rsquo;t
           share it publicly.
         </p>

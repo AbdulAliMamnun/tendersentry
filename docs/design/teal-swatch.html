@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TenderSentry — white, teal, grey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --white:#FFFFFF;       /* page ground */
+    --mist:#F4F6F6;        /* quiet blocks, table headers */
+    --ink:#16191C;         /* type */
+    --grey:#5F676C;        /* secondary type */
+    --grey-light:#8B9296;  /* tertiary, captions */
+    --rule:#DCE0E1;        /* hairlines, borders */
+    --teal:#0E5459;        /* primary accent */
+    --teal-mid:#14747B;    /* hover, secondary marks */
+    --teal-soft:#9FBFC2;   /* quiet borders */
+    --teal-wash:#E8F0F0;   /* fills, chips */
+    --flag:#8E4034;        /* muted brick — only where a bid is disqualified */
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--white);color:var(--ink);font-family:'Archivo',system-ui,sans-serif;
+       font-size:17px;line-height:1.5;font-variant-numeric:tabular-nums}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 clamp(20px,4vw,48px)}
+
+  nav{border-bottom:1px solid var(--rule)}
+  .navin{display:flex;align-items:center;gap:22px;padding:.8rem 0;flex-wrap:wrap}
+  .logo{font-weight:900;font-size:1.1rem;letter-spacing:-.03em;margin-right:auto}
+  .logo b{color:var(--teal)}
+  .navin a{color:var(--grey);text-decoration:none;font-weight:700;font-size:.95rem;padding-bottom:4px}
+  .navin a.on{color:var(--ink);border-bottom:2px solid var(--teal)}
+  .cta{background:var(--teal);color:#fff!important;padding:.5rem 1rem;font-weight:800!important;border-radius:2px}
+
+  section{padding:clamp(34px,6vh,64px) 0;border-bottom:1px solid var(--rule)}
+  .eyebrow{font-size:.78rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-mid)}
+  h1{margin-top:1rem;font-weight:800;font-size:clamp(2.2rem,4.4vw,3.5rem);line-height:1.02;letter-spacing:-.035em;max-width:15ch}
+  .lede{margin-top:1.1rem;max-width:48ch;font-size:1.22rem;color:var(--grey);font-weight:500}
+  ol{margin-top:1.6rem;list-style:none;max-width:44rem}
+  ol li{display:grid;grid-template-columns:1.6rem 1fr;gap:.9rem;padding:.34rem 0;font-size:1.1rem}
+  ol li b{color:var(--teal);font-weight:800}
+  .aside{margin-top:1rem;font-size:.92rem;color:var(--grey-light)}
+  .chip{display:inline-block;font-size:.8rem;font-weight:700;padding:.2em .6em;
+        background:var(--teal-wash);color:var(--teal);border:1px solid var(--teal-soft);margin-left:.5rem}
+
+  .row{display:flex;gap:.8rem;flex-wrap:wrap;align-items:center;margin-top:1.8rem}
+  .btn{font:inherit;font-weight:800;font-size:1rem;padding:.75rem 1.5rem;border-radius:2px;cursor:pointer;border:1.5px solid var(--teal)}
+  .btn.solid{background:var(--teal);color:#fff}
+  .btn.solid:hover{background:var(--teal-mid);border-color:var(--teal-mid)}
+  .btn.ghost{background:transparent;color:var(--teal)}
+  .btn.ghost:hover{background:var(--teal-wash)}
+  .free{font-size:.92rem;color:var(--grey);font-weight:600}
+
+  h2{font-weight:800;font-size:1.5rem;letter-spacing:-.02em}
+  .sub{margin-top:.4rem;color:var(--grey);font-size:.98rem}
+
+  .board{margin-top:1.4rem;border:1px solid var(--rule);border-radius:3px;overflow:hidden}
+  .bhead{display:flex;justify-content:space-between;padding:.7rem 1rem;background:var(--mist);
+         border-bottom:1px solid var(--rule);font-size:.9rem;font-weight:700;color:var(--grey)}
+  .brow{display:grid;grid-template-columns:3rem 1fr auto;gap:1rem;padding:.9rem 1rem;
+        border-bottom:1px solid var(--rule);align-items:baseline}
+  .brow:last-child{border-bottom:0}
+  .fit{font-weight:900;font-size:1.15rem;color:var(--teal)}
+  .ttl{font-weight:700;font-size:1.02rem}
+  .meta{margin-top:.2rem;font-size:.92rem;color:var(--grey);font-weight:500}
+  .val{font-size:.9rem;color:var(--grey);font-weight:600;text-align:right;white-space:nowrap}
+  .brow.flag{background:var(--mist)}
+  .brow.flag .fit{color:var(--flag)}
+  .quote{margin-top:.4rem;font-size:.92rem;color:var(--flag);font-weight:600;
+         border-left:3px solid var(--flag);padding-left:.7rem}
+
+  .cards{margin-top:1.4rem;display:grid;gap:1rem}
+  @media(min-width:820px){.cards{grid-template-columns:repeat(3,1fr)}}
+  .card{border:1px solid var(--rule);padding:1.2rem;border-radius:3px}
+  .card:hover{border-color:var(--teal-soft);background:var(--mist)}
+  .card h3{font-weight:800;font-size:1.12rem;letter-spacing:-.02em}
+  .card p{margin-top:.5rem;font-size:.96rem;color:var(--grey)}
+  .card a{display:inline-block;margin-top:.9rem;font-weight:800;font-size:.94rem;color:var(--teal);
+          text-decoration:none;border-bottom:2px solid var(--teal);padding-bottom:2px}
+
+  .swatches{display:grid;gap:.75rem;margin-top:1.4rem}
+  @media(min-width:700px){.swatches{grid-template-columns:repeat(4,1fr)}}
+  .sw{border:1px solid var(--rule);border-radius:3px;overflow:hidden}
+  .sw i{display:block;height:62px}
+  .sw span{display:block;padding:.55rem .7rem;font-size:.83rem;font-weight:700}
+  .sw small{display:block;padding:0 .7rem .6rem;font-size:.78rem;color:var(--grey);font-weight:600}
+
+  form{margin-top:1.4rem;max-width:34rem;display:grid;gap:.75rem}
+  label{font-weight:700;font-size:.94rem}
+  input,select{width:100%;font:inherit;font-size:1rem;padding:.75rem .9rem;
+    background:var(--white);border:1.5px solid var(--ink);border-radius:2px;color:var(--ink)}
+  input:focus-visible{outline:3px solid var(--teal-soft);outline-offset:2px}
+  footer{padding:1.6rem 0 3rem;color:var(--grey);font-size:.92rem;font-weight:500}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap navin">
+  <div class="logo">Tender<b>Sentry</b></div>
+  <a href="#" class="on">Discovery</a><a href="#">Bid risk</a><a href="#">Compliance</a>
+  <a href="#" class="cta">Get your board</a>
+</div></nav>
+
+<div class="wrap">
+
+  <section>
+    <div class="eyebrow">For Ontario &amp; Québec contractors</div>
+    <h1>Bid the right tenders. Skip the wrong ones.</h1>
+    <p class="lede">Two thousand tenders are open across Ontario and Québec, and one clause on page 75 throws the bid out anyway.</p>
+    <ol>
+      <li><b>1</b><span>We rank every open tender against the work your firm actually bids.</span></li>
+      <li><b>2</b><span>We show the range behind your number. <span class="chip">In development</span></span></li>
+      <li><b>3</b><span>We quote the clause that would disqualify you, with its page.</span></li>
+    </ol>
+    <p class="aside">The pricing itself is yours.</p>
+    <div class="row">
+      <button class="btn solid">Join the beta</button>
+      <button class="btn ghost">Check a tender free</button>
+      <span class="free">Free while in beta.</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>Example board</h2>
+    <p class="sub">Teal carries fit. The flagged row is greyed, and the only warm colour on the site sits on the clause that would disqualify you.</p>
+    <div class="board">
+      <div class="bhead"><span>Watermain &amp; sewer · Ontario</span><span>from 1,983 open notices</span></div>
+      <div class="brow">
+        <div class="fit">92</div>
+        <div><div class="ttl">Watermain Replacement — Bayfield Street North</div>
+             <div class="meta">City of Barrie · closes 18 Sep</div></div>
+        <div class="val">$1.2M · published</div>
+      </div>
+      <div class="brow">
+        <div class="fit">88</div>
+        <div><div class="ttl">Sanitary Sewer Rehabilitation, Phase 2</div>
+             <div class="meta">Township of Springwater · closes 24 Sep</div></div>
+        <div class="val">~$500K–1M · estimated</div>
+      </div>
+      <div class="brow flag">
+        <div class="fit">85</div>
+        <div><div class="ttl">Road Reconstruction — Concession 4</div>
+             <div class="meta">Municipality of Kincardine · closes 12 Sep</div>
+             <div class="quote">“…must be an original…” — p. 75. Physical delivery, three days.</div></div>
+        <div class="val">size unknown</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Product cards</h2>
+    <div class="cards">
+      <div class="card"><h3>Find the work</h3><p>Every open tender in Ontario and Québec, ranked against what your firm bids.</p><a href="#">Learn more →</a></div>
+      <div class="card"><h3>Know what you're risking</h3><p>The range behind your number, and where your contingency sits in it.</p><a href="#">In development →</a></div>
+      <div class="card"><h3>Don't get thrown out</h3><p>Mandatory requirements quoted word for word, with the page number.</p><a href="#">Learn more →</a></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Tokens</h2>
+    <div class="swatches">
+      <div class="sw"><i style="background:#FFFFFF;border-bottom:1px solid #DCE0E1"></i><span>White</span><small>#FFFFFF · page ground</small></div>
+      <div class="sw"><i style="background:#F4F6F6"></i><span>Mist</span><small>#F4F6F6 · quiet blocks</small></div>
+      <div class="sw"><i style="background:#16191C"></i><span>Ink</span><small>#16191C · type</small></div>
+      <div class="sw"><i style="background:#5F676C"></i><span>Grey</span><small>#5F676C · secondary type</small></div>
+      <div class="sw"><i style="background:#8B9296"></i><span>Grey light</span><small>#8B9296 · captions</small></div>
+      <div class="sw"><i style="background:#DCE0E1"></i><span>Rule</span><small>#DCE0E1 · hairlines</small></div>
+      <div class="sw"><i style="background:#0E5459"></i><span>Teal</span><small>#0E5459 · primary accent</small></div>
+      <div class="sw"><i style="background:#14747B"></i><span>Teal mid</span><small>#14747B · hover</small></div>
+      <div class="sw"><i style="background:#9FBFC2"></i><span>Teal soft</span><small>#9FBFC2 · quiet borders</small></div>
+      <div class="sw"><i style="background:#E8F0F0"></i><span>Teal wash</span><small>#E8F0F0 · chips, fills</small></div>
+      <div class="sw"><i style="background:#8E4034"></i><span>Flag</span><small>#8E4034 · disqualified only</small></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Form</h2>
+    <form onsubmit="event.preventDefault()">
+      <div><label for="e">Email</label><input id="e" type="email" placeholder="you@yourfirm.ca"></div>
+      <div><label for="r">Where you work</label><select id="r"><option>Ontario</option><option>Québec</option><option>Both</option></select></div>
+      <button class="btn solid" style="justify-self:start">Request my board</button>
+    </form>
+  </section>
+
+  <footer>Built in Toronto · Methodology on GitHub · Municipal register: MMAH · Population: StatCan</footer>
+</div>
+
+</body>
+</html>

@@ -21,7 +21,7 @@ export default function CheckPage() {
           <h1 className="mt-5 text-[30px] font-semibold leading-[1.2]">
             Check one tender, free
           </h1>
-          <p className="mt-5 text-[15px] leading-relaxed text-body">
+          <p className="mt-5 text-[15px] leading-relaxed text-grey">
             Send us any Canadian tender package. We return the full compliance brief —
             every mandatory requirement, each one cited to the page it appears on, and a
             plain answer on whether your firm can submit at all — within 24 hours.
@@ -31,18 +31,18 @@ export default function CheckPage() {
             <CheckForm />
           </div>
 
-          <section className="mt-12 border-t border-hairline pt-8">
+          <section className="mt-12 border-t border-rule pt-8">
             <h2 className="text-sm font-semibold">What you get back</h2>
-            <ul className="mt-4 space-y-3 text-sm leading-relaxed text-body">
+            <ul className="mt-4 space-y-3 text-sm leading-relaxed text-grey">
               <li>
-                <strong className="font-medium text-heading">
+                <strong className="font-medium text-ink">
                   Every mandatory requirement,
                 </strong>{" "}
                 separated from the background text, and split into what you must do to
                 submit versus what binds you only after award.
               </li>
               <li>
-                <strong className="font-medium text-heading">
+                <strong className="font-medium text-ink">
                   The exact sentence and page
                 </strong>{" "}
                 behind each one, checked character-for-character against your PDF. If a
@@ -50,14 +50,14 @@ export default function CheckPage() {
                 shown.
               </li>
               <li>
-                <strong className="font-medium text-heading">
+                <strong className="font-medium text-ink">
                   The blockers first —
                 </strong>{" "}
                 a fax-only submission clause or a bid-security form you cannot provide
                 voids an otherwise winning bid, so those lead the brief.
               </li>
             </ul>
-            <p className="mt-6 text-xs leading-relaxed text-muted">
+            <p className="mt-6 text-xs leading-relaxed text-grey-light">
               Briefs are prepared with a human in the loop during the beta, which is why
               they take up to 24 hours rather than seconds.
             </p>

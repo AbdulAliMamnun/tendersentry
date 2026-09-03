@@ -56,7 +56,7 @@ export function Compliance() {
         <strong>The instrument, and the clock on the original.</strong> A tender closes
         electronically, and then the paper has to follow:
       </P>
-      <Quote cite="Township of Muskoka Lakes, tender document, clause TC-2.1">
+      <Quote disqualifying cite="Township of Muskoka Lakes, tender document, clause TC-2.1">
         The original bid security must be received within three (3) working days of the
         tender closing.
       </Quote>
@@ -69,7 +69,7 @@ export function Compliance() {
       <P>
         <strong>Received, not sent.</strong>
       </P>
-      <Quote cite="Municipality of Kincardine, tender document, p.75">
+      <Quote disqualifying cite="Municipality of Kincardine, tender document, p.75">
         Bids must be received at the address noted above prior to the closing time.
       </Quote>
       <P>
@@ -81,7 +81,7 @@ export function Compliance() {
       <P>
         <strong>A channel your firm does not have.</strong>
       </P>
-      <Quote cite={`${board.blocker.title}, p.${board.blocker.page}`}>
+      <Quote disqualifying cite={`${board.blocker.title}, p.${board.blocker.page}`}>
         {board.blocker.quote}
       </Quote>
       <P>

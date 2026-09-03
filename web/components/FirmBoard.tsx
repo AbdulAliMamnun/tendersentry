@@ -12,7 +12,7 @@ export function FirmBoard({ rows }: { rows: FirmBoardRow[] }) {
   if (rows.length === 0) {
     return (
       <div className="card p-7">
-        <p className="text-sm text-body">
+        <p className="text-sm text-grey">
           No opportunities matched your profile in this run. That usually means the
           filters are too tight rather than the market being empty — reply to your
           welcome email and we&rsquo;ll widen them with you.
@@ -27,14 +27,14 @@ export function FirmBoard({ rows }: { rows: FirmBoardRow[] }) {
         {rows.map((row) => (
           <li
             key={`${row.rank}-${row.title}`}
-            className="border-b border-hairline px-5 py-4 last:border-b-0 sm:px-6"
+            className="border-b border-rule px-5 py-4 last:border-b-0 sm:px-6"
           >
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
-                <p className="text-[15px] font-medium leading-snug text-heading">
+                <p className="text-[15px] font-medium leading-snug text-ink">
                   {row.title}
                 </p>
-                <p className="mt-1 text-xs text-muted">
+                <p className="mt-1 text-xs text-grey-light">
                   {row.buyer ? `${row.buyer} · ` : ""}
                   Closes {formatClosing(row.closing_date)} · {sourceLabel(row.source)}
                 </p>
@@ -42,8 +42,8 @@ export function FirmBoard({ rows }: { rows: FirmBoardRow[] }) {
               <span
                 className={`shrink-0 rounded-pill px-2.5 py-1 text-xs font-semibold ${
                   row.blocker
-                    ? "bg-brand-redSoft text-brand-red"
-                    : "bg-fit-greenSoft text-fit-green"
+                    ? "bg-mist text-flag"
+                    : "bg-teal-wash text-teal"
                 }`}
               >
                 {row.blocker ? "Don't bid" : `${row.score} fit`}
@@ -52,12 +52,12 @@ export function FirmBoard({ rows }: { rows: FirmBoardRow[] }) {
 
             {row.blocker ? (
               <>
-                <p className="mt-2 text-sm font-medium text-brand-red">
+                <p className="mt-2 text-sm font-medium text-flag">
                   {row.blocker.reason}
                 </p>
-                <p className="mt-1.5 text-sm italic leading-relaxed text-body">
+                <p className="mt-1.5 text-sm italic leading-relaxed text-grey">
                   &ldquo;{row.blocker.quote}&rdquo;{" "}
-                  <span className="whitespace-nowrap not-italic text-muted">
+                  <span className="whitespace-nowrap not-italic text-grey">
                     · p.{row.blocker.page}
                   </span>
                 </p>
@@ -65,7 +65,7 @@ export function FirmBoard({ rows }: { rows: FirmBoardRow[] }) {
             ) : null}
 
             {row.flags.length > 0 ? (
-              <p className="mt-2 text-xs text-muted">
+              <p className="mt-2 text-xs text-grey-light">
                 {row.flags.map(flagLabel).join(" · ")}
               </p>
             ) : null}

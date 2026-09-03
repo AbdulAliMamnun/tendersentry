@@ -21,18 +21,18 @@ export function BoardCard() {
 
   return (
     <div className="card overflow-hidden">
-      <div className="flex flex-wrap items-end justify-between gap-3 border-b border-hairline px-5 py-4 sm:px-6">
+      <div className="flex flex-wrap items-end justify-between gap-3 border-b border-rule px-5 py-4 sm:px-6">
         <div>
           <div className="flex items-center gap-2.5">
-            <span className="live-dot h-2 w-2 rounded-full bg-fit-green" aria-hidden />
-            <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-heading">
+            <span className="live-dot h-2 w-2 rounded-full bg-teal" aria-hidden />
+            <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink">
               Example — what a ranked board looks like
             </span>
           </div>
           {/* "a demo firm" left a reader to work out which half was invented. It
               matters more now that a row carries a size: the firm is made up, the
               notices and the quoted clause are not. Say which is which. */}
-          <p className="mt-1 pl-[18px] text-xs text-muted">
+          <p className="mt-1 pl-[18px] text-xs text-grey-light">
             <span className="font-medium">{firm.name}</span> is a fictional firm.
             The notices, sizes and the quoted clause are real.
           </p>
@@ -45,7 +45,7 @@ export function BoardCard() {
             promise a precision the pipeline does not have. Nothing renders when the
             field is absent, rather than a fallback that would be a guess. */}
         {maxIngestedAt() ? (
-          <span className="text-xs text-muted">updated {dataAsOf()}</span>
+          <span className="text-xs text-grey-light">updated {dataAsOf()}</span>
         ) : null}
       </div>
 
@@ -53,11 +53,11 @@ export function BoardCard() {
         {rows.map((row) => (
           <li
             key={row.title}
-            className="flex items-start justify-between gap-4 border-b border-hairline px-5 py-4 sm:px-6"
+            className="flex items-start justify-between gap-4 border-b border-rule px-5 py-4 sm:px-6"
           >
             <div className="min-w-0">
-              <p className="truncate text-[15px] font-medium text-heading">{row.title}</p>
-              <p className="mt-1 text-xs text-muted">
+              <p className="truncate text-[15px] font-medium text-ink">{row.title}</p>
+              <p className="mt-1 text-xs text-grey-light">
                 Closes {formatClosing(row.closing_date)}
               </p>
               {/* The range behind the number — step 3 of the arc the hero promises.
@@ -72,7 +72,7 @@ export function BoardCard() {
                 return (
                   <p
                     className={`mt-1 text-xs ${
-                      scale.estimated ? "italic text-muted" : "text-body"
+                      scale.estimated ? "italic text-grey-light" : "text-grey"
                     }`}
                   >
                     {scale.text}
@@ -80,7 +80,7 @@ export function BoardCard() {
                 );
               })()}
             </div>
-            <span className="shrink-0 rounded-pill bg-fit-greenSoft px-2.5 py-1 text-xs font-semibold text-fit-green">
+            <span className="shrink-0 rounded-pill bg-teal-wash px-2.5 py-1 text-xs font-semibold text-teal">
               {row.score} fit
             </span>
           </li>
@@ -88,20 +88,20 @@ export function BoardCard() {
 
         <li className="px-5 py-4 sm:px-6">
           <div className="flex items-start justify-between gap-4">
-            <p className="min-w-0 text-[15px] font-semibold text-heading">
+            <p className="min-w-0 text-[15px] font-semibold text-ink">
               {blocker.title}
             </p>
-            <span className="shrink-0 rounded-pill bg-brand-redSoft px-2.5 py-1 text-xs font-semibold text-brand-red">
+            <span className="shrink-0 rounded-pill bg-mist px-2.5 py-1 text-xs font-semibold text-flag">
               Don&rsquo;t bid
             </span>
           </div>
-          <p className="mt-2 text-sm font-medium text-brand-red">{blocker.reason}</p>
-          <p className="mt-2 text-sm italic leading-relaxed text-body">
+          <p className="mt-2 text-sm font-medium text-flag">{blocker.reason}</p>
+          <p className="mt-2 text-sm italic leading-relaxed text-grey">
             &ldquo;{blocker.quote}&rdquo;{" "}
             {/* The date belongs with the evidence it qualifies. Green rows above are
                 live; this quote was checked against the source PDF on a fixed date and
                 without it a point-in-time example reads as current. */}
-            <span className="whitespace-nowrap not-italic text-muted">
+            <span className="whitespace-nowrap not-italic text-grey">
               · p.{blocker.page} · verified {dataAsOf(blocker.extracted_at)}
             </span>
           </p>

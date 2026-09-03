@@ -61,13 +61,13 @@ export default async function GuidePage({
       />
       <main className="shell py-12 sm:py-16">
         <article className="mx-auto max-w-[46rem]">
-          <Link href="/guides" className="text-xs font-medium text-muted hover:text-brand-red">
+          <Link href="/guides" className="text-xs font-medium text-grey-light hover:text-teal">
             ← All guides
           </Link>
-          <h1 className="mt-5 text-[28px] font-semibold leading-tight text-heading sm:text-[34px]">
+          <h1 className="mt-5 text-[28px] font-semibold leading-tight text-ink sm:text-[34px]">
             {guide.title}
           </h1>
-          <p className="mt-3 text-xs text-muted">
+          <p className="mt-3 text-xs text-grey-light">
             {guide.readingMinutes} min read · updated {guide.updated}
           </p>
 
@@ -80,10 +80,10 @@ export default async function GuidePage({
           <div className="card mt-12 px-5 py-6 sm:px-6">
             {guide.cta === "check" ? (
               <>
-                <h2 className="text-[17px] font-semibold text-heading">
+                <h2 className="text-[17px] font-semibold text-ink">
                   Have us check a tender, free
                 </h2>
-                <p className="mt-2 text-[15px] leading-relaxed text-body">
+                <p className="mt-2 text-[15px] leading-relaxed text-grey">
                   Send one document. We return every requirement we find, each quoted and
                   cited to its page, so you can verify every call we make.
                 </p>
@@ -93,10 +93,10 @@ export default async function GuidePage({
               </>
             ) : (
               <>
-                <h2 className="text-[17px] font-semibold text-heading">
+                <h2 className="text-[17px] font-semibold text-ink">
                   See today&rsquo;s market ranked for your firm
                 </h2>
-                <p className="mt-2 text-[15px] leading-relaxed text-body">
+                <p className="mt-2 text-[15px] leading-relaxed text-grey">
                   Describe what you build and watch the open pool reorder — free, and no
                   account needed.
                 </p>
@@ -108,8 +108,8 @@ export default async function GuidePage({
           </div>
 
           {related.length > 0 && (
-            <div className="mt-12 border-t border-hairline pt-8">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-heading">
+            <div className="mt-12 border-t border-rule pt-8">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink">
                 Related
               </p>
               <div className="mt-4 space-y-3">
@@ -117,7 +117,7 @@ export default async function GuidePage({
                   <Link
                     key={entry.slug}
                     href={`/guides/${entry.slug}`}
-                    className="block text-[15px] font-medium text-brand-red hover:opacity-80"
+                    className="block text-[15px] font-medium text-teal hover:opacity-80"
                   >
                     {entry.title}
                   </Link>

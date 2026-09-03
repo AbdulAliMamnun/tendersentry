@@ -8,8 +8,8 @@
   }
 
   body {
-    background-color: #faf9f7;
-    color: #57534e;
+    background-color: #FFFFFF;
+    color: #5F676C;
     -webkit-font-smoothing: antialiased;
   }
 
@@ -17,13 +17,13 @@
   h2,
   h3,
   h4 {
-    color: #292524;
+    color: #16191C;
     letter-spacing: -0.02em;
   }
 
   ::selection {
-    background: #fcebeb;
-    color: #292524;
+    background: #E8F0F0;
+    color: #16191C;
   }
 }
 
@@ -33,32 +33,32 @@
   }
 
   .card {
-    @apply rounded-card border border-hairline bg-card;
+    @apply rounded-card border border-rule bg-white;
   }
 
   .eyebrow {
-    @apply text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-red;
+    @apply text-[11px] font-semibold uppercase tracking-[0.14em] text-teal-mid;
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center rounded-control bg-heading px-5 py-3
+    @apply inline-flex items-center justify-center rounded-control bg-ink px-5 py-3
       text-sm font-semibold text-white transition-opacity hover:opacity-90;
   }
 
   .btn-outline {
-    @apply inline-flex items-center justify-center rounded-control border border-hairline
-      bg-card px-5 py-3 text-sm font-semibold text-body transition-colors
-      hover:border-muted;
+    @apply inline-flex items-center justify-center rounded-control border border-rule
+      bg-white px-5 py-3 text-sm font-semibold text-grey transition-colors
+      hover:border-teal-soft;
   }
 
-  .btn-red {
-    @apply inline-flex items-center justify-center rounded-control bg-brand-red px-5 py-3
+  .btn-accent {
+    @apply inline-flex items-center justify-center rounded-control bg-teal px-5 py-3
       text-sm font-semibold text-white transition-opacity hover:opacity-90;
   }
 
   .field {
-    @apply w-full rounded-control border border-hairline bg-card px-4 py-3 text-sm
-      text-heading placeholder:text-muted focus:border-muted focus:outline-none;
+    @apply w-full rounded-control border border-rule bg-white px-4 py-3 text-sm
+      text-ink placeholder:text-grey focus:border-teal focus:outline-none;
   }
 }
 

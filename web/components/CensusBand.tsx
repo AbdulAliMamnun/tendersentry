@@ -4,12 +4,21 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { Bucket } from "@/lib/data";
 
+/**
+ * One ordered ramp, open to gated to unknown — not five arbitrary hues.
+ *
+ * Teal means a notice is reachable; grey means a gated platform; pale means we could
+ * not tell. No `flag` appears here by design: a gated procurement platform is not a
+ * disqualified bid, and spending the reserved colour on ordinal data is how it stops
+ * being reserved. Values are the tokens from tailwind.config.ts, spelled out because
+ * these are SVG fills rather than classes.
+ */
 const BUCKET_COLORS: Record<string, string> = {
-  bids_and_tenders: "#A32D2D",
-  unknown: "#d6d3d1",
-  notices_gated: "#c9bfae",
-  other_platforms: "#8a7f70",
-  open: "#477054",
+  open: "#0E5459", // teal
+  notices_gated: "#14747B", // teal-mid
+  bids_and_tenders: "#5F676C", // grey
+  other_platforms: "#8B9296", // grey-light
+  unknown: "#DCE0E1", // rule
 };
 
 /**
@@ -31,7 +40,7 @@ export function CensusBand({ buckets }: { buckets: Bucket[] }) {
 
   return (
     <div className="card p-6 sm:p-7">
-      <p className="text-xs font-medium text-muted">
+      <p className="text-xs font-medium text-grey-light">
         Share of Ontario&rsquo;s population, by where their municipality posts tenders
       </p>
 
@@ -46,7 +55,7 @@ export function CensusBand({ buckets }: { buckets: Bucket[] }) {
             title={`${bucket.label}: ${bucket.share_of_population.toFixed(1)}%`}
             style={{
               width: `${(bucket.share_of_population / total) * 100}%`,
-              backgroundColor: BUCKET_COLORS[bucket.key] ?? "#d6d3d1",
+              backgroundColor: BUCKET_COLORS[bucket.key] ?? "#DCE0E1",
             }}
           />
         ))}
@@ -57,11 +66,11 @@ export function CensusBand({ buckets }: { buckets: Bucket[] }) {
           <li key={bucket.key} className="flex items-center gap-2.5 text-sm">
             <span
               className="h-2.5 w-2.5 shrink-0 rounded-sm"
-              style={{ backgroundColor: BUCKET_COLORS[bucket.key] ?? "#d6d3d1" }}
+              style={{ backgroundColor: BUCKET_COLORS[bucket.key] ?? "#DCE0E1" }}
               aria-hidden
             />
-            <span className="text-body">{bucket.label}</span>
-            <span className="ml-auto font-semibold tabular-nums text-heading">
+            <span className="text-grey">{bucket.label}</span>
+            <span className="ml-auto font-semibold tabular-nums text-ink">
               {bucket.share_of_population < 1
                 ? "<1%"
                 : `${Math.round(bucket.share_of_population)}%`}

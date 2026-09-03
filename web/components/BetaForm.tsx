@@ -54,10 +54,10 @@ export function BetaForm() {
   if (state === "done") {
     return (
       <div className="md:max-w-md">
-        <p className="text-[15px] font-semibold text-heading">
+        <p className="text-[15px] font-semibold text-ink">
           Got it — we&rsquo;ll build your board.
         </p>
-        <p className="mt-2 text-sm leading-relaxed text-body">
+        <p className="mt-2 text-sm leading-relaxed text-grey">
           We&rsquo;ll email <strong>{email}</strong> a private link to it. If anything
           about your trades or regions is ambiguous, we&rsquo;ll ask rather than guess.
         </p>
@@ -67,10 +67,10 @@ export function BetaForm() {
 
   return (
     <form onSubmit={onSubmit} className="md:max-w-md md:text-left">
-      <label htmlFor="beta-email" className="block text-sm font-medium text-heading">
+      <label htmlFor="beta-email" className="block text-sm font-medium text-ink">
         Get your firm&rsquo;s board
       </label>
-      <p className="mt-1.5 text-sm text-body">
+      <p className="mt-1.5 text-sm text-grey">
         Tell us what you build and where. Free while in beta.
       </p>
 
@@ -113,7 +113,7 @@ export function BetaForm() {
           value={jobSize}
           onChange={(event) => setJobSize(event.target.value)}
           aria-label="Typical job size"
-          className="field text-body"
+          className="field text-grey"
         >
           <option value="">Typical job size (optional)</option>
           {JOB_SIZES.map((size) => (
@@ -129,7 +129,7 @@ export function BetaForm() {
       </button>
 
       {state === "error" ? (
-        <p className="mt-2 text-sm text-brand-red">{message}</p>
+        <p className="mt-2 text-sm text-flag">{message}</p>
       ) : null}
     </form>
   );

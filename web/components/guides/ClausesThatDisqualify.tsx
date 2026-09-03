@@ -45,7 +45,7 @@ export function ClausesThatDisqualify() {
         The variant that catches experienced bidders is the original-document rule:
       </P>
 
-      <Quote cite="Township of Muskoka Lakes, tender document, clause TC-2.1">
+      <Quote disqualifying cite="Township of Muskoka Lakes, tender document, clause TC-2.1">
         The original bid security must be received within three (3) working days of the
         tender closing.
       </Quote>
@@ -74,7 +74,7 @@ export function ClausesThatDisqualify() {
         modern firm simply does not operate:
       </P>
 
-      <Quote cite={`${board.blocker.title}, p.${board.blocker.page}`}>
+      <Quote disqualifying cite={`${board.blocker.title}, p.${board.blocker.page}`}>
         {board.blocker.quote}
       </Quote>
 
@@ -99,7 +99,7 @@ export function ClausesThatDisqualify() {
         receipt-time rule rather than a postmark rule.
       </P>
 
-      <Quote cite="Municipality of Kincardine, tender document, p.75">
+      <Quote disqualifying cite="Municipality of Kincardine, tender document, p.75">
         Bids must be received at the address noted above prior to the closing time.
       </Quote>
 

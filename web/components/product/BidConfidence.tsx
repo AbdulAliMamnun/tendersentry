@@ -30,15 +30,15 @@ import { H2, P } from "@/components/guides/Prose";
  * Palette, from tailwind.config.ts. SVG paints with attributes rather than classes,
  * so the tokens are spelled out here and nowhere else in the file.
  *
- * fit-green for the curve and brand-red for the tail is the pair the demo board
- * already uses — green for what fits, red for the clause that disqualifies you. The
- * curve and its tail are the same sentence: what you can work with, and what costs
- * you.
+ * teal for the curve and flag for the tail is the pair the demo board already uses:
+ * teal for what you can work with, flag for the part that costs you. The tail is the
+ * one place on this page the reserved colour is spent, and it earns it — everything
+ * past the marker is a job the contingency does not cover.
  */
-const INK = "#292524"; // heading
-const RULE = "#a8a29e"; // muted
-const ACCENT = "#477054"; // fit-green
-const ALERT = "#A32D2D"; // brand-red
+const INK = "#16191C"; // ink
+const RULE = "#DCE0E1"; // rule
+const ACCENT = "#0E5459"; // teal
+const ALERT = "#8E4034"; // flag
 
 /** Geometry, matching the reference composition. */
 const CX = 600;
@@ -64,7 +64,7 @@ function geometry(p: number) {
 }
 
 type State = {
-  heading: React.ReactNode;
+  ink: React.ReactNode;
   body: React.ReactNode;
   /** Read aloud in place of the figure. Written per state, never as one narration. */
   figure: string;
@@ -74,28 +74,28 @@ type State = {
 
 const STATES: State[] = [
   {
-    heading: "You bid one number.",
+    ink: "You bid one number.",
     body: "Takeoff, subs, quotes, and a contingency you picked because it felt about right.",
     figure:
       "A single narrow vertical bar on a baseline, marked one million dollars: one bid price, with no width to it.",
     at: 0.15,
   },
   {
-    heading: "It was always a range.",
+    ink: "It was always a range.",
     body: "Every line could land high or low, and some move together — the wet spring that hurts earthworks hurts drainage too.",
     figure:
       "The same bar has widened into a broad bell-shaped curve centred on that number: the range of costs the job could actually land at.",
     at: 0.62,
   },
   {
-    heading: (
+    ink: (
       <>
-        Your contingency covers <span className="text-fit-green">this much</span> of it.
+        Your contingency covers <span className="text-teal">this much</span> of it.
       </>
     ),
     body: (
       <>
-        <span className="text-brand-red">Everything past the marker</span> is a job that
+        <span className="text-flag">Everything past the marker</span> is a job that
         costs more than you bid. We show you where that marker actually sits, on a tender
         you&rsquo;re already looking at.
       </>
@@ -121,7 +121,7 @@ function Scene({ p, hidden }: { p: number; hidden: boolean }) {
       <path
         d={shape(sigma, 60, 1140)}
         fill={ACCENT}
-        // .16 suited a dark ground; on #faf9f7 it renders #DDE3DD, 1.24:1 against
+        // .16 suited a dark ground; on #FFFFFF it renders as a wash, 1.2:1 against
         // the page — a wash, not a shape. The 3px stroke at 5.37:1 does the
         // legibility work; the fill is a tint behind it.
         fillOpacity={0.22 + 0.06 * window01(p, 0.18, 0.62)}
@@ -172,10 +172,10 @@ function Caption({
 }) {
   return (
     <div className={className} style={opacity === undefined ? undefined : { opacity }}>
-      <h2 className="max-w-[13ch] text-[clamp(1.6rem,5vw,2.6rem)] font-extrabold leading-[0.98] tracking-[-0.03em] text-heading">
-        {state.heading}
+      <h2 className="max-w-[13ch] text-[clamp(1.6rem,5vw,2.6rem)] font-extrabold leading-[0.98] tracking-[-0.03em] text-ink">
+        {state.ink}
       </h2>
-      <p className="mt-3 max-w-[40ch] text-[15px] font-medium leading-relaxed text-body">
+      <p className="mt-3 max-w-[40ch] text-[15px] font-medium leading-relaxed text-grey">
         {state.body}
       </p>
       {/* The figure, in words, per state — the screen-reader path gets the same three
@@ -264,7 +264,7 @@ function ScrollStory() {
           ))}
           <div
             aria-hidden="true"
-            className="absolute bottom-5 left-5 text-xs font-bold text-muted sm:left-7"
+            className="absolute bottom-5 left-5 text-xs font-bold text-grey-light sm:left-7"
           >
             {p < 0.3 ? 1 : p < 0.66 ? 2 : 3} / 3
           </div>
@@ -277,7 +277,7 @@ function ScrollStory() {
           The argument is three steps, so it stays three steps. */}
       <div
         data-static-story
-        className="mt-10 hidden divide-y divide-hairline border-y border-hairline motion-reduce:block"
+        className="mt-10 hidden divide-y divide-rule border-y border-rule motion-reduce:block"
       >
         {STATES.map((state, index) => (
           <div key={index} className="px-5 py-7 sm:px-7">
@@ -320,9 +320,9 @@ const ARC = [
 ];
 
 const TAG_CLASS = {
-  live: "border-hairline text-muted",
-  yours: "border-dashed border-hairline text-muted",
-  now: "border-fit-green bg-fit-greenSoft text-fit-green",
+  live: "border-rule text-grey-light",
+  yours: "border-dashed border-rule text-grey-light",
+  now: "border-teal bg-teal-wash text-teal",
 };
 
 /** Illustrative model. Not a forecast, and not drawn from any real data. */
@@ -360,15 +360,15 @@ function Dial() {
         : "No setting here is right for all twenty jobs.";
 
   return (
-    <div className="mt-6 rounded-lg bg-page p-5 sm:p-7">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-brand-red">
+    <div className="mt-6 rounded-lg bg-white p-5 sm:p-7">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-teal-mid">
         Illustrative model — invented numbers
       </p>
       <div className="mt-4 flex flex-wrap items-baseline gap-4">
-        <div className="text-[clamp(2.6rem,7vw,4rem)] font-extrabold leading-none tracking-[-0.04em] text-heading">
+        <div className="text-[clamp(2.6rem,7vw,4rem)] font-extrabold leading-none tracking-[-0.04em] text-ink">
           {pct}%
         </div>
-        <p className="max-w-[24ch] text-sm font-medium text-muted">
+        <p className="max-w-[24ch] text-sm font-medium text-grey">
           added to every estimate, on twenty $1M jobs you bid in a year
         </p>
       </div>
@@ -387,12 +387,12 @@ function Dial() {
         aria-describedby="dial-assumptions"
         className="bc-range mt-5 w-full"
       />
-      <div className="mt-2 flex justify-between text-xs font-semibold text-muted">
+      <div className="mt-2 flex justify-between text-xs font-semibold text-grey-light">
         <span>5% — lean</span>
         <span>15% — cautious</span>
       </div>
 
-      <div className="mt-6 grid gap-px overflow-hidden rounded-md border border-hairline bg-hairline sm:grid-cols-3">
+      <div className="mt-6 grid gap-px overflow-hidden rounded-md border border-rule bg-rule sm:grid-cols-3">
         {[
           { value: Math.round(won), label: "jobs you win, of twenty bid", bad: false },
           { value: over, label: "of those, cost more than you bid", bad: true },
@@ -401,31 +401,31 @@ function Dial() {
           <div key={cell.label} className="bg-white px-4 pb-5 pt-4">
             <b
               className={`block text-[clamp(2rem,5vw,2.8rem)] font-extrabold leading-none tracking-[-0.04em] ${
-                cell.bad ? "text-brand-red" : "text-heading"
+                cell.bad ? "text-flag" : "text-ink"
               }`}
             >
               {cell.value}
             </b>
-            <span className="mt-2 block max-w-[22ch] text-[13px] font-semibold text-muted">
+            <span className="mt-2 block max-w-[22ch] text-[13px] font-semibold text-grey-light">
               {cell.label}
             </span>
             {/* On the cells, not only in the paragraph below: a screenshot of this
                 block travels without the paragraph. */}
-            <span className="mt-1 block text-[11px] font-medium uppercase tracking-[0.1em] text-muted">
+            <span className="mt-1 block text-[11px] font-medium uppercase tracking-[0.1em] text-grey-light">
               Illustrative
             </span>
           </div>
         ))}
       </div>
 
-      <p className="mt-5 max-w-[34ch] text-[17px] font-bold leading-tight tracking-[-0.02em] text-heading">
+      <p className="mt-5 max-w-[34ch] text-[17px] font-bold leading-tight tracking-[-0.02em] text-ink">
         {verdict}
       </p>
       <p
         id="dial-assumptions"
-        className="mt-4 max-w-[70ch] border-t border-hairline pt-4 text-[13px] leading-relaxed text-muted"
+        className="mt-4 max-w-[70ch] border-t border-rule pt-4 text-[13px] leading-relaxed text-grey-light"
       >
-        <strong className="font-bold text-heading">
+        <strong className="font-bold text-ink">
           These numbers are illustrative, not a forecast.
         </strong>{" "}
         They assume twenty $1M jobs, estimates landing within about 12% of true cost
@@ -468,7 +468,7 @@ function Capture() {
 
   if (state === "sent") {
     return (
-      <p className="mt-6 rounded-lg border border-hairline bg-page p-5 text-[15px] text-body">
+      <p className="mt-6 rounded-lg border border-rule bg-white p-5 text-[15px] text-grey">
         Thanks — noted. We&rsquo;ll come back to you with what we build, and you&rsquo;ll
         see it before it ships.
       </p>
@@ -477,7 +477,7 @@ function Capture() {
 
   return (
     <form onSubmit={submit} className="mt-6 grid max-w-[36rem] gap-3">
-      <label htmlFor="bc-email" className="text-sm font-bold text-heading">
+      <label htmlFor="bc-email" className="text-sm font-bold text-ink">
         Email
       </label>
       <input
@@ -487,9 +487,9 @@ function Capture() {
         value={email}
         onChange={(event) => setEmail(event.target.value)}
         placeholder="you@yourfirm.ca"
-        className="w-full rounded-lg border border-hairline bg-white px-4 py-3 text-[15px] text-heading outline-none placeholder:text-muted focus:border-brand-red"
+        className="w-full rounded-lg border border-rule bg-white px-4 py-3 text-[15px] text-ink outline-none placeholder:text-grey focus:border-teal"
       />
-      <label htmlFor="bc-note" className="text-sm font-bold text-heading">
+      <label htmlFor="bc-note" className="text-sm font-bold text-ink">
         Where do your estimates go wrong?
       </label>
       <textarea
@@ -498,13 +498,13 @@ function Capture() {
         onChange={(event) => setNote(event.target.value)}
         rows={4}
         placeholder="Earthworks, every time. Rock we didn't know about."
-        className="w-full rounded-lg border border-hairline bg-white px-4 py-3 text-[15px] text-heading outline-none placeholder:text-muted focus:border-brand-red"
+        className="w-full rounded-lg border border-rule bg-white px-4 py-3 text-[15px] text-ink outline-none placeholder:text-grey focus:border-teal"
       />
-      {error ? <p className="text-sm text-brand-red">{error}</p> : null}
+      {error ? <p className="text-sm text-flag">{error}</p> : null}
       <button
         type="submit"
         disabled={state === "sending"}
-        className="justify-self-start rounded-lg bg-heading px-6 py-3 text-[15px] font-bold text-white hover:opacity-90 disabled:opacity-60"
+        className="justify-self-start rounded-lg bg-ink px-6 py-3 text-[15px] font-bold text-white hover:opacity-90 disabled:opacity-60"
       >
         {state === "sending" ? "Sending…" : "Send it"}
       </button>
@@ -517,10 +517,10 @@ export function BidConfidence() {
     <>
       <style>{`
         .bc-range{-webkit-appearance:none;appearance:none;background:transparent;cursor:grab}
-        .bc-range::-webkit-slider-runnable-track{height:6px;background:var(--bc-track,#292524)}
-        .bc-range::-moz-range-track{height:6px;background:#292524}
-        .bc-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:28px;height:28px;margin-top:-11px;background:#477054;border:2.5px solid #292524;border-radius:2px}
-        .bc-range::-moz-range-thumb{width:28px;height:28px;background:#477054;border:2.5px solid #292524;border-radius:2px}
+        .bc-range::-webkit-slider-runnable-track{height:6px;background:var(--bc-track,#16191C)}
+        .bc-range::-moz-range-track{height:6px;background:#16191C}
+        .bc-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:28px;height:28px;margin-top:-11px;background:#0E5459;border:2.5px solid #16191C;border-radius:2px}
+        .bc-range::-moz-range-thumb{width:28px;height:28px;background:#0E5459;border:2.5px solid #16191C;border-radius:2px}
       `}</style>
 
       <P>
@@ -538,17 +538,17 @@ export function BidConfidence() {
       <H2>Four things happen between finding a job and winning one worth having</H2>
       <P>We do three of them. The one we don&rsquo;t is the one you&rsquo;re best at.</P>
 
-      <div className="mt-6 border-t-2 border-heading">
+      <div className="mt-6 border-t-2 border-ink">
         {ARC.map((step) => (
           <div
             key={step.title}
-            className="grid grid-cols-[1fr_auto] items-baseline gap-x-6 gap-y-2 border-b border-hairline py-5"
+            className="grid grid-cols-[1fr_auto] items-baseline gap-x-6 gap-y-2 border-b border-rule py-5"
           >
             <div>
-              <h3 className="text-[17px] font-extrabold tracking-[-0.02em] text-heading sm:text-[19px]">
+              <h3 className="text-[17px] font-extrabold tracking-[-0.02em] text-ink sm:text-[19px]">
                 {step.title}
               </h3>
-              <p className="mt-1 max-w-[52ch] text-[15px] text-muted">{step.body}</p>
+              <p className="mt-1 max-w-[52ch] text-[15px] text-grey">{step.body}</p>
             </div>
             <span
               className={`whitespace-nowrap border px-2 py-1 text-[11px] font-bold ${TAG_CLASS[step.tone]}`}

@@ -4,7 +4,7 @@ import { GITHUB_URL } from "@/lib/data";
  * Light footer: attribution and sources. No form, no anchor.
  *
  * It used to render a `BetaForm` as well, and because guide and product routes
- * render one too, nine pages shipped the same form twice — identical heading,
+ * render one too, nine pages shipped the same form twice — identical ink,
  * sub-line and button, within a screen of scrolling. Visible to every reader, and
  * in no single source file.
  *
@@ -20,33 +20,33 @@ import { GITHUB_URL } from "@/lib/data";
  */
 export function Footer() {
   return (
-    <footer className="border-t border-hairline bg-page">
+    <footer className="border-t border-rule bg-white">
       <div className="shell py-14">
         <div>
-          <p className="text-[15px] font-semibold text-heading">Free while in beta</p>
-          <p className="mt-2 max-w-sm text-sm leading-relaxed text-body">
+          <p className="text-[15px] font-semibold text-ink">Free while in beta</p>
+          <p className="mt-2 max-w-sm text-sm leading-relaxed text-grey">
             We are onboarding a small group of Ontario and Québec contractors. No card,
             no commitment.
           </p>
-          <p className="mt-6 text-xs leading-relaxed text-muted">
+          <p className="mt-6 text-xs leading-relaxed text-grey-light">
             Built in Toronto ·{" "}
             <a
               href={`${GITHUB_URL}/blob/main/census/README.md`}
-              className="underline underline-offset-2 hover:text-body"
+              className="underline underline-offset-2 hover:text-grey"
             >
               Methodology on GitHub
             </a>{" "}
             · Municipal register:{" "}
             <a
               href="https://data.ontario.ca/dataset/ontario-municipalities"
-              className="underline underline-offset-2 hover:text-body"
+              className="underline underline-offset-2 hover:text-grey"
             >
               MMAH
             </a>{" "}
             (OGL-Ontario) · Population:{" "}
             <a
               href="https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=9810000201"
-              className="underline underline-offset-2 hover:text-body"
+              className="underline underline-offset-2 hover:text-grey"
             >
               StatCan
             </a>

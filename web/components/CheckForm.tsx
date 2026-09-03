@@ -79,8 +79,8 @@ export function CheckForm() {
   if (state === "done") {
     return (
       <div className="card p-7">
-        <p className="text-[15px] leading-relaxed text-body">
-          <strong className="font-semibold text-heading">
+        <p className="text-[15px] leading-relaxed text-grey">
+          <strong className="font-semibold text-ink">
             Got it — we&rsquo;ve received your tender.
           </strong>{" "}
           Your compliance brief will be sent to <strong>{email}</strong> within 24
@@ -88,8 +88,8 @@ export function CheckForm() {
           rather than guess.
         </p>
         {submitted ? (
-          <p className="mt-5 truncate rounded-control border border-hairline bg-page px-4 py-3 text-sm text-body">
-            <span className="text-muted">Received:</span> {submitted}
+          <p className="mt-5 truncate rounded-control border border-rule bg-white px-4 py-3 text-sm text-grey">
+            <span className="text-grey">Received:</span> {submitted}
           </p>
         ) : null}
       </div>
@@ -99,8 +99,8 @@ export function CheckForm() {
   return (
     <form onSubmit={onSubmit} className="card p-7">
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-heading">
-          Your email <span className="text-brand-red">*</span>
+        <label htmlFor="email" className="block text-sm font-medium text-ink">
+          Your email <span className="text-teal">*</span>
         </label>
         <input
           id="email"
@@ -114,7 +114,7 @@ export function CheckForm() {
       </div>
 
       <div className="mt-6">
-        <label htmlFor="file" className="block text-sm font-medium text-heading">
+        <label htmlFor="file" className="block text-sm font-medium text-ink">
           Tender PDF
         </label>
         <input
@@ -122,11 +122,11 @@ export function CheckForm() {
           ref={fileRef}
           type="file"
           accept="application/pdf,.pdf"
-          className="mt-2 block w-full text-sm text-body file:mr-4 file:rounded-control
-            file:border file:border-hairline file:bg-page file:px-4 file:py-2.5
-            file:text-sm file:font-medium file:text-body hover:file:border-muted"
+          className="mt-2 block w-full text-sm text-grey file:mr-4 file:rounded-control
+            file:border file:border-rule file:bg-white file:px-4 file:py-2.5
+            file:text-sm file:font-medium file:text-grey hover:file:border-teal-soft"
         />
-        <p className="mt-2 text-xs leading-relaxed text-muted">
+        <p className="mt-2 text-xs leading-relaxed text-grey-light">
           Uploaded documents are stored privately-by-link and used only to prepare your
           brief.
         </p>
@@ -134,14 +134,14 @@ export function CheckForm() {
 
       <div className="mt-6">
         <div className="flex items-center gap-3">
-          <span className="h-px flex-1 bg-hairline" />
-          <span className="text-xs uppercase tracking-wide text-muted">or</span>
-          <span className="h-px flex-1 bg-hairline" />
+          <span className="h-px flex-1 bg-rule" />
+          <span className="text-xs uppercase tracking-wide text-grey-light">or</span>
+          <span className="h-px flex-1 bg-rule" />
         </div>
       </div>
 
       <div className="mt-6">
-        <label htmlFor="notice" className="block text-sm font-medium text-heading">
+        <label htmlFor="notice" className="block text-sm font-medium text-ink">
           Link to the notice
         </label>
         <input
@@ -155,8 +155,8 @@ export function CheckForm() {
       </div>
 
       <div className="mt-6">
-        <label htmlFor="firm" className="block text-sm font-medium text-heading">
-          Firm name <span className="font-normal text-muted">(optional)</span>
+        <label htmlFor="firm" className="block text-sm font-medium text-ink">
+          Firm name <span className="font-normal text-grey">(optional)</span>
         </label>
         <input
           id="firm"
@@ -168,12 +168,12 @@ export function CheckForm() {
         />
       </div>
 
-      <button type="submit" className="btn-red mt-7 w-full" disabled={state === "sending"}>
+      <button type="submit" className="btn-accent mt-7 w-full" disabled={state === "sending"}>
         {state === "sending" ? "Sending…" : "Send it over"}
       </button>
 
       {state === "error" ? (
-        <p className="mt-3 text-sm text-brand-red">{message}</p>
+        <p className="mt-3 text-sm text-flag">{message}</p>
       ) : null}
     </form>
   );

@@ -92,11 +92,11 @@ export function FirmLookup({ betaKey }: { betaKey: string }) {
   }
 
   return (
-    <section className="mt-12 border-t border-hairline pt-10">
-      <h2 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-heading">
+    <section className="mt-12 border-t border-rule pt-10">
+      <h2 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink">
         Look up your firm
       </h2>
-      <p className="mt-3 max-w-2xl text-sm leading-relaxed text-body">
+      <p className="mt-3 max-w-2xl text-sm leading-relaxed text-grey">
         If your firm has bid on Québec public procurement, we can rank today&rsquo;s
         market from your actual record rather than from a description — real bidding
         history, the buyers you have worked for, the sizes you work at.
@@ -115,7 +115,7 @@ export function FirmLookup({ betaKey }: { betaKey: string }) {
           maxLength={200}
           onChange={(event) => setName(event.target.value)}
           placeholder="Your firm's legal name — e.g. Construction ABC inc."
-          className="w-full rounded-lg border border-hairline bg-white px-4 py-3 text-[15px] text-heading outline-none placeholder:text-muted focus:border-brand-red"
+          className="w-full rounded-lg border border-rule bg-white px-4 py-3 text-[15px] text-ink outline-none placeholder:text-grey focus:border-teal"
         />
         <button
           type="submit"
@@ -127,32 +127,32 @@ export function FirmLookup({ betaKey }: { betaKey: string }) {
       </form>
 
       {failed && (
-        <p className="mt-5 rounded-lg border border-hairline px-5 py-4 text-sm leading-relaxed text-body">
+        <p className="mt-5 rounded-lg border border-rule px-5 py-4 text-sm leading-relaxed text-grey">
           Lookup is unavailable right now — nothing to do with what you typed.
         </p>
       )}
 
       {data?.outcome === "none" && (
-        <div className="mt-5 rounded-lg border border-hairline px-5 py-4">
-          <p className="text-sm leading-relaxed text-body">{data.message}</p>
+        <div className="mt-5 rounded-lg border border-rule px-5 py-4">
+          <p className="text-sm leading-relaxed text-grey">{data.message}</p>
         </div>
       )}
 
       {data?.outcome === "ambiguous" && data.candidates && (
         <div className="card mt-5 overflow-hidden">
-          <p className="border-b border-hairline px-5 py-3 text-sm text-body sm:px-6">
+          <p className="border-b border-rule px-5 py-3 text-sm text-grey sm:px-6">
             More than one firm files under that name. Which is yours?
           </p>
           <ul>
             {data.candidates.map((candidate) => (
-              <li key={candidate.id} className="border-b border-hairline last:border-b-0">
+              <li key={candidate.id} className="border-b border-rule last:border-b-0">
                 <button
                   type="button"
                   onClick={() => void submit({ firmId: candidate.id })}
-                  className="block w-full px-5 py-4 text-left hover:bg-page sm:px-6"
+                  className="block w-full px-5 py-4 text-left hover:bg-white sm:px-6"
                 >
-                  <p className="text-[15px] font-medium text-heading">{candidate.name}</p>
-                  <p className="mt-1 text-xs text-muted">
+                  <p className="text-[15px] font-medium text-ink">{candidate.name}</p>
+                  <p className="mt-1 text-xs text-grey-light">
                     {basisLine(candidate)}
                     {candidate.lastActive ? ` · last active ${candidate.lastActive}` : ""}
                   </p>
@@ -165,28 +165,28 @@ export function FirmLookup({ betaKey }: { betaKey: string }) {
 
       {data?.outcome === "match" && data.profile && data.results && (
         <div className="card mt-5 overflow-hidden">
-          <div className="border-b border-hairline px-5 py-4 sm:px-6">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-heading">
+          <div className="border-b border-rule px-5 py-4 sm:px-6">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink">
               Ranked from {data.profile.name}&rsquo;s public bidding record
             </p>
             {/* The basis, stated. Aggregate facts only — never which contracts. */}
-            <p className="mt-1.5 text-xs text-muted">{basisLine(data.profile)}</p>
+            <p className="mt-1.5 text-xs text-grey-light">{basisLine(data.profile)}</p>
           </div>
 
           <ul>
             {data.results.map((row, index) => (
               <li
                 key={`${row.title}-${index}`}
-                className="flex items-start justify-between gap-4 border-b border-hairline px-5 py-4 last:border-b-0 sm:px-6"
+                className="flex items-start justify-between gap-4 border-b border-rule px-5 py-4 last:border-b-0 sm:px-6"
               >
                 <div className="min-w-0">
-                  <p className="text-[15px] font-medium leading-snug text-heading">
+                  <p className="text-[15px] font-medium leading-snug text-ink">
                     {row.url ? (
                       <a
                         href={row.url}
                         target="_blank"
                         rel="noopener noreferrer nofollow"
-                        className="hover:text-brand-red"
+                        className="hover:text-teal"
                       >
                         {row.title}
                       </a>
@@ -194,7 +194,7 @@ export function FirmLookup({ betaKey }: { betaKey: string }) {
                       row.title
                     )}
                   </p>
-                  <p className="mt-1 text-xs text-muted">
+                  <p className="mt-1 text-xs text-grey-light">
                     {row.buyer}
                     {row.region ? ` · ${row.region}` : ""} · Closes{" "}
                     {formatClosing(row.closingDate)}
@@ -205,7 +205,7 @@ export function FirmLookup({ betaKey }: { betaKey: string }) {
                     return (
                       <p
                         className={`mt-1 text-xs ${
-                          scale.estimated ? "italic text-muted" : "text-body"
+                          scale.estimated ? "italic text-grey-light" : "text-grey"
                         }`}
                       >
                         {scale.text}
@@ -213,7 +213,7 @@ export function FirmLookup({ betaKey }: { betaKey: string }) {
                     );
                   })()}
                 </div>
-                <span className="shrink-0 rounded-pill bg-fit-greenSoft px-2.5 py-1 text-xs font-semibold text-fit-green">
+                <span className="shrink-0 rounded-pill bg-teal-wash px-2.5 py-1 text-xs font-semibold text-teal">
                   {Math.round(row.fit)} fit
                 </span>
               </li>
@@ -221,7 +221,7 @@ export function FirmLookup({ betaKey }: { betaKey: string }) {
           </ul>
 
           {data.removalNotice && (
-            <p className="border-t border-hairline px-5 py-3 text-xs leading-relaxed text-muted sm:px-6">
+            <p className="border-t border-rule px-5 py-3 text-xs leading-relaxed text-grey-light sm:px-6">
               {data.removalNotice}
             </p>
           )}

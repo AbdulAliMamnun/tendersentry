@@ -47,12 +47,12 @@ export default async function CensusPage({
           <h1 className="mt-5 text-[30px] font-semibold leading-[1.2] sm:text-[34px]">
             What we&rsquo;ve measured
           </h1>
-          <p className="mt-5 text-[15px] leading-relaxed text-body">
+          <p className="mt-5 text-[15px] leading-relaxed text-grey">
             Building a tender service means measuring things nobody had counted. This
             page is what we found — every figure with its method, its date, and its
             caveats, so it can be checked rather than taken on trust.
           </p>
-          <p className="mt-4 text-[15px] leading-relaxed text-body">
+          <p className="mt-4 text-[15px] leading-relaxed text-grey">
             It opens with the Ontario Tender Access Census: the first public map of how
             every one of Ontario&rsquo;s 444 municipalities publishes its tenders, built
             by surveying each municipality&rsquo;s own website. More than half of
@@ -72,14 +72,14 @@ export default async function CensusPage({
         {/* Population-weighted bar */}
         <section className="mt-14">
           <h2 className="text-xl font-semibold">Weighted by population</h2>
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-body">
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-grey">
             Counting municipalities makes open publishing look more common than it is:
             the municipalities that post openly are overwhelmingly small townships.
           </p>
           <div className="mt-6">
             <DistributionBar rows={census.distribution} />
           </div>
-          <p className="mt-2 text-xs text-muted">
+          <p className="mt-2 text-xs text-grey-light">
             Excludes one municipality misattributed in the provincial register (0.7% of
             population); see caveats.
           </p>
@@ -91,7 +91,7 @@ export default async function CensusPage({
           <div className="mt-5 overflow-x-auto">
             <table className="w-full min-w-[620px] border-collapse text-sm">
               <thead>
-                <tr className="border-b border-hairline text-left text-xs uppercase tracking-wide text-muted">
+                <tr className="border-b border-rule text-left text-xs uppercase tracking-wide text-grey-light">
                   <th className="py-3 pr-4 font-medium">Where tenders are published</th>
                   <th className="py-3 pr-4 text-right font-medium">Municipalities</th>
                   <th className="py-3 pr-4 text-right font-medium">% of munis</th>
@@ -103,21 +103,21 @@ export default async function CensusPage({
                 {rows.map((row) => {
                   const figures = row.corrected ?? row;
                   return (
-                    <tr key={row.classification} className="border-b border-hairline">
-                      <td className="py-3 pr-4 text-heading">
+                    <tr key={row.classification} className="border-b border-rule">
+                      <td className="py-3 pr-4 text-ink">
                         {row.label}
-                        {row.corrected ? <sup className="text-brand-red"> †</sup> : null}
+                        {row.corrected ? <sup className="text-teal-mid"> †</sup> : null}
                       </td>
                       <td className="py-3 pr-4 text-right tabular-nums">
                         {figures.municipalities}
                       </td>
-                      <td className="py-3 pr-4 text-right tabular-nums text-body">
+                      <td className="py-3 pr-4 text-right tabular-nums text-grey">
                         {figures.share_of_municipalities}%
                       </td>
                       <td className="py-3 pr-4 text-right tabular-nums">
                         {formatNumber(figures.population)}
                       </td>
-                      <td className="py-3 text-right tabular-nums text-body">
+                      <td className="py-3 text-right tabular-nums text-grey">
                         {/* Sub-1% shares keep their precision; the rest read to one
                             decimal so the column lines up. */}
                         {figures.share_of_population < 1
@@ -128,7 +128,7 @@ export default async function CensusPage({
                   );
                 })}
                 <tr>
-                  <td className="py-3 pr-4 font-semibold text-heading">Total</td>
+                  <td className="py-3 pr-4 font-semibold text-ink">Total</td>
                   <td className="py-3 pr-4 text-right font-semibold tabular-nums">
                     {census.totals.municipalities}
                   </td>
@@ -142,7 +142,7 @@ export default async function CensusPage({
             </table>
           </div>
           {openRow?.corrected ? (
-            <p className="mt-4 max-w-3xl text-xs leading-relaxed text-muted">
+            <p className="mt-4 max-w-3xl text-xs leading-relaxed text-grey-light">
               † {openRow.corrected.footnote}
             </p>
           ) : null}
@@ -151,7 +151,7 @@ export default async function CensusPage({
         {/* Everything else we have measured. */}
         <section className="mt-16">
           <h2 className="text-xl font-semibold">Beyond the census</h2>
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-body">
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-grey">
             Four more findings from building the ranking and estimation models. Each
             carries its number, how it was measured, and where it breaks down.
           </p>
@@ -164,9 +164,9 @@ export default async function CensusPage({
           <div className="mt-5 grid gap-4 md:grid-cols-2">
             <div className="card p-6">
               <h3 className="text-sm font-semibold">Sources</h3>
-              <ul className="mt-3 space-y-2.5 text-sm leading-relaxed text-body">
+              <ul className="mt-3 space-y-2.5 text-sm leading-relaxed text-grey">
                 <li>
-                  <strong className="font-medium text-heading">Register.</strong>{" "}
+                  <strong className="font-medium text-ink">Register.</strong>{" "}
                   {census.sources.register.name}, dataset{" "}
                   <code className="text-xs">{census.sources.register.dataset_id}</code>,{" "}
                   {census.sources.register.licence}. Retrieved {census.retrieved}. It
@@ -174,7 +174,7 @@ export default async function CensusPage({
                   guessed.
                 </li>
                 <li>
-                  <strong className="font-medium text-heading">Population.</strong>{" "}
+                  <strong className="font-medium text-ink">Population.</strong>{" "}
                   {census.sources.population.name}, matched for{" "}
                   {census.sources.population.matched} municipalities. Census divisions
                   and subdivisions are told apart by DGUID, because Ontario has six
@@ -185,7 +185,7 @@ export default async function CensusPage({
 
             <div className="card p-6">
               <h3 className="text-sm font-semibold">How we crawled</h3>
-              <ul className="mt-3 space-y-2.5 text-sm leading-relaxed text-body">
+              <ul className="mt-3 space-y-2.5 text-sm leading-relaxed text-grey">
                 <li>
                   Identified as <code className="text-xs">TenderSentryBot</code>, at
                   least five seconds between requests to any one host.
@@ -204,9 +204,9 @@ export default async function CensusPage({
 
             <div className="card p-6 md:col-span-2">
               <h3 className="text-sm font-semibold">Known limits</h3>
-              <ul className="mt-3 space-y-2.5 text-sm leading-relaxed text-body">
+              <ul className="mt-3 space-y-2.5 text-sm leading-relaxed text-grey">
                 <li>
-                  <strong className="font-medium text-heading">
+                  <strong className="font-medium text-ink">
                     One register error, excluded.
                   </strong>{" "}
                   The province lists a neighbouring township&rsquo;s website against the
@@ -214,14 +214,14 @@ export default async function CensusPage({
                   above rather than silently repointed.
                 </li>
                 <li>
-                  <strong className="font-medium text-heading">
+                  <strong className="font-medium text-ink">
                     Two cities block bots.
                   </strong>{" "}
                   Ottawa and Vaughan return 403 to our crawler, which says nothing about
                   whether they publish openly. They are counted as unread, not as absent.
                 </li>
                 <li>
-                  <strong className="font-medium text-heading">
+                  <strong className="font-medium text-ink">
                     JavaScript-rendered pages are undercounted.
                   </strong>{" "}
                   Where a municipality&rsquo;s procurement page is drawn by scripts, this
@@ -229,7 +229,7 @@ export default async function CensusPage({
                   floor rather than a finding. We did not run a headless browser.
                 </li>
                 <li>
-                  <strong className="font-medium text-heading">
+                  <strong className="font-medium text-ink">
                     What open publishing is worth.
                   </strong>{" "}
                   A Québec civil contractor in our system sees more than four times the
@@ -242,7 +242,7 @@ export default async function CensusPage({
               <p className="mt-5 text-sm">
                 <a
                   href={`${GITHUB_URL}/blob/main/census/README.md`}
-                  className="font-semibold text-brand-red hover:opacity-80"
+                  className="font-semibold text-teal hover:opacity-80"
                 >
                   Full methodology on GitHub →
                 </a>

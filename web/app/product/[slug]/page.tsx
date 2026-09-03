@@ -57,7 +57,7 @@ export default async function ProductPage({
       <main className="shell py-12 sm:py-16">
         <article className="mx-auto max-w-[46rem]">
           <p className="eyebrow">Product</p>
-          <h1 className="mt-4 text-[28px] font-semibold leading-tight text-heading sm:text-[34px]">
+          <h1 className="mt-4 text-[28px] font-semibold leading-tight text-ink sm:text-[34px]">
             {product.title}
           </h1>
 
@@ -65,8 +65,8 @@ export default async function ProductPage({
             <Body />
           </div>
 
-          <div className="mt-12 border-t border-hairline pt-8">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-heading">
+          <div className="mt-12 border-t border-rule pt-8">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink">
               The rest of the product
             </p>
             <div className="mt-4 space-y-3">
@@ -74,7 +74,7 @@ export default async function ProductPage({
                 <Link
                   key={entry.slug}
                   href={`/product/${entry.slug}`}
-                  className="block text-[15px] font-medium text-brand-red hover:opacity-80"
+                  className="block text-[15px] font-medium text-teal hover:opacity-80"
                 >
                   {entry.cardTitle}
                 </Link>

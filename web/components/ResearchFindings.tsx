@@ -187,23 +187,23 @@ export function ResearchFindings() {
   return (
     <div className="mt-8 space-y-10">
       {FINDINGS.map((finding) => (
-        <section key={finding.title} className="border-t border-hairline pt-8">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-heading">
+        <section key={finding.title} className="border-t border-rule pt-8">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink">
             {finding.title}
           </p>
-          <h3 className="mt-3 text-[19px] font-semibold leading-snug text-heading">
+          <h3 className="mt-3 text-[19px] font-semibold leading-snug text-ink">
             {finding.headline}
           </h3>
-          <div className="mt-4 max-w-3xl space-y-4 text-[15px] leading-relaxed text-body">
+          <div className="mt-4 max-w-3xl space-y-4 text-[15px] leading-relaxed text-grey">
             {finding.body}
           </div>
-          <p className="mt-5 max-w-3xl text-xs leading-relaxed text-muted">
+          <p className="mt-5 max-w-3xl text-xs leading-relaxed text-grey-light">
             <span className="font-semibold uppercase tracking-[0.08em]">Method</span> ·{" "}
             {finding.method}
           </p>
           <Link
             href={finding.guide.href}
-            className="mt-4 inline-block text-sm font-semibold text-brand-red hover:opacity-80"
+            className="mt-4 inline-block text-sm font-semibold text-teal hover:opacity-80"
           >
             {finding.guide.label} →
           </Link>

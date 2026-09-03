@@ -166,13 +166,13 @@ export function DemoRanker() {
         <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
           <label
             htmlFor="firm-description"
-            className="text-[11px] font-semibold uppercase tracking-[0.12em] text-heading"
+            className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink"
           >
             What does your firm build, and what size jobs do you want?
           </label>
           {/* Freshness as a stated fact rather than something a visitor has to
               assume. The same timestamp tests/test_freshness.py fails the suite over. */}
-          <span className="text-[11px] text-muted">Data as of {dataAsOf()}</span>
+          <span className="text-[11px] text-grey-light">Data as of {dataAsOf()}</span>
         </div>
         <div className="mt-3 flex flex-col gap-3 sm:flex-row">
           <input
@@ -181,7 +181,7 @@ export function DemoRanker() {
             maxLength={500}
             onChange={(event) => setDescription(event.target.value)}
             placeholder={PLACEHOLDER}
-            className="w-full rounded-lg border border-hairline bg-white px-4 py-3 text-[15px] text-heading outline-none placeholder:text-muted focus:border-brand-red"
+            className="w-full rounded-lg border border-rule bg-white px-4 py-3 text-[15px] text-ink outline-none placeholder:text-grey focus:border-teal"
           />
           <label htmlFor="firm-region" className="sr-only">
             Region
@@ -193,7 +193,7 @@ export function DemoRanker() {
               setRegion(event.target.value as RegionChoice);
               setRegionTouched(true);
             }}
-            className="shrink-0 rounded-lg border border-hairline bg-white px-3 py-3 text-[15px] text-heading outline-none focus:border-brand-red sm:w-auto"
+            className="shrink-0 rounded-lg border border-rule bg-white px-3 py-3 text-[15px] text-ink outline-none focus:border-teal sm:w-auto"
           >
             {REGION_OPTIONS.map((option) => (
               <option key={option.value} value={option.value}>
@@ -211,7 +211,7 @@ export function DemoRanker() {
         </div>
 
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          <span className="text-xs text-muted">Try:</span>
+          <span className="text-xs text-grey-light">Try:</span>
           {EXAMPLES.map((example) => (
             <button
               key={example}
@@ -220,7 +220,7 @@ export function DemoRanker() {
                 setDescription(example);
                 void submit(example);
               }}
-              className="rounded-pill border border-hairline px-2.5 py-1 text-xs text-body hover:border-brand-red hover:text-brand-red"
+              className="rounded-pill border border-rule px-2.5 py-1 text-xs text-grey hover:border-teal hover:text-teal"
             >
               {example}
             </button>
@@ -229,29 +229,29 @@ export function DemoRanker() {
 
         {/* The hint that used to appear only after a failed match. It is advice about
             how to write the input, so it belongs beside the input. */}
-        <p className="mt-3 text-xs leading-relaxed text-muted">
+        <p className="mt-3 text-xs leading-relaxed text-grey-light">
           Name the work directly — &ldquo;watermain replacement&rdquo;,
           &ldquo;pavage&rdquo;, &ldquo;roofing&rdquo;.
         </p>
         {/* One line. Everything else waits until there are results to explain. */}
-        <p className="mt-2 text-xs leading-relaxed text-muted">
+        <p className="mt-2 text-xs leading-relaxed text-grey-light">
           Description isn&rsquo;t stored — only which trades it matched.
         </p>
       </form>
 
       {message && (
-        <p className="mt-4 text-center text-sm text-brand-red">{message}</p>
+        <p className="mt-4 text-center text-sm text-flag">{message}</p>
       )}
 
       {data && data.hit && (
         <div className="card mt-5 overflow-hidden">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline px-5 py-4 sm:px-6">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-rule px-5 py-4 sm:px-6">
             <div className="flex items-center gap-2.5">
               <span
-                className="live-dot h-2 w-2 rounded-full bg-fit-green"
+                className="live-dot h-2 w-2 rounded-full bg-teal"
                 aria-hidden
               />
-              <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-heading">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink">
                 {/* Say when a field was inferred rather than read from the words, and
                     where the region in force came from. */}
                 Reading{data.interpreted ? " (interpreted)" : ""}: {data.reading}
@@ -262,22 +262,22 @@ export function DemoRanker() {
                     : ""}
               </span>
             </div>
-            <span className="text-xs text-muted">
+            <span className="text-xs text-grey-light">
               {data.onTrade.toLocaleString()} on-trade of{" "}
               {data.considered.toLocaleString()} open notices
             </span>
           </div>
 
           {data.declaredSize && (
-            <p className="border-b border-hairline px-5 py-2.5 text-xs leading-relaxed text-muted sm:px-6">
+            <p className="border-b border-rule px-5 py-2.5 text-xs leading-relaxed text-grey-light sm:px-6">
               You said {data.declaredSize} — showing fit against published and estimated
               contract sizes; estimates are ours, not the buyer&rsquo;s.
             </p>
           )}
 
           {data.thin && (
-            <div className="border-b border-hairline bg-brand-redSoft px-5 py-3 sm:px-6">
-              <p className="text-sm leading-relaxed text-brand-red">
+            <div className="border-b border-rule bg-mist px-5 py-3 sm:px-6">
+              <p className="text-sm leading-relaxed text-ink">
                 {data.onTrade === 0 ? (
                   <>
                     Nothing open matches those trades in{" "}
@@ -296,17 +296,17 @@ export function DemoRanker() {
               </p>
               {/* The demo's weakest moment is also the census finding, so it links to
                   the evidence rather than apologising. */}
-              <p className="mt-1.5 text-sm leading-relaxed text-body">
+              <p className="mt-1.5 text-sm leading-relaxed text-grey">
                 Most Ontario municipal tenders sit behind gated portals.{" "}
                 <Link
                   href="/research"
-                  className="font-medium text-brand-red hover:opacity-80"
+                  className="font-medium text-teal hover:opacity-80"
                 >
                   See why &rarr;
                 </Link>{" "}
                 Your board also draws on monitored municipal sources and your own
                 uploads —{" "}
-                <a href="#join" className="font-medium text-brand-red hover:opacity-80">
+                <a href="#join" className="font-medium text-teal hover:opacity-80">
                   join the beta
                 </a>
                 .
@@ -318,16 +318,16 @@ export function DemoRanker() {
             {data.results.map((row, index) => (
               <li
                 key={`${row.title}-${index}`}
-                className="flex items-start justify-between gap-4 border-b border-hairline px-5 py-4 last:border-b-0 sm:px-6"
+                className="flex items-start justify-between gap-4 border-b border-rule px-5 py-4 last:border-b-0 sm:px-6"
               >
                 <div className="min-w-0">
-                  <p className="text-[15px] font-medium leading-snug text-heading">
+                  <p className="text-[15px] font-medium leading-snug text-ink">
                     {row.url ? (
                       <a
                         href={row.url}
                         target="_blank"
                         rel="noopener noreferrer nofollow"
-                        className="hover:text-brand-red"
+                        className="hover:text-teal"
                       >
                         {row.title}
                       </a>
@@ -335,7 +335,7 @@ export function DemoRanker() {
                       row.title
                     )}
                   </p>
-                  <p className="mt-1 text-xs text-muted">
+                  <p className="mt-1 text-xs text-grey-light">
                     {row.buyer}
                     {row.region ? ` · ${row.region}` : ""} ·{" "}
                     {sourceLabel(row.source)} · Closes {formatClosing(row.closingDate)}
@@ -346,7 +346,7 @@ export function DemoRanker() {
                     return (
                       <p
                         className={`mt-1 text-xs ${
-                          scale.estimated ? "italic text-muted" : "text-body"
+                          scale.estimated ? "italic text-grey-light" : "text-grey"
                         }`}
                       >
                         {scale.text}
@@ -354,7 +354,7 @@ export function DemoRanker() {
                     );
                   })()}
                 </div>
-                <span className="shrink-0 rounded-pill bg-fit-greenSoft px-2.5 py-1 text-xs font-semibold text-fit-green">
+                <span className="shrink-0 rounded-pill bg-teal-wash px-2.5 py-1 text-xs font-semibold text-teal">
                   {Math.round(row.fit)} fit
                 </span>
               </li>
@@ -362,7 +362,7 @@ export function DemoRanker() {
           </ul>
 
           {data.results.length > 0 && (
-            <div className="space-y-2 border-t border-hairline px-5 py-3 text-xs leading-relaxed text-muted sm:px-6">
+            <div className="space-y-2 border-t border-rule px-5 py-3 text-xs leading-relaxed text-grey-light sm:px-6">
               <p>
                 Fit is an absolute score, not a rank within this list — a low number
                 means a weak match, not fifth place. It measures bid fit, never a chance
@@ -373,7 +373,7 @@ export function DemoRanker() {
                   Most matches here are in{" "}
                   {PROVINCE_NAMES[data.skew.province] ?? data.skew.province} —
                   Ontario&rsquo;s municipal tenders are largely behind gated portals.{" "}
-                  <Link href="/research" className="font-medium text-brand-red hover:opacity-80">
+                  <Link href="/research" className="font-medium text-teal hover:opacity-80">
                     Why →
                   </Link>
                 </p>
@@ -392,14 +392,14 @@ export function DemoRanker() {
       )}
 
       {data && !data.hit && (
-        <p className="mt-5 rounded-lg border border-hairline px-5 py-4 text-sm leading-relaxed text-body">
+        <p className="mt-5 rounded-lg border border-rule px-5 py-4 text-sm leading-relaxed text-grey">
           We couldn&rsquo;t recognise a trade in that. Try naming the work more
           directly and we&rsquo;ll rank the live market against it.
         </p>
       )}
 
       {failed && (
-        <p className="mt-5 rounded-lg border border-hairline px-5 py-4 text-sm leading-relaxed text-body">
+        <p className="mt-5 rounded-lg border border-rule px-5 py-4 text-sm leading-relaxed text-grey">
           Live ranking is unavailable right now — nothing to do with what you typed.
           Try again in a moment.
         </p>
