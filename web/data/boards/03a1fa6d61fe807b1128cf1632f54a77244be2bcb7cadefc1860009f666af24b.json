@@ -10,8 +10,8 @@
       "ontario_any"
     ]
   },
-  "generated_at": "2026-09-02T14:10:30+00:00",
-  "candidate_count": 163,
+  "generated_at": "2026-09-03T14:15:03+00:00",
+  "candidate_count": 164,
   "board": [
     {
       "rank": 1,
@@ -59,6 +59,17 @@
     },
     {
       "rank": 5,
+      "title": "South Campus Watermain Replacement",
+      "buyer": "National Research Council of Canada (NRC)",
+      "closing_date": "2026-09-15",
+      "score": 79,
+      "source": "canadabuys",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 6,
       "title": "Maintenance dredging with floating equipment at Baie-Comeau, QC",
       "buyer": "Department of Fisheries and Oceans (DFO)",
       "closing_date": "2026-09-15",
@@ -69,7 +80,7 @@
       ]
     },
     {
-      "rank": 6,
+      "rank": 7,
       "title": "Replacement Heating Systems at 7 Long-Range Radar Sites",
       "buyer": "Defence Construction Canada / Construction de Défense Canada",
       "closing_date": "2026-09-15",
@@ -80,7 +91,7 @@
       ]
     },
     {
-      "rank": 7,
+      "rank": 8,
       "title": "APN - RP OPS and CFHA Base Program , Nunavut",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2029-03-31",
@@ -92,7 +103,7 @@
       ]
     },
     {
-      "rank": 8,
+      "rank": 9,
       "title": "W6889-270212 - Roadway and Sidewalk Snow and Ice Control Operations",
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-09-17",
@@ -100,17 +111,6 @@
       "source": "canadabuys",
       "flags": [
         "trade_family_only",
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 9,
-      "title": "South Campus Watermain Replacement",
-      "buyer": "National Research Council of Canada (NRC)",
-      "closing_date": "2026-09-08",
-      "score": 75,
-      "source": "canadabuys",
-      "flags": [
         "value_unknown"
       ]
     },
@@ -208,6 +208,18 @@
     },
     {
       "rank": 18,
+      "title": "Request for Information - Network Operations Center - Bldg 76 (CJWC Relocation)",
+      "buyer": "Defence Construction Canada - National Capital Region",
+      "closing_date": "2026-09-16",
+      "score": 66,
+      "source": "canadabuys",
+      "flags": [
+        "trade_unmapped",
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 19,
       "title": "Indigenous Cultural Centre at Bath Institution",
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-09-17",
@@ -219,7 +231,7 @@
       ]
     },
     {
-      "rank": 19,
+      "rank": 20,
       "title": "Community Residential Facilities",
       "buyer": "Correctional Service of Canada (CSC)",
       "closing_date": "2026-12-31",
@@ -230,7 +242,7 @@
       ]
     },
     {
-      "rank": 20,
+      "rank": 21,
       "title": "MP Police Outfitting - Repair and Overhaul (R&O)",
       "buyer": "Department of National Defence (DND)",
       "closing_date": "2026-09-18",
@@ -242,7 +254,7 @@
       ]
     },
     {
-      "rank": 21,
+      "rank": 22,
       "title": "AI-ENABLED TRANSLATION AND POST-EDITING SERVICES (MTPE MODEL)",
       "buyer": "Canada Mortgage and Housing Corporation (CNHC)",
       "closing_date": "2026-09-09",
@@ -253,7 +265,7 @@
       ]
     },
     {
-      "rank": 22,
+      "rank": 23,
       "title": "Provision of Traffic Control Services – Parks Canada – Ontario Waterways Rideau Canal",
       "buyer": "Parks Canada Agency (PC)",
       "closing_date": "2026-09-09",
@@ -264,7 +276,7 @@
       ]
     },
     {
-      "rank": 23,
+      "rank": 24,
       "title": "APN - NORAD Northern Basing Infrastructure (NNBI), Nunavut",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2027-01-11",
@@ -276,22 +288,10 @@
       ]
     },
     {
-      "rank": 24,
+      "rank": 25,
       "title": "Step 2 for 2 Service Battalion HQ Administration Company Building",
       "buyer": "Defence Construction Canada / Construction de Défense Canada",
       "closing_date": "2026-09-10",
-      "score": 62,
-      "source": "canadabuys",
-      "flags": [
-        "trade_unmapped",
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 25,
-      "title": "Model Validation Automation Technologies",
-      "buyer": "Export Development Canada (EDC)",
-      "closing_date": "2026-09-25",
       "score": 62,
       "source": "canadabuys",
       "flags": [

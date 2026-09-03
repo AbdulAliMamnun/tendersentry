@@ -12,8 +12,8 @@
       "quebec"
     ]
   },
-  "generated_at": "2026-09-02T14:10:30+00:00",
-  "candidate_count": 579,
+  "generated_at": "2026-09-03T14:15:03+00:00",
+  "candidate_count": 544,
   "board": [
     {
       "rank": 1,
@@ -94,17 +94,6 @@
     },
     {
       "rank": 8,
-      "title": "6812-26-0907 - Travaux de planage fin, route 169 et 170 (Saguenay-Lac-Saint-Jean).",
-      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
-      "closing_date": "2026-09-23",
-      "score": 91,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 9,
       "title": "Rapiéçage d'asphalte 2026",
       "buyer": "Municipalité de Sainte-Julienne",
       "closing_date": "2026-09-24",
@@ -115,7 +104,7 @@
       ]
     },
     {
-      "rank": 10,
+      "rank": 9,
       "title": "Travaux de voirie et d’éclairage dans l’avenue Jean-Bourdon de la rue Jasmin à la rue Henri-D'Arles – Arrondissement d’Ahuntsic-Cartierville",
       "buyer": "Ville de Montréal / SIRR - Service des infrastructures du réseau routier",
       "closing_date": "2026-09-24",
@@ -126,7 +115,7 @@
       ]
     },
     {
-      "rank": 11,
+      "rank": 10,
       "title": "Services professionnels pour la réalisation d’un rapport d’appréciation des risques liés aux inondations et à la mobilité des cours d’eau et à l’analyse de solution d’adaptation pour le bassin versant de la rivière Bécancour",
       "buyer": "MRC DE BÉCANCOUR.",
       "closing_date": "2026-09-25",
@@ -137,7 +126,7 @@
       ]
     },
     {
-      "rank": 12,
+      "rank": 11,
       "title": "6517-26-0301 - Contrat à exécution sur demande pour marquage longitudinal avec peinture à base d'eau sur diverses routes (Bas-Saint-Laurent-Gaspésie-Îles-de-la-Madeleine).",
       "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
       "closing_date": "2026-09-28",
@@ -148,7 +137,7 @@
       ]
     },
     {
-      "rank": 13,
+      "rank": 12,
       "title": "Réfection des infrastructures municipales sur diverses rues",
       "buyer": "Ville de Terrebonne",
       "closing_date": "2026-09-29",
@@ -159,7 +148,7 @@
       ]
     },
     {
-      "rank": 14,
+      "rank": 13,
       "title": "Remplacement des variateurs de vitesse des groupes motopompes de la station d'épuration des eaux usées J.-R.-Marcotte",
       "buyer": "Ville de Montréal - Service de l'Eau",
       "closing_date": "2026-09-29",
@@ -170,7 +159,7 @@
       ]
     },
     {
-      "rank": 15,
+      "rank": 14,
       "title": "Services Professionnels en ingénierie et architecture pour des infrastructures de gestion des eaux pluviales et des eaux usées - Service de l'eau",
       "buyer": "Ville de Montréal - Service de l'approvisionnement",
       "closing_date": "2026-09-29",
@@ -181,7 +170,7 @@
       ]
     },
     {
-      "rank": 16,
+      "rank": 15,
       "title": "Services professionnels pour la réfection du poste de pompage sanitaire Martel",
       "buyer": "Ville de Chambly",
       "closing_date": "2026-10-05",
@@ -192,7 +181,7 @@
       ]
     },
     {
-      "rank": 17,
+      "rank": 16,
       "title": "Travaux électriques pour l'éclairage sportif et structures de support",
       "buyer": "Parc olympique",
       "closing_date": "2026-10-07",
@@ -203,7 +192,7 @@
       ]
     },
     {
-      "rank": 18,
+      "rank": 17,
       "title": "CI32 - Construction des structures auxiliaires SA1, SA2 et SA3",
       "buyer": "Société de transport de Montréal",
       "closing_date": "2026-10-08",
@@ -214,7 +203,7 @@
       ]
     },
     {
-      "rank": 19,
+      "rank": 18,
       "title": "Mise à niveau et mise aux normes du réservoir et des installations de distribution d'eau potable",
       "buyer": "Municipalité de Sainte-Martine.",
       "closing_date": "2026-10-22",
@@ -225,7 +214,7 @@
       ]
     },
     {
-      "rank": 20,
+      "rank": 19,
       "title": "Côte-Nord / Sécurisation L7004 - Accès BA121 - Déboisement, aménagement de chemins et construction de ponts forestiers",
       "buyer": "Hydro-Québec.",
       "closing_date": "2026-09-10",
@@ -236,7 +225,7 @@
       ]
     },
     {
-      "rank": 21,
+      "rank": 20,
       "title": "Travaux de réfection de pavage et de trottoirs - 2026",
       "buyer": "Ville de Lachute",
       "closing_date": "2026-09-10",
@@ -247,7 +236,7 @@
       ]
     },
     {
-      "rank": 22,
+      "rank": 21,
       "title": "Services professionnels - Réfection du pont Drouin (POA186608)",
       "buyer": "Ville de Québec",
       "closing_date": "2026-09-14",
@@ -258,7 +247,7 @@
       ]
     },
     {
-      "rank": 23,
+      "rank": 22,
       "title": "Réfection de la station de pompage et du barrage de la rivière La Guerre",
       "buyer": "MRC du Haut-Saint-Laurent",
       "closing_date": "2026-09-14",
@@ -269,7 +258,7 @@
       ]
     },
     {
-      "rank": 24,
+      "rank": 23,
       "title": "Services professionnels en ingénierie pour plans et devis technique- modernisation de station d'égout sanitaire rue de l'Église",
       "buyer": "Ville de Saint-Antonin",
       "closing_date": "2026-09-15",
@@ -280,9 +269,20 @@
       ]
     },
     {
-      "rank": 25,
+      "rank": 24,
       "title": "Remplacement d'un ponceau, chemin de la Rivière-Rouge",
       "buyer": "L'Ascension",
+      "closing_date": "2026-09-15",
+      "score": 89,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 25,
+      "title": "Entretien de la digue- Stabilisation du talus",
+      "buyer": "Ville de Sainte-Marthe-sur-le-Lac.",
       "closing_date": "2026-09-15",
       "score": 89,
       "source": "seao",
