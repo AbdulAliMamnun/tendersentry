@@ -10,11 +10,22 @@
       "ontario_any"
     ]
   },
-  "generated_at": "2026-09-03T14:15:03+00:00",
-  "candidate_count": 164,
+  "generated_at": "2026-09-04T14:05:41+00:00",
+  "candidate_count": 167,
   "board": [
     {
       "rank": 1,
+      "title": "Septic System Replacement, Rouge National Urban Park",
+      "buyer": "Parks Canada Agency (PC)",
+      "closing_date": "2026-09-22",
+      "score": 89,
+      "source": "canadabuys",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 2,
       "title": "Retender EQ754-251469 Burlington Lift Bridge Security Gate and Fence Installation",
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-09-09",
@@ -25,7 +36,7 @@
       ]
     },
     {
-      "rank": 2,
+      "rank": 3,
       "title": "APN_FIRE HYDRANT INSPECTION, TESTING AND MAINTENANCE (ITM) GARRISON PETAWAWA",
       "buyer": "Defence Construction Canada - Ontario Region",
       "closing_date": "2026-09-09",
@@ -36,7 +47,7 @@
       ]
     },
     {
-      "rank": 3,
+      "rank": 4,
       "title": "APN_ONTARIO ARMOURIES SITE ENHANCEMENT PROGRAM VARIOUS ONTARIO LOCATIONS",
       "buyer": "Defence Construction Canada - Ontario Region",
       "closing_date": "2026-09-29",
@@ -47,7 +58,7 @@
       ]
     },
     {
-      "rank": 4,
+      "rank": 5,
       "title": "CONSTRUCTION MANAGEMENT SERVICES, WHITEHORSE CADET TRAINING CENTRE  WHITEHORSE",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2026-10-12",
@@ -58,7 +69,7 @@
       ]
     },
     {
-      "rank": 5,
+      "rank": 6,
       "title": "South Campus Watermain Replacement",
       "buyer": "National Research Council of Canada (NRC)",
       "closing_date": "2026-09-15",
@@ -69,7 +80,7 @@
       ]
     },
     {
-      "rank": 6,
+      "rank": 7,
       "title": "Maintenance dredging with floating equipment at Baie-Comeau, QC",
       "buyer": "Department of Fisheries and Oceans (DFO)",
       "closing_date": "2026-09-15",
@@ -80,7 +91,7 @@
       ]
     },
     {
-      "rank": 7,
+      "rank": 8,
       "title": "Replacement Heating Systems at 7 Long-Range Radar Sites",
       "buyer": "Defence Construction Canada / Construction de Défense Canada",
       "closing_date": "2026-09-15",
@@ -91,7 +102,7 @@
       ]
     },
     {
-      "rank": 8,
+      "rank": 9,
       "title": "APN - RP OPS and CFHA Base Program , Nunavut",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2029-03-31",
@@ -103,7 +114,7 @@
       ]
     },
     {
-      "rank": 9,
+      "rank": 10,
       "title": "W6889-270212 - Roadway and Sidewalk Snow and Ice Control Operations",
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-09-17",
@@ -111,17 +122,6 @@
       "source": "canadabuys",
       "flags": [
         "trade_family_only",
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 10,
-      "title": "EP168-270160 - Solicitation of Offers (RFP) - Alexandra Bridge - Comprehensive Detailed Inspection and Underwater Inspection",
-      "buyer": "Department of Public Works and Government Services (PSPC)",
-      "closing_date": "2026-09-08",
-      "score": 75,
-      "source": "canadabuys",
-      "flags": [
         "value_unknown"
       ]
     },
@@ -149,18 +149,28 @@
     },
     {
       "rank": 13,
-      "title": "Step 2 for 2 Service Battalion HQ Administration Company Building",
-      "buyer": "Defence Construction Canada / Construction de Défense Canada",
-      "closing_date": "2026-09-24",
-      "score": 68,
+      "title": "Plumbing Services, AAFC, Saskatoon Research and Development Centre",
+      "buyer": "Department of Agriculture and Agri-Food (AAFC)",
+      "closing_date": "2026-10-13",
+      "score": 70,
       "source": "canadabuys",
       "flags": [
-        "trade_unmapped",
         "value_unknown"
       ]
     },
     {
       "rank": 14,
+      "title": "EP168-270160 - Solicitation of Offers (RFP) - Alexandra Bridge - Comprehensive Detailed Inspection and Underwater Inspection",
+      "buyer": "Department of Public Works and Government Services (PSPC)",
+      "closing_date": "2026-09-08",
+      "score": 70,
+      "source": "canadabuys",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 15,
       "title": "Directed Faith Community Reintegration Project – Muslim Initiative",
       "buyer": "Correctional Service of Canada (CSC)",
       "closing_date": "2026-09-22",
@@ -171,7 +181,7 @@
       ]
     },
     {
-      "rank": 15,
+      "rank": 16,
       "title": "APN_CONSTRUCTION OF TEMPORARY MODULAR WORKSPACES  KINGSTON, ON",
       "buyer": "Defence Construction Canada - Ontario Region",
       "closing_date": "2026-09-27",
@@ -183,7 +193,7 @@
       ]
     },
     {
-      "rank": 16,
+      "rank": 17,
       "title": "Environmental Consultant Services in Nunavut",
       "buyer": "Defence Construction Canada / Construction de Défense Canada",
       "closing_date": "2026-10-14",
@@ -195,7 +205,7 @@
       ]
     },
     {
-      "rank": 17,
+      "rank": 18,
       "title": "APN - NORAD Northern Basing Infrastructure (NNBI), NWT",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2026-11-30",
@@ -207,7 +217,7 @@
       ]
     },
     {
-      "rank": 18,
+      "rank": 19,
       "title": "Request for Information - Network Operations Center - Bldg 76 (CJWC Relocation)",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2026-09-16",
@@ -219,7 +229,7 @@
       ]
     },
     {
-      "rank": 19,
+      "rank": 20,
       "title": "Indigenous Cultural Centre at Bath Institution",
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-09-17",
@@ -231,7 +241,19 @@
       ]
     },
     {
-      "rank": 20,
+      "rank": 21,
+      "title": "Step 2 for 2 Service Battalion HQ Administration Company Building",
+      "buyer": "Defence Construction Canada / Construction de Défense Canada",
+      "closing_date": "2026-09-24",
+      "score": 66,
+      "source": "canadabuys",
+      "flags": [
+        "trade_unmapped",
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 22,
       "title": "Community Residential Facilities",
       "buyer": "Correctional Service of Canada (CSC)",
       "closing_date": "2026-12-31",
@@ -242,7 +264,7 @@
       ]
     },
     {
-      "rank": 21,
+      "rank": 23,
       "title": "MP Police Outfitting - Repair and Overhaul (R&O)",
       "buyer": "Department of National Defence (DND)",
       "closing_date": "2026-09-18",
@@ -254,7 +276,7 @@
       ]
     },
     {
-      "rank": 22,
+      "rank": 24,
       "title": "AI-ENABLED TRANSLATION AND POST-EDITING SERVICES (MTPE MODEL)",
       "buyer": "Canada Mortgage and Housing Corporation (CNHC)",
       "closing_date": "2026-09-09",
@@ -265,37 +287,13 @@
       ]
     },
     {
-      "rank": 23,
+      "rank": 25,
       "title": "Provision of Traffic Control Services – Parks Canada – Ontario Waterways Rideau Canal",
       "buyer": "Parks Canada Agency (PC)",
       "closing_date": "2026-09-09",
       "score": 64,
       "source": "canadabuys",
       "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 24,
-      "title": "APN - NORAD Northern Basing Infrastructure (NNBI), Nunavut",
-      "buyer": "Defence Construction Canada - National Capital Region",
-      "closing_date": "2027-01-11",
-      "score": 63,
-      "source": "canadabuys",
-      "flags": [
-        "trade_family_only",
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 25,
-      "title": "Step 2 for 2 Service Battalion HQ Administration Company Building",
-      "buyer": "Defence Construction Canada / Construction de Défense Canada",
-      "closing_date": "2026-09-10",
-      "score": 62,
-      "source": "canadabuys",
-      "flags": [
-        "trade_unmapped",
         "value_unknown"
       ]
     }
