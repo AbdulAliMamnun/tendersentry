@@ -12,33 +12,11 @@
       "quebec"
     ]
   },
-  "generated_at": "2026-09-07T15:36:30+00:00",
-  "candidate_count": 639,
+  "generated_at": "2026-09-08T14:15:19+00:00",
+  "candidate_count": 617,
   "board": [
     {
       "rank": 1,
-      "title": "6410-26-0005 - Planage et pose d'enrobé bitumineux sur différentes structures du Centre-du-Québec (Mauricie-Centre-du-Québec).",
-      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
-      "closing_date": "2026-09-28",
-      "score": 96,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 2,
-      "title": "8809-26-0008 - Remplacement de 3 ponceaux, insertion de 1 ponceau et réhabilitation de chaussée sur le territoire du Centre de services de Mont-Laurier.",
-      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
-      "closing_date": "2026-09-28",
-      "score": 96,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 3,
       "title": "Travaux d'égout (Reconstruction, réhabilitation), eau, voirie, éclairage, feux circulation et utilités publiques (Bell, CSEM), rue Sherbrooke de l’A-15 au boulevard Décarie,  arrondissement CDN",
       "buyer": "Ville de Montréal / SIRR - Service des infrastructures du réseau routier",
       "closing_date": "2026-10-01",
@@ -49,40 +27,7 @@
       ]
     },
     {
-      "rank": 4,
-      "title": "Travaux de conduite principale, de réhabilitation d'égout, de reconstruction de trottoirs et de massifs de la CSEM, sur la rue Bélanger entre la rue Saint-Michel et la 18e avenue.",
-      "buyer": "Ville de Montréal - Service de l'Eau",
-      "closing_date": "2026-09-17",
-      "score": 93,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 5,
-      "title": "Côte-Nord / Sécurisation L7004 - Accès BA121 - Déboisement, aménagement de chemins et construction de ponts forestiers",
-      "buyer": "Hydro-Québec.",
-      "closing_date": "2026-09-17",
-      "score": 93,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 6,
-      "title": "8807-26-0202 - Travaux de planage et pavage sur plusieurs structures sur le territoire du centre de services de Saint-Jérôme (Laurentides)",
-      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
-      "closing_date": "2026-09-17",
-      "score": 93,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 7,
+      "rank": 2,
       "title": "Travaux ponctuels d’excavation et de réparation sur le réseau d’aqueduc et d’égout",
       "buyer": "Ville de Longueuil",
       "closing_date": "2026-09-24",
@@ -93,18 +38,29 @@
       ]
     },
     {
-      "rank": 8,
-      "title": "6517-26-0301 - Contrat à exécution sur demande pour marquage longitudinal avec peinture à base d'eau sur diverses routes (Bas-Saint-Laurent-Gaspésie-Îles-de-la-Madeleine).",
+      "rank": 3,
+      "title": "6410-26-0005 - Planage et pose d'enrobé bitumineux sur différentes structures du Centre-du-Québec (Mauricie-Centre-du-Québec).",
       "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
       "closing_date": "2026-09-28",
-      "score": 91,
+      "score": 93,
       "source": "seao",
       "flags": [
         "value_unknown"
       ]
     },
     {
-      "rank": 9,
+      "rank": 4,
+      "title": "8809-26-0008 - Remplacement de 3 ponceaux, insertion de 1 ponceau et réhabilitation de chaussée sur le territoire du Centre de services de Mont-Laurier.",
+      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
+      "closing_date": "2026-09-28",
+      "score": 93,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 5,
       "title": "Réfection des infrastructures municipales sur diverses rues",
       "buyer": "Ville de Terrebonne",
       "closing_date": "2026-09-29",
@@ -115,7 +71,7 @@
       ]
     },
     {
-      "rank": 10,
+      "rank": 6,
       "title": "Remplacement des variateurs de vitesse des groupes motopompes de la station d'épuration des eaux usées J.-R.-Marcotte",
       "buyer": "Ville de Montréal - Service de l'Eau",
       "closing_date": "2026-09-29",
@@ -126,7 +82,7 @@
       ]
     },
     {
-      "rank": 11,
+      "rank": 7,
       "title": "Services Professionnels en ingénierie et architecture pour des infrastructures de gestion des eaux pluviales et des eaux usées - Service de l'eau",
       "buyer": "Ville de Montréal - Service de l'approvisionnement",
       "closing_date": "2026-09-29",
@@ -137,7 +93,7 @@
       ]
     },
     {
-      "rank": 12,
+      "rank": 8,
       "title": "26073-S Analyses hydrauliques et hydrologiques et ingénierie pour des travaux correctifs au barrage Aylmer",
       "buyer": "Ministère de l'Environnement, de la Lutte contre les changements climatiques, de la Faune et des Parcs",
       "closing_date": "2026-09-29",
@@ -148,51 +104,51 @@
       ]
     },
     {
+      "rank": 9,
+      "title": "Travaux sylvicoles non commerciaux : Voirie",
+      "buyer": "Rexforêt",
+      "closing_date": "2026-09-29",
+      "score": 91,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 10,
+      "title": "Travaux sylvicoles non commerciaux : Voirie",
+      "buyer": "Rexforêt",
+      "closing_date": "2026-09-29",
+      "score": 91,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 11,
+      "title": "Travaux sylvicoles non commerciaux : Voirie",
+      "buyer": "Rexforêt",
+      "closing_date": "2026-09-29",
+      "score": 91,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 12,
+      "title": "Travaux sylvicoles non commerciaux : Voirie",
+      "buyer": "Rexforêt",
+      "closing_date": "2026-09-29",
+      "score": 91,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
       "rank": 13,
-      "title": "Travaux sylvicoles non commerciaux : Voirie",
-      "buyer": "Rexforêt",
-      "closing_date": "2026-09-29",
-      "score": 91,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 14,
-      "title": "Travaux sylvicoles non commerciaux : Voirie",
-      "buyer": "Rexforêt",
-      "closing_date": "2026-09-29",
-      "score": 91,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 15,
-      "title": "Travaux sylvicoles non commerciaux : Voirie",
-      "buyer": "Rexforêt",
-      "closing_date": "2026-09-29",
-      "score": 91,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 16,
-      "title": "Travaux sylvicoles non commerciaux : Voirie",
-      "buyer": "Rexforêt",
-      "closing_date": "2026-09-29",
-      "score": 91,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 17,
       "title": "Appréciation des risques liés aux inondations et à la mobilité durable des cours d'eau et analyse de solutions d'adaptation pour le bassin versant de la rivière Bulstrode sur le territoire de la MRC d'Arthabaska",
       "buyer": "MRC D'Arthabaska",
       "closing_date": "2026-09-30",
@@ -203,7 +159,7 @@
       ]
     },
     {
-      "rank": 18,
+      "rank": 14,
       "title": "Marquage de la chaussée pour une période de cinq (5) ans",
       "buyer": "Ville de Bois-des-Filion.",
       "closing_date": "2026-09-30",
@@ -214,7 +170,7 @@
       ]
     },
     {
-      "rank": 19,
+      "rank": 15,
       "title": "8912-26-0003 - Contrat à exécution sur demande pour le revêtement de chaussée en enrobé bitumineux sur diverses routes situées sur le territoire de la Direction Générale de l'Outaouais. (Outaouais)",
       "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
       "closing_date": "2026-09-30",
@@ -225,7 +181,7 @@
       ]
     },
     {
-      "rank": 20,
+      "rank": 16,
       "title": "9001-26-0208 - Réparation du pont P-07241, situé sur le chemin Bice (Orford)",
       "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
       "closing_date": "2026-09-30",
@@ -236,7 +192,7 @@
       ]
     },
     {
-      "rank": 21,
+      "rank": 17,
       "title": "Travaux de réparation de béton de petites et moyennes envergures",
       "buyer": "Ville de Laval",
       "closing_date": "2026-10-01",
@@ -247,7 +203,7 @@
       ]
     },
     {
-      "rank": 22,
+      "rank": 18,
       "title": "9001-25-0206 - Réparation des ponts P-09867S et P-09867N, situés sur l’autoroute 10 (Shefford)",
       "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
       "closing_date": "2026-10-01",
@@ -258,7 +214,7 @@
       ]
     },
     {
-      "rank": 23,
+      "rank": 19,
       "title": "6506-26-0004 - Pose d'enrobé pour couche mince et rechargement des accotements sur les routes 132, 195 et rue Principale (Bas-Saint-Laurent - Gaspésie - Îles-de-la-Madeleine)",
       "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
       "closing_date": "2026-10-02",
@@ -269,7 +225,7 @@
       ]
     },
     {
-      "rank": 24,
+      "rank": 20,
       "title": "Travaux d'infrastructures municipales sur le chemin des Quatre-Bourgeois TW-04B (PSO250090)",
       "buyer": "Ville de Québec",
       "closing_date": "2026-10-05",
@@ -280,10 +236,54 @@
       ]
     },
     {
-      "rank": 25,
+      "rank": 21,
       "title": "Services professionnels pour la réfection du poste de pompage sanitaire Martel",
       "buyer": "Ville de Chambly",
       "closing_date": "2026-10-05",
+      "score": 91,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 22,
+      "title": "6603-26-0224 - Travaux de maintien du tablier du Pont de Québec P-04925 sur la route 175 (Lévis)",
+      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
+      "closing_date": "2026-10-05",
+      "score": 91,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 23,
+      "title": "2513-25-0905 - Travaux d’élargissement et ajout d’une voie réservée sur l’autoroute 10, directions Est et Ouest, échangeur de l’autoroute.30 et l’échangeur de l’autoroute 35 et le réaménagement de bretelles des autoroutes 10 et 35 (CMM)",
+      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
+      "closing_date": "2026-10-05",
+      "score": 91,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 24,
+      "title": "Pour des services de reproduction de marques longitudinales sur la chaussée et les voies cyclables",
+      "buyer": "Ville de Blainville",
+      "closing_date": "2026-10-06",
+      "score": 91,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 25,
+      "title": "Augmentation de la capacité de la station d'épuration des eaux usées - Secteur \"Village\"",
+      "buyer": "Municipalité de Saint-Denis-de-Brompton .",
+      "closing_date": "2026-10-06",
       "score": 91,
       "source": "seao",
       "flags": [
