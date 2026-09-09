@@ -10,8 +10,8 @@
       "ontario_any"
     ]
   },
-  "generated_at": "2026-09-08T14:15:19+00:00",
-  "candidate_count": 160,
+  "generated_at": "2026-09-09T14:15:47+00:00",
+  "candidate_count": 155,
   "board": [
     {
       "rank": 1,
@@ -26,10 +26,10 @@
     },
     {
       "rank": 2,
-      "title": "APN_ONTARIO ARMOURIES SITE ENHANCEMENT PROGRAM VARIOUS ONTARIO LOCATIONS",
-      "buyer": "Defence Construction Canada - Ontario Region",
-      "closing_date": "2026-09-29",
-      "score": 80,
+      "title": "Retender EQ754-251469 Burlington Lift Bridge Security Gate and Fence Installation",
+      "buyer": "Department of Public Works and Government Services (PSPC)",
+      "closing_date": "2026-09-28",
+      "score": 89,
       "source": "canadabuys",
       "flags": [
         "value_unknown"
@@ -37,6 +37,17 @@
     },
     {
       "rank": 3,
+      "title": "Clowes Weir Reconstruction - Rideau Canal National Historic Site of Canada",
+      "buyer": "Parks Canada Agency (PC)",
+      "closing_date": "2026-09-29",
+      "score": 89,
+      "source": "canadabuys",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 4,
       "title": "CONSTRUCTION MANAGEMENT SERVICES, WHITEHORSE CADET TRAINING CENTRE  WHITEHORSE",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2026-10-12",
@@ -47,22 +58,11 @@
       ]
     },
     {
-      "rank": 4,
-      "title": "Retender EQ754-251469 Burlington Lift Bridge Security Gate and Fence Installation",
-      "buyer": "Department of Public Works and Government Services (PSPC)",
-      "closing_date": "2026-09-09",
-      "score": 80,
-      "source": "canadabuys",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
       "rank": 5,
-      "title": "APN_FIRE HYDRANT INSPECTION, TESTING AND MAINTENANCE (ITM) GARRISON PETAWAWA",
+      "title": "APN_ONTARIO ARMOURIES SITE ENHANCEMENT PROGRAM VARIOUS ONTARIO LOCATIONS",
       "buyer": "Defence Construction Canada - Ontario Region",
-      "closing_date": "2026-09-09",
-      "score": 80,
+      "closing_date": "2026-09-29",
+      "score": 78,
       "source": "canadabuys",
       "flags": [
         "value_unknown"
@@ -218,18 +218,6 @@
     },
     {
       "rank": 19,
-      "title": "MP Police Outfitting - Repair and Overhaul (R&O)",
-      "buyer": "Department of National Defence (DND)",
-      "closing_date": "2026-09-18",
-      "score": 65,
-      "source": "canadabuys",
-      "flags": [
-        "trade_family_only",
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 20,
       "title": "APN_CONSTRUCTION OF TEMPORARY MODULAR WORKSPACES  KINGSTON, ON",
       "buyer": "Defence Construction Canada - Ontario Region",
       "closing_date": "2026-09-27",
@@ -241,7 +229,7 @@
       ]
     },
     {
-      "rank": 21,
+      "rank": 20,
       "title": "APN - NORAD Northern Basing Infrastructure (NNBI), Nunavut",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2027-01-11",
@@ -253,7 +241,7 @@
       ]
     },
     {
-      "rank": 22,
+      "rank": 21,
       "title": "Request for Information - Network Operations Center - Bldg 76 (CJWC Relocation)",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2026-09-16",
@@ -265,7 +253,7 @@
       ]
     },
     {
-      "rank": 23,
+      "rank": 22,
       "title": "Indigenous Cultural Centre at Bath Institution",
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-09-17",
@@ -277,7 +265,7 @@
       ]
     },
     {
-      "rank": 24,
+      "rank": 23,
       "title": "RFP 2026-026 - Talent, Learning and Organizational Development Services",
       "buyer": "Bank of Canada",
       "closing_date": "2026-10-01",
@@ -289,10 +277,22 @@
       ]
     },
     {
-      "rank": 25,
+      "rank": 24,
       "title": "Off-the-shelf Online Training and Leadership Coaching Services",
       "buyer": "Export Development Canada - EDC",
       "closing_date": "2026-10-08",
+      "score": 62,
+      "source": "canadabuys",
+      "flags": [
+        "trade_unmapped",
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 25,
+      "title": "Employee Rewards and Recognition Program",
+      "buyer": "Export Development Canada (EDC)",
+      "closing_date": "2026-10-09",
       "score": 62,
       "source": "canadabuys",
       "flags": [

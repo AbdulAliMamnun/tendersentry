@@ -14,11 +14,11 @@
       "scale_source": "estimated_model"
     },
     {
-      "title": "APN_ONTARIO ARMOURIES SITE ENHANCEMENT PROGRAM VARIOUS ONTARIO LOCATIONS",
-      "buyer": "Defence Construction Canada - Ontario Region",
-      "closing_date": "2026-09-29",
+      "title": "Retender EQ754-251469 Burlington Lift Bridge Security Gate and Fence Installation",
+      "buyer": "Department of Public Works and Government Services (PSPC)",
+      "closing_date": "2026-09-28",
       "source": "canadabuys",
-      "score": 80,
+      "score": 89,
       "scale_band": "$100–500K",
       "scale_source": "estimated_model"
     }
@@ -42,5 +42,5 @@
     "verification": "exact substring, re-read from the source PDF at generation",
     "reason": "Requires fax submission — this firm submits electronically only."
   },
-  "candidate_count": 160
+  "candidate_count": 155
 }
