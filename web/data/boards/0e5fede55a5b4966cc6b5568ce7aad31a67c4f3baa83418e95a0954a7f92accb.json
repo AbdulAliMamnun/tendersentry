@@ -12,8 +12,8 @@
       "quebec"
     ]
   },
-  "generated_at": "2026-09-09T14:15:47+00:00",
-  "candidate_count": 578,
+  "generated_at": "2026-09-10T14:09:38+00:00",
+  "candidate_count": 535,
   "board": [
     {
       "rank": 1,
@@ -61,50 +61,6 @@
     },
     {
       "rank": 5,
-      "title": "Appréciation des risques liés aux inondations et à la mobilité durable des cours d'eau et analyse de solutions d'adaptation pour le bassin versant de la rivière Bulstrode sur le territoire de la MRC d'Arthabaska",
-      "buyer": "MRC D'Arthabaska",
-      "closing_date": "2026-09-30",
-      "score": 91,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 6,
-      "title": "Marquage de la chaussée pour une période de cinq (5) ans",
-      "buyer": "Ville de Bois-des-Filion.",
-      "closing_date": "2026-09-30",
-      "score": 91,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 7,
-      "title": "8912-26-0003 - Contrat à exécution sur demande pour le revêtement de chaussée en enrobé bitumineux sur diverses routes situées sur le territoire de la Direction Générale de l'Outaouais. (Outaouais)",
-      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
-      "closing_date": "2026-09-30",
-      "score": 91,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 8,
-      "title": "9001-26-0208 - Réparation du pont P-07241, situé sur le chemin Bice (Orford)",
-      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
-      "closing_date": "2026-09-30",
-      "score": 91,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 9,
       "title": "Travaux de réparation de béton de petites et moyennes envergures",
       "buyer": "Ville de Laval",
       "closing_date": "2026-10-01",
@@ -115,7 +71,7 @@
       ]
     },
     {
-      "rank": 10,
+      "rank": 6,
       "title": "9001-25-0206 - Réparation des ponts P-09867S et P-09867N, situés sur l’autoroute 10 (Shefford)",
       "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
       "closing_date": "2026-10-01",
@@ -126,7 +82,7 @@
       ]
     },
     {
-      "rank": 11,
+      "rank": 7,
       "title": "6506-26-0004 - Pose d'enrobé pour couche mince et rechargement des accotements sur les routes 132, 195 et rue Principale (Bas-Saint-Laurent - Gaspésie - Îles-de-la-Madeleine)",
       "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
       "closing_date": "2026-10-02",
@@ -137,7 +93,7 @@
       ]
     },
     {
-      "rank": 12,
+      "rank": 8,
       "title": "Travaux d'infrastructures municipales sur le chemin des Quatre-Bourgeois TW-04B (PSO250090)",
       "buyer": "Ville de Québec",
       "closing_date": "2026-10-05",
@@ -148,7 +104,7 @@
       ]
     },
     {
-      "rank": 13,
+      "rank": 9,
       "title": "Services professionnels pour la réfection du poste de pompage sanitaire Martel",
       "buyer": "Ville de Chambly",
       "closing_date": "2026-10-05",
@@ -159,7 +115,7 @@
       ]
     },
     {
-      "rank": 14,
+      "rank": 10,
       "title": "6603-26-0224 - Travaux de maintien du tablier du Pont de Québec P-04925 sur la route 175 (Lévis)",
       "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
       "closing_date": "2026-10-05",
@@ -170,7 +126,7 @@
       ]
     },
     {
-      "rank": 15,
+      "rank": 11,
       "title": "2513-25-0905 - Travaux d’élargissement et ajout d’une voie réservée sur l’autoroute 10, directions Est et Ouest, échangeur de l’autoroute.30 et l’échangeur de l’autoroute 35 et le réaménagement de bretelles des autoroutes 10 et 35 (CMM)",
       "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
       "closing_date": "2026-10-05",
@@ -181,7 +137,7 @@
       ]
     },
     {
-      "rank": 16,
+      "rank": 12,
       "title": "Pour des services de reproduction de marques longitudinales sur la chaussée et les voies cyclables",
       "buyer": "Ville de Blainville",
       "closing_date": "2026-10-06",
@@ -192,7 +148,7 @@
       ]
     },
     {
-      "rank": 17,
+      "rank": 13,
       "title": "Augmentation de la capacité de la station d'épuration des eaux usées - Secteur \"Village\"",
       "buyer": "Municipalité de Saint-Denis-de-Brompton .",
       "closing_date": "2026-10-06",
@@ -203,7 +159,7 @@
       ]
     },
     {
-      "rank": 18,
+      "rank": 14,
       "title": "Services professionnels en aménagement urbain, en ingénierie et en architecture pour des études d’avant-projet préliminaire dans le corridor du viaduc Rosemont – Van Horne",
       "buyer": "Ville de Montréal - Service de l'approvisionnement",
       "closing_date": "2026-10-06",
@@ -214,7 +170,7 @@
       ]
     },
     {
-      "rank": 19,
+      "rank": 15,
       "title": "Travaux électriques pour l'éclairage sportif et structures de support",
       "buyer": "Parc olympique",
       "closing_date": "2026-10-07",
@@ -225,7 +181,7 @@
       ]
     },
     {
-      "rank": 20,
+      "rank": 16,
       "title": "services professionnels en ingénierie des structures et génie civil pour réfection complète de tous les logements des bloc B et C, plomberie, électricité et structure Habitations De L’Érablière",
       "buyer": "OMH de Montréal (OMHM)",
       "closing_date": "2026-10-07",
@@ -236,7 +192,7 @@
       ]
     },
     {
-      "rank": 21,
+      "rank": 17,
       "title": "CI32 - Construction des structures auxiliaires SA1, SA2 et SA3",
       "buyer": "Société de transport de Montréal",
       "closing_date": "2026-10-08",
@@ -247,7 +203,7 @@
       ]
     },
     {
-      "rank": 22,
+      "rank": 18,
       "title": "Regroupement d'achat pour des services d'analyses bactériologiques et physico-chimiques de l'eau potable pour les années 2027 à 2031",
       "buyer": "Ville de Sorel-Tracy (approvisionnement)",
       "closing_date": "2026-10-08",
@@ -258,7 +214,7 @@
       ]
     },
     {
-      "rank": 23,
+      "rank": 19,
       "title": "Mise à niveau et mise aux normes du réservoir et des installations de distribution d'eau potable",
       "buyer": "Municipalité de Sainte-Martine.",
       "closing_date": "2026-10-22",
@@ -269,10 +225,10 @@
       ]
     },
     {
-      "rank": 24,
-      "title": "Ponceaux 5e rang Sud et voirie rue des Érables",
-      "buyer": "Municipalité d'Albertville",
-      "closing_date": "2026-09-14",
+      "rank": 20,
+      "title": "Réparations locales de trottoirs, bordures, pavage et gazon",
+      "buyer": "Ville de Deux-Montagnes.",
+      "closing_date": "2026-09-15",
       "score": 90,
       "source": "seao",
       "flags": [
@@ -280,11 +236,55 @@
       ]
     },
     {
-      "rank": 25,
-      "title": "Reconstruction de deux regards en béton armé coulés en place Réfection locale du béton dégradé d'une partie du ponceau existant",
-      "buyer": "Municipalité Sainte-Hélène de Bagot",
-      "closing_date": "2026-09-15",
+      "rank": 21,
+      "title": "Travaux de conduite principale, de réhabilitation d'égout, de reconstruction de trottoirs et de massifs de la CSEM, sur la rue Bélanger entre la rue Saint-Michel et la 18e avenue.",
+      "buyer": "Ville de Montréal - Service de l'Eau",
+      "closing_date": "2026-09-17",
       "score": 90,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 22,
+      "title": "Côte-Nord / Sécurisation L7004 - Accès BA121 - Déboisement, aménagement de chemins et construction de ponts forestiers",
+      "buyer": "Hydro-Québec.",
+      "closing_date": "2026-09-17",
+      "score": 90,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 23,
+      "title": "8807-26-0202 - Travaux de planage et pavage sur plusieurs structures sur le territoire du centre de services de Saint-Jérôme (Laurentides)",
+      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
+      "closing_date": "2026-09-17",
+      "score": 90,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 24,
+      "title": "Plans, devis et surveillance des travaux du bâtiment du site de traitement des eaux usées de Cap-aux-Meules",
+      "buyer": "Municipalité  des Iles-de-la-Madeleine",
+      "closing_date": "2026-09-21",
+      "score": 89,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 25,
+      "title": "Travaux de reconstruction du pont de la route 604 (secteur Gourganne) - Réserve faunique des Laurentides",
+      "buyer": "Société des établissements de plein air du Québec (Sépaq).",
+      "closing_date": "2026-09-21",
+      "score": 89,
       "source": "seao",
       "flags": [
         "value_unknown"
