@@ -12,8 +12,8 @@
       "quebec"
     ]
   },
-  "generated_at": "2026-09-11T14:09:18+00:00",
-  "candidate_count": 525,
+  "generated_at": "2026-09-12T13:26:30+00:00",
+  "candidate_count": 529,
   "board": [
     {
       "rank": 1,
@@ -61,17 +61,6 @@
     },
     {
       "rank": 5,
-      "title": "6506-26-0004 - Pose d'enrobé pour couche mince et rechargement des accotements sur les routes 132, 195 et rue Principale (Bas-Saint-Laurent - Gaspésie - Îles-de-la-Madeleine)",
-      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
-      "closing_date": "2026-10-02",
-      "score": 91,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 6,
       "title": "Travaux d'infrastructures municipales sur le chemin des Quatre-Bourgeois TW-04B (PSO250090)",
       "buyer": "Ville de Québec",
       "closing_date": "2026-10-05",
@@ -82,7 +71,7 @@
       ]
     },
     {
-      "rank": 7,
+      "rank": 6,
       "title": "Services professionnels pour la réfection du poste de pompage sanitaire Martel",
       "buyer": "Ville de Chambly",
       "closing_date": "2026-10-05",
@@ -93,7 +82,7 @@
       ]
     },
     {
-      "rank": 8,
+      "rank": 7,
       "title": "6603-26-0224 - Travaux de maintien du tablier du Pont de Québec P-04925 sur la route 175 (Lévis)",
       "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
       "closing_date": "2026-10-05",
@@ -104,7 +93,7 @@
       ]
     },
     {
-      "rank": 9,
+      "rank": 8,
       "title": "2513-25-0905 - Travaux d’élargissement et ajout d’une voie réservée sur l’autoroute 10, directions Est et Ouest, échangeur de l’autoroute.30 et l’échangeur de l’autoroute 35 et le réaménagement de bretelles des autoroutes 10 et 35 (CMM)",
       "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
       "closing_date": "2026-10-05",
@@ -115,7 +104,7 @@
       ]
     },
     {
-      "rank": 10,
+      "rank": 9,
       "title": "Pour des services de reproduction de marques longitudinales sur la chaussée et les voies cyclables",
       "buyer": "Ville de Blainville",
       "closing_date": "2026-10-06",
@@ -126,7 +115,7 @@
       ]
     },
     {
-      "rank": 11,
+      "rank": 10,
       "title": "Augmentation de la capacité de la station d'épuration des eaux usées - Secteur \"Village\"",
       "buyer": "Municipalité de Saint-Denis-de-Brompton .",
       "closing_date": "2026-10-06",
@@ -137,7 +126,7 @@
       ]
     },
     {
-      "rank": 12,
+      "rank": 11,
       "title": "Services professionnels en aménagement urbain, en ingénierie et en architecture pour des études d’avant-projet préliminaire dans le corridor du viaduc Rosemont – Van Horne",
       "buyer": "Ville de Montréal - Service de l'approvisionnement",
       "closing_date": "2026-10-06",
@@ -148,7 +137,7 @@
       ]
     },
     {
-      "rank": 13,
+      "rank": 12,
       "title": "Travaux électriques pour l'éclairage sportif et structures de support",
       "buyer": "Parc olympique",
       "closing_date": "2026-10-07",
@@ -159,7 +148,7 @@
       ]
     },
     {
-      "rank": 14,
+      "rank": 13,
       "title": "services professionnels en ingénierie des structures et génie civil pour réfection complète de tous les logements des bloc B et C, plomberie, électricité et structure Habitations De L’Érablière",
       "buyer": "OMH de Montréal (OMHM)",
       "closing_date": "2026-10-07",
@@ -170,7 +159,7 @@
       ]
     },
     {
-      "rank": 15,
+      "rank": 14,
       "title": "CI32 - Construction des structures auxiliaires SA1, SA2 et SA3",
       "buyer": "Société de transport de Montréal",
       "closing_date": "2026-10-08",
@@ -181,7 +170,7 @@
       ]
     },
     {
-      "rank": 16,
+      "rank": 15,
       "title": "Regroupement d'achat pour des services d'analyses bactériologiques et physico-chimiques de l'eau potable pour les années 2027 à 2031",
       "buyer": "Ville de Sorel-Tracy (approvisionnement)",
       "closing_date": "2026-10-08",
@@ -192,7 +181,7 @@
       ]
     },
     {
-      "rank": 17,
+      "rank": 16,
       "title": "Mise à niveau et mise aux normes du réservoir et des installations de distribution d'eau potable",
       "buyer": "Municipalité de Sainte-Martine.",
       "closing_date": "2026-10-22",
@@ -203,7 +192,7 @@
       ]
     },
     {
-      "rank": 18,
+      "rank": 17,
       "title": "Travaux de conduite principale, de réhabilitation d'égout, de reconstruction de trottoirs et de massifs de la CSEM, sur la rue Bélanger entre la rue Saint-Michel et la 18e avenue.",
       "buyer": "Ville de Montréal - Service de l'Eau",
       "closing_date": "2026-09-17",
@@ -214,7 +203,7 @@
       ]
     },
     {
-      "rank": 19,
+      "rank": 18,
       "title": "Côte-Nord / Sécurisation L7004 - Accès BA121 - Déboisement, aménagement de chemins et construction de ponts forestiers",
       "buyer": "Hydro-Québec.",
       "closing_date": "2026-09-17",
@@ -225,7 +214,7 @@
       ]
     },
     {
-      "rank": 20,
+      "rank": 19,
       "title": "8807-26-0202 - Travaux de planage et pavage sur plusieurs structures sur le territoire du centre de services de Saint-Jérôme (Laurentides)",
       "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
       "closing_date": "2026-09-17",
@@ -236,10 +225,21 @@
       ]
     },
     {
+      "rank": 20,
+      "title": "Remplacement de la conduite d'eau brute de l'usine de production d'eau potable de Duchesnay",
+      "buyer": "Ville de Sainte-Catherine-de-la-Jacques-Cartier",
+      "closing_date": "2026-09-22",
+      "score": 89,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
       "rank": 21,
-      "title": "Travaux de nettoyage de la réserve d'eau potable - UTE de Sainte-Foy",
-      "buyer": "Ville de Québec",
-      "closing_date": "2026-09-21",
+      "title": "Réaménagement du niveau rez-de-chaussée de la Direction des relations avec les citoyens et les communications au 710, boul. des Seigneurs",
+      "buyer": "Ville de Terrebonne",
+      "closing_date": "2026-09-22",
       "score": 89,
       "source": "seao",
       "flags": [
@@ -248,9 +248,9 @@
     },
     {
       "rank": 22,
-      "title": "Réfection de la station de pompage et du barrage de la rivière La Guerre",
-      "buyer": "MRC du Haut-Saint-Laurent",
-      "closing_date": "2026-09-21",
+      "title": "Services professionnels d'ingénierie pour la gestion et la surveillance de travaux de structures (Ponts et Tunnels) et d'aménagements divers",
+      "buyer": "Ville de Montréal - Service de l'approvisionnement",
+      "closing_date": "2026-09-22",
       "score": 89,
       "source": "seao",
       "flags": [
@@ -259,9 +259,9 @@
     },
     {
       "rank": 23,
-      "title": "Services professionnels pour des études hydrologiques et hydrauliques de cours d’eau sur le territoire de la MRC de La Vallée-du-Richelieu (MRCVR)",
-      "buyer": "MRC de la Vallée-du-Richelieu.",
-      "closing_date": "2026-09-21",
+      "title": "26086-C Fabrication et installation des nouvelles goupilles et des nouveaux portillons du barrage des Rapide-des-Cèdres",
+      "buyer": "Ministère de l'Environnement, de la Lutte contre les changements climatiques, de la Faune et des Parcs",
+      "closing_date": "2026-09-22",
       "score": 89,
       "source": "seao",
       "flags": [
@@ -270,9 +270,9 @@
     },
     {
       "rank": 24,
-      "title": "Travaux de réfection de pavage - Rang de l'île/rue Poirier/Chemin de la Coulée",
-      "buyer": "Municipalité de Pierreville.",
-      "closing_date": "2026-09-21",
+      "title": "Travaux préparatoires - nivellement des sols pour le POB Bastien",
+      "buyer": "Réseau de transport de la Capitale.",
+      "closing_date": "2026-09-22",
       "score": 89,
       "source": "seao",
       "flags": [
@@ -281,9 +281,9 @@
     },
     {
       "rank": 25,
-      "title": "Remplacement de l'unité de traitement d'air à l'usine de filtration d’eau potable",
-      "buyer": "Ville de Trois-Rivières",
-      "closing_date": "2026-09-21",
+      "title": "6403-26-HA03 Effectuer la surveillance lors de la construction chaussée ouest de l'Aut.55 sur 5.1 km de longueur - Lot D (Mauricie-Centre du Québec).",
+      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
+      "closing_date": "2026-09-23",
       "score": 89,
       "source": "seao",
       "flags": [
