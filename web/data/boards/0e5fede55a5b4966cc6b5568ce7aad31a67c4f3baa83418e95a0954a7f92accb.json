@@ -12,8 +12,8 @@
       "quebec"
     ]
   },
-  "generated_at": "2026-09-14T16:15:46+00:00",
-  "candidate_count": 584,
+  "generated_at": "2026-09-15T14:43:46+00:00",
+  "candidate_count": 570,
   "board": [
     {
       "rank": 1,
@@ -50,61 +50,6 @@
     },
     {
       "rank": 4,
-      "title": "Services professionnels pour la réfection du poste de pompage sanitaire Martel",
-      "buyer": "Ville de Chambly",
-      "closing_date": "2026-10-05",
-      "score": 91,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 5,
-      "title": "6603-26-0224 - Travaux de maintien du tablier du Pont de Québec P-04925 sur la route 175 (Lévis)",
-      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
-      "closing_date": "2026-10-05",
-      "score": 91,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 6,
-      "title": "2513-25-0905 - Travaux d’élargissement et ajout d’une voie réservée sur l’autoroute 10, directions Est et Ouest, échangeur de l’autoroute.30 et l’échangeur de l’autoroute 35 et le réaménagement de bretelles des autoroutes 10 et 35 (CMM)",
-      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
-      "closing_date": "2026-10-05",
-      "score": 91,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 7,
-      "title": "2e publication - Nettoyage cours d'eau Décharge du Père-Hilaire et cours d'eau Décharge Neuve",
-      "buyer": "Ville de Louiseville.",
-      "closing_date": "2026-10-05",
-      "score": 91,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 8,
-      "title": "Pour des services de reproduction de marques longitudinales sur la chaussée et les voies cyclables",
-      "buyer": "Ville de Blainville",
-      "closing_date": "2026-10-06",
-      "score": 91,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 9,
       "title": "Augmentation de la capacité de la station d'épuration des eaux usées - Secteur \"Village\"",
       "buyer": "Municipalité de Saint-Denis-de-Brompton .",
       "closing_date": "2026-10-06",
@@ -115,7 +60,7 @@
       ]
     },
     {
-      "rank": 10,
+      "rank": 5,
       "title": "Services professionnels en aménagement urbain, en ingénierie et en architecture pour des études d’avant-projet préliminaire dans le corridor du viaduc Rosemont – Van Horne",
       "buyer": "Ville de Montréal - Service de l'approvisionnement",
       "closing_date": "2026-10-06",
@@ -126,7 +71,7 @@
       ]
     },
     {
-      "rank": 11,
+      "rank": 6,
       "title": "Travaux électriques pour l'éclairage sportif et structures de support",
       "buyer": "Parc olympique",
       "closing_date": "2026-10-07",
@@ -137,7 +82,7 @@
       ]
     },
     {
-      "rank": 12,
+      "rank": 7,
       "title": "Services professionnels en ingénierie pour plans et devis technique- modernisation de station d'égout sanitaire rue de l'Église",
       "buyer": "Ville de Saint-Antonin",
       "closing_date": "2026-10-07",
@@ -148,7 +93,7 @@
       ]
     },
     {
-      "rank": 13,
+      "rank": 8,
       "title": "services professionnels en ingénierie des structures et génie civil pour réfection complète de tous les logements des bloc B et C, plomberie, électricité et structure Habitations De L’Érablière",
       "buyer": "OMH de Montréal (OMHM)",
       "closing_date": "2026-10-07",
@@ -159,7 +104,7 @@
       ]
     },
     {
-      "rank": 14,
+      "rank": 9,
       "title": "Services professionnels pour des études préparatoires, d’avant-projets, de plans et devis ainsi que l'assistance technique durant les travaux de réaménagement de la rue Saint-Hubert et d’aménagement de la rue Labelle Est",
       "buyer": "Ville de Laval",
       "closing_date": "2026-10-08",
@@ -170,7 +115,7 @@
       ]
     },
     {
-      "rank": 15,
+      "rank": 10,
       "title": "Regroupement d'achat pour des services d'analyses bactériologiques et physico-chimiques de l'eau potable pour les années 2027 à 2031",
       "buyer": "Ville de Sorel-Tracy (approvisionnement)",
       "closing_date": "2026-10-08",
@@ -181,7 +126,7 @@
       ]
     },
     {
-      "rank": 16,
+      "rank": 11,
       "title": "services professionnels en ingénierie des structures et génie civil dans le cadre d’un projet de remise à neuf de l’enveloppe aux habitations Beaudet",
       "buyer": "OMH de Montréal (OMHM)",
       "closing_date": "2026-10-13",
@@ -192,7 +137,7 @@
       ]
     },
     {
-      "rank": 17,
+      "rank": 12,
       "title": "Service de nettoyage et d'inspection télévisée des conduites d'égouts incluant le transport et la disposition des résidus - Multi arrondissements",
       "buyer": "Ville de Montréal - Service de l'approvisionnement",
       "closing_date": "2026-10-13",
@@ -203,7 +148,7 @@
       ]
     },
     {
-      "rank": 18,
+      "rank": 13,
       "title": "4174-25-PK01 Fournir les services d'une foreuse et son équipe en vue d'exécuter des forages et des sondages sur l'ensemble du territoire de la province de Québec (Direction générale du laboratoire des chaussées).",
       "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
       "closing_date": "2026-10-13",
@@ -214,7 +159,7 @@
       ]
     },
     {
-      "rank": 19,
+      "rank": 14,
       "title": "Services professionnels d’un consultant technique en gestion des sédiments au réservoir Beaudet",
       "buyer": "Ville de Victoriaville.",
       "closing_date": "2026-10-14",
@@ -225,7 +170,7 @@
       ]
     },
     {
-      "rank": 20,
+      "rank": 15,
       "title": "Entretien et réparation d'urgence des réseaux d'égouts et d'aqueduc",
       "buyer": "Ville de Westmount",
       "closing_date": "2026-10-14",
@@ -236,7 +181,7 @@
       ]
     },
     {
-      "rank": 21,
+      "rank": 16,
       "title": "2513-26-HE05 - Effectuer la surveillance des travaux de réfection de la structure P-13472 sur la route 116 dans l'échangeur A-30/R-116 ainsi que toute activité connexe (Saint-Bruno-de-Montarville)",
       "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
       "closing_date": "2026-10-14",
@@ -247,7 +192,7 @@
       ]
     },
     {
-      "rank": 22,
+      "rank": 17,
       "title": "2602-21-AA01 – Réalisation d’une étude d'opportunité pour la reconstruction du pont P-13213 situé sur la route 112, au-dessus de l'autoroute 20, dans la ville de Longueuil. (Montérégie",
       "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
       "closing_date": "2026-10-14",
@@ -258,7 +203,7 @@
       ]
     },
     {
-      "rank": 23,
+      "rank": 18,
       "title": "Réhabilitation d'une conduite d'eau de 2100mm dans l'axe de l'avenue Viger entre la rue Wolfe et l'avenue Papineau",
       "buyer": "Ville de Montréal - Service de l'Eau",
       "closing_date": "2026-10-15",
@@ -269,7 +214,7 @@
       ]
     },
     {
-      "rank": 24,
+      "rank": 19,
       "title": "Travaux de réhabilitation de conduites d'égout par chemisage dans diverses rues de la ville de Montréal dans les arrondissements de ANJ, MHM, RPP et STL",
       "buyer": "Ville de Montréal / SIRR - Service des infrastructures du réseau routier",
       "closing_date": "2026-10-15",
@@ -280,11 +225,66 @@
       ]
     },
     {
-      "rank": 25,
+      "rank": 20,
       "title": "Mise à niveau et mise aux normes du réservoir et des installations de distribution d'eau potable",
       "buyer": "Municipalité de Sainte-Martine.",
       "closing_date": "2026-10-22",
       "score": 91,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 21,
+      "title": "CI32 - Construction des structures auxiliaires SA1, SA2 et SA3",
+      "buyer": "Société de transport de Montréal",
+      "closing_date": "2026-10-27",
+      "score": 91,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 22,
+      "title": "Travaux ponctuels d’excavation et de réparation sur le réseau d’aqueduc et d’égout",
+      "buyer": "Ville de Longueuil",
+      "closing_date": "2026-09-24",
+      "score": 90,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 23,
+      "title": "Services professionnels pour la réalisation d’un rapport d’appréciation des risques liés aux inondations et à la mobilité des cours d’eau et à l’analyse de solution d’adaptation pour le bassin versant de la rivière Bécancour",
+      "buyer": "MRC DE BÉCANCOUR.",
+      "closing_date": "2026-09-25",
+      "score": 89,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 24,
+      "title": "Travaux de pavage 2026 - Phase 2",
+      "buyer": "Corporation Municipale de Elgin",
+      "closing_date": "2026-09-28",
+      "score": 89,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 25,
+      "title": "Aménagement de ponceau sur le chemin du Lac-Labelle",
+      "buyer": "Municipalité de Labelle.",
+      "closing_date": "2026-09-28",
+      "score": 89,
       "source": "seao",
       "flags": [
         "value_unknown"
