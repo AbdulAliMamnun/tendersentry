@@ -10,8 +10,8 @@
       "ontario_any"
     ]
   },
-  "generated_at": "2026-09-16T14:42:15+00:00",
-  "candidate_count": 164,
+  "generated_at": "2026-09-17T14:46:35+00:00",
+  "candidate_count": 161,
   "board": [
     {
       "rank": 1,
@@ -217,18 +217,6 @@
     },
     {
       "rank": 19,
-      "title": "W6889-270212 - Roadway and Sidewalk Snow and Ice Control Operations",
-      "buyer": "Department of Public Works and Government Services (PSPC)",
-      "closing_date": "2026-09-17",
-      "score": 66,
-      "source": "canadabuys",
-      "flags": [
-        "trade_family_only",
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 20,
       "title": "Community Residential Facilities",
       "buyer": "Correctional Service of Canada (CSC)",
       "closing_date": "2026-12-31",
@@ -239,7 +227,7 @@
       ]
     },
     {
-      "rank": 21,
+      "rank": 20,
       "title": "APN_CONSTRUCTION OF TEMPORARY MODULAR WORKSPACES  KINGSTON, ON",
       "buyer": "Defence Construction Canada - Ontario Region",
       "closing_date": "2026-09-27",
@@ -251,7 +239,7 @@
       ]
     },
     {
-      "rank": 22,
+      "rank": 21,
       "title": "MP Police Outfitting - Repair and Overhaul (R&O)",
       "buyer": "Department of National Defence (DND)",
       "closing_date": "2026-10-02",
@@ -263,7 +251,7 @@
       ]
     },
     {
-      "rank": 23,
+      "rank": 22,
       "title": "Directed Faith Community Reintegration Project – Muslim Initiative",
       "buyer": "Correctional Service of Canada (CSC)",
       "closing_date": "2026-09-22",
@@ -274,7 +262,7 @@
       ]
     },
     {
-      "rank": 24,
+      "rank": 23,
       "title": "TSPS - Project Leader/Executive",
       "buyer": "Department of National Defence (DND)",
       "closing_date": "2026-09-25",
@@ -285,7 +273,7 @@
       ]
     },
     {
-      "rank": 25,
+      "rank": 24,
       "title": "APN - NORAD Northern Basing Infrastructure (NNBI), Nunavut",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2027-01-11",
@@ -293,6 +281,18 @@
       "source": "canadabuys",
       "flags": [
         "trade_family_only",
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 25,
+      "title": "Indigenous Cultural Centre at Bath Institution",
+      "buyer": "Department of Public Works and Government Services (PSPC)",
+      "closing_date": "2026-09-23",
+      "score": 62,
+      "source": "canadabuys",
+      "flags": [
+        "trade_unmapped",
         "value_unknown"
       ]
     }
