@@ -14,9 +14,9 @@
       "scale_source": "estimated_model"
     },
     {
-      "title": "Retender EQ754-251469 Burlington Lift Bridge Security Gate and Fence Installation",
-      "buyer": "Department of Public Works and Government Services (PSPC)",
-      "closing_date": "2026-09-28",
+      "title": "Clowes Weir Reconstruction - Rideau Canal National Historic Site of Canada",
+      "buyer": "Parks Canada Agency (PC)",
+      "closing_date": "2026-09-29",
       "source": "canadabuys",
       "score": 89,
       "scale_band": "$100–500K",
@@ -42,5 +42,5 @@
     "verification": "exact substring, re-read from the source PDF at generation",
     "reason": "Requires fax submission — this firm submits electronically only."
   },
-  "candidate_count": 158
+  "candidate_count": 161
 }
