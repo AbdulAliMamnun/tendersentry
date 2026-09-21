@@ -10,8 +10,8 @@
       "ontario_any"
     ]
   },
-  "generated_at": "2026-09-20T14:02:23+00:00",
-  "candidate_count": 161,
+  "generated_at": "2026-09-21T16:18:38+00:00",
+  "candidate_count": 158,
   "board": [
     {
       "rank": 1,
@@ -264,17 +264,6 @@
     },
     {
       "rank": 23,
-      "title": "TSPS - Project Leader/Executive",
-      "buyer": "Department of National Defence (DND)",
-      "closing_date": "2026-09-25",
-      "score": 64,
-      "source": "canadabuys",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 24,
       "title": "APN - NORAD Northern Basing Infrastructure (NNBI), Nunavut",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2027-01-11",
@@ -286,7 +275,7 @@
       ]
     },
     {
-      "rank": 25,
+      "rank": 24,
       "title": "APN_CONSTRUCTION OF TEMPORARY MODULAR WORKSPACES  KINGSTON, ON",
       "buyer": "Defence Construction Canada - Ontario Region",
       "closing_date": "2026-09-27",
@@ -294,6 +283,18 @@
       "source": "canadabuys",
       "flags": [
         "trade_family_only",
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 25,
+      "title": "Furnace Replacements (HSC) Borden",
+      "buyer": "Department of National Defence (DND)",
+      "closing_date": "2026-10-02",
+      "score": 60,
+      "source": "canadabuys",
+      "flags": [
+        "trade_unmapped",
         "value_unknown"
       ]
     }
