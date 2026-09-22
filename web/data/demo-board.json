@@ -9,7 +9,7 @@
       "buyer": "Department of Fisheries and Oceans (DFO)",
       "closing_date": "2026-10-01",
       "source": "canadabuys",
-      "score": 93,
+      "score": 90,
       "scale_band": "$500K–2M",
       "scale_source": "estimated_model"
     },
@@ -42,5 +42,5 @@
     "verification": "exact substring, re-read from the source PDF at generation",
     "reason": "Requires fax submission — this firm submits electronically only."
   },
-  "candidate_count": 158
+  "candidate_count": 164
 }

@@ -10,15 +10,15 @@
       "ontario_any"
     ]
   },
-  "generated_at": "2026-09-21T16:18:38+00:00",
-  "candidate_count": 158,
+  "generated_at": "2026-09-22T14:27:33+00:00",
+  "candidate_count": 164,
   "board": [
     {
       "rank": 1,
       "title": "Wharf Reconstruction - L'Orignal, ON",
       "buyer": "Department of Fisheries and Oceans (DFO)",
       "closing_date": "2026-10-01",
-      "score": 93,
+      "score": 90,
       "source": "canadabuys",
       "flags": [
         "value_unknown"
@@ -48,17 +48,6 @@
     },
     {
       "rank": 4,
-      "title": "CONSTRUCTION MANAGEMENT SERVICES, WHITEHORSE CADET TRAINING CENTRE  WHITEHORSE",
-      "buyer": "Defence Construction Canada - National Capital Region",
-      "closing_date": "2026-10-12",
-      "score": 80,
-      "source": "canadabuys",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 5,
       "title": "Refrigeration and HVAC Services at the Pacific Biological Station (PBS), Nanaimo, British Columbia (B.C.).",
       "buyer": "Department of Fisheries and Oceans (DFO)",
       "closing_date": "2026-10-13",
@@ -69,10 +58,10 @@
       ]
     },
     {
-      "rank": 6,
+      "rank": 5,
       "title": "Septic System Replacement, Rouge National Urban Park",
       "buyer": "Parks Canada Agency (PC)",
-      "closing_date": "2026-09-22",
+      "closing_date": "2026-09-24",
       "score": 80,
       "source": "canadabuys",
       "flags": [
@@ -80,7 +69,7 @@
       ]
     },
     {
-      "rank": 7,
+      "rank": 6,
       "title": "RFSO -Coastal imaging, habitat classification, shoreline assessment in Canada",
       "buyer": "Department of Fisheries and Oceans (DFO)",
       "closing_date": "2026-10-06",
@@ -91,10 +80,21 @@
       ]
     },
     {
-      "rank": 8,
+      "rank": 7,
       "title": "APN_ONTARIO ARMOURIES SITE ENHANCEMENT PROGRAM VARIOUS ONTARIO LOCATIONS",
       "buyer": "Defence Construction Canada - Ontario Region",
       "closing_date": "2026-10-06",
+      "score": 78,
+      "source": "canadabuys",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 8,
+      "title": "CONSTRUCTION MANAGEMENT SERVICES, WHITEHORSE CADET TRAINING CENTRE  WHITEHORSE",
+      "buyer": "Defence Construction Canada - National Capital Region",
+      "closing_date": "2026-10-12",
       "score": 78,
       "source": "canadabuys",
       "flags": [
@@ -159,17 +159,6 @@
     },
     {
       "rank": 14,
-      "title": "Replacement Heating Systems at 7 Long-Range Radar Sites",
-      "buyer": "Defence Construction Canada / Construction de Défense Canada",
-      "closing_date": "2026-09-22",
-      "score": 69,
-      "source": "canadabuys",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 15,
       "title": "APN_Construct Warehouse (CADSS/MAJAID), Trenton ON",
       "buyer": "Defence Construction Canada - Ontario Region",
       "closing_date": "2026-10-27",
@@ -177,6 +166,17 @@
       "source": "canadabuys",
       "flags": [
         "trade_unmapped",
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 15,
+      "title": "Directed Faith Community Reintegration Project – Muslim Initiative",
+      "buyer": "Correctional Service of Canada (CSC)",
+      "closing_date": "2026-10-02",
+      "score": 68,
+      "source": "canadabuys",
+      "flags": [
         "value_unknown"
       ]
     },
