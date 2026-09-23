@@ -10,8 +10,8 @@
       "ontario_any"
     ]
   },
-  "generated_at": "2026-09-22T14:27:33+00:00",
-  "candidate_count": 164,
+  "generated_at": "2026-09-23T14:47:54+00:00",
+  "candidate_count": 167,
   "board": [
     {
       "rank": 1,
@@ -48,17 +48,6 @@
     },
     {
       "rank": 4,
-      "title": "Refrigeration and HVAC Services at the Pacific Biological Station (PBS), Nanaimo, British Columbia (B.C.).",
-      "buyer": "Department of Fisheries and Oceans (DFO)",
-      "closing_date": "2026-10-13",
-      "score": 80,
-      "source": "canadabuys",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 5,
       "title": "Septic System Replacement, Rouge National Urban Park",
       "buyer": "Parks Canada Agency (PC)",
       "closing_date": "2026-09-24",
@@ -69,7 +58,7 @@
       ]
     },
     {
-      "rank": 6,
+      "rank": 5,
       "title": "RFSO -Coastal imaging, habitat classification, shoreline assessment in Canada",
       "buyer": "Department of Fisheries and Oceans (DFO)",
       "closing_date": "2026-10-06",
@@ -80,7 +69,7 @@
       ]
     },
     {
-      "rank": 7,
+      "rank": 6,
       "title": "APN_ONTARIO ARMOURIES SITE ENHANCEMENT PROGRAM VARIOUS ONTARIO LOCATIONS",
       "buyer": "Defence Construction Canada - Ontario Region",
       "closing_date": "2026-10-06",
@@ -91,10 +80,21 @@
       ]
     },
     {
-      "rank": 8,
+      "rank": 7,
       "title": "CONSTRUCTION MANAGEMENT SERVICES, WHITEHORSE CADET TRAINING CENTRE  WHITEHORSE",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2026-10-12",
+      "score": 78,
+      "source": "canadabuys",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 8,
+      "title": "Refrigeration and HVAC Services at the Pacific Biological Station (PBS), Nanaimo, British Columbia (B.C.).",
+      "buyer": "Department of Fisheries and Oceans (DFO)",
+      "closing_date": "2026-10-13",
       "score": 78,
       "source": "canadabuys",
       "flags": [
@@ -137,17 +137,6 @@
     },
     {
       "rank": 12,
-      "title": "Plumbing Services, AAFC, Saskatoon Research and Development Centre",
-      "buyer": "Department of Agriculture and Agri-Food (AAFC)",
-      "closing_date": "2026-10-13",
-      "score": 70,
-      "source": "canadabuys",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 13,
       "title": "RF Data Fusion for Command and Control",
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-10-20",
@@ -158,7 +147,7 @@
       ]
     },
     {
-      "rank": 14,
+      "rank": 13,
       "title": "APN_Construct Warehouse (CADSS/MAJAID), Trenton ON",
       "buyer": "Defence Construction Canada - Ontario Region",
       "closing_date": "2026-10-27",
@@ -170,29 +159,18 @@
       ]
     },
     {
+      "rank": 14,
+      "title": "Plumbing Services, AAFC, Saskatoon Research and Development Centre",
+      "buyer": "Department of Agriculture and Agri-Food (AAFC)",
+      "closing_date": "2026-10-13",
+      "score": 68,
+      "source": "canadabuys",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
       "rank": 15,
-      "title": "Directed Faith Community Reintegration Project – Muslim Initiative",
-      "buyer": "Correctional Service of Canada (CSC)",
-      "closing_date": "2026-10-02",
-      "score": 68,
-      "source": "canadabuys",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 16,
-      "title": "Technical Assessment and Cost-Benefit Analysis on Fuel Storage Tank Systems Life Cycle (Installation, Maintenance and Removal)",
-      "buyer": "Department of the Environment (ECCC )",
-      "closing_date": "2026-10-02",
-      "score": 68,
-      "source": "canadabuys",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 17,
       "title": "Environmental Consultant Services in Nunavut",
       "buyer": "Defence Construction Canada / Construction de Défense Canada",
       "closing_date": "2026-10-14",
@@ -204,7 +182,7 @@
       ]
     },
     {
-      "rank": 18,
+      "rank": 16,
       "title": "APN - NORAD Northern Basing Infrastructure (NNBI), NWT",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2026-11-30",
@@ -216,7 +194,7 @@
       ]
     },
     {
-      "rank": 19,
+      "rank": 17,
       "title": "APN - Facilities Maintenance and Support Services Northern Canada",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2026-11-30",
@@ -228,7 +206,7 @@
       ]
     },
     {
-      "rank": 20,
+      "rank": 18,
       "title": "Step 2 for 2 Service Battalion HQ Administration Company Building",
       "buyer": "Defence Construction Canada / Construction de Défense Canada",
       "closing_date": "2026-10-08",
@@ -240,7 +218,7 @@
       ]
     },
     {
-      "rank": 21,
+      "rank": 19,
       "title": "Community Residential Facilities",
       "buyer": "Correctional Service of Canada (CSC)",
       "closing_date": "2026-12-31",
@@ -251,19 +229,29 @@
       ]
     },
     {
-      "rank": 22,
-      "title": "MP Police Outfitting - Repair and Overhaul (R&O)",
-      "buyer": "Department of National Defence (DND)",
+      "rank": 20,
+      "title": "Directed Faith Community Reintegration Project – Muslim Initiative",
+      "buyer": "Correctional Service of Canada (CSC)",
       "closing_date": "2026-10-02",
-      "score": 65,
+      "score": 64,
       "source": "canadabuys",
       "flags": [
-        "trade_family_only",
         "value_unknown"
       ]
     },
     {
-      "rank": 23,
+      "rank": 21,
+      "title": "Technical Assessment and Cost-Benefit Analysis on Fuel Storage Tank Systems Life Cycle (Installation, Maintenance and Removal)",
+      "buyer": "Department of the Environment (ECCC )",
+      "closing_date": "2026-10-02",
+      "score": 64,
+      "source": "canadabuys",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 22,
       "title": "APN - NORAD Northern Basing Infrastructure (NNBI), Nunavut",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2027-01-11",
@@ -275,10 +263,22 @@
       ]
     },
     {
+      "rank": 23,
+      "title": "Project Manager  – Level 3",
+      "buyer": "Department of Industry (ISED)",
+      "closing_date": "2026-10-16",
+      "score": 62,
+      "source": "canadabuys",
+      "flags": [
+        "trade_unmapped",
+        "value_unknown"
+      ]
+    },
+    {
       "rank": 24,
-      "title": "APN_CONSTRUCTION OF TEMPORARY MODULAR WORKSPACES  KINGSTON, ON",
-      "buyer": "Defence Construction Canada - Ontario Region",
-      "closing_date": "2026-09-27",
+      "title": "MP Police Outfitting - Repair and Overhaul (R&O)",
+      "buyer": "Department of National Defence (DND)",
+      "closing_date": "2026-10-02",
       "score": 62,
       "source": "canadabuys",
       "flags": [
@@ -288,9 +288,9 @@
     },
     {
       "rank": 25,
-      "title": "Furnace Replacements (HSC) Borden",
-      "buyer": "Department of National Defence (DND)",
-      "closing_date": "2026-10-02",
+      "title": "Shuttle Services – Kingston",
+      "buyer": "Correctional Service of Canada (CSC)",
+      "closing_date": "2026-10-05",
       "score": 60,
       "source": "canadabuys",
       "flags": [
