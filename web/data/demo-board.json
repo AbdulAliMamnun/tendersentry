@@ -5,21 +5,21 @@
   },
   "rows": [
     {
+      "title": "EQ754-261464 Long Lake and Little Brother Lake Dam Replacement Site Resident Services",
+      "buyer": "Department of Public Works and Government Services (PSPC)",
+      "closing_date": "2026-10-20",
+      "source": "canadabuys",
+      "score": 91,
+      "scale_band": "$100–500K",
+      "scale_source": "estimated_model"
+    },
+    {
       "title": "Wharf Reconstruction - L'Orignal, ON",
       "buyer": "Department of Fisheries and Oceans (DFO)",
       "closing_date": "2026-10-01",
       "source": "canadabuys",
       "score": 90,
       "scale_band": "$500K–2M",
-      "scale_source": "estimated_model"
-    },
-    {
-      "title": "Retender EQ754-251469 Burlington Lift Bridge Security Gate and Fence Installation",
-      "buyer": "Department of Public Works and Government Services (PSPC)",
-      "closing_date": "2026-09-28",
-      "source": "canadabuys",
-      "score": 85,
-      "scale_band": "$100–500K",
       "scale_source": "estimated_model"
     }
   ],
@@ -42,5 +42,5 @@
     "verification": "exact substring, re-read from the source PDF at generation",
     "reason": "Requires fax submission — this firm submits electronically only."
   },
-  "candidate_count": 167
+  "candidate_count": 170
 }
