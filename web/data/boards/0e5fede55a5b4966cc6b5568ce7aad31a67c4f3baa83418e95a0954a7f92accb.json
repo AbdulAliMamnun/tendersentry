@@ -12,44 +12,11 @@
       "quebec"
     ]
   },
-  "generated_at": "2026-09-24T14:43:53+00:00",
-  "candidate_count": 506,
+  "generated_at": "2026-09-25T15:05:32+00:00",
+  "candidate_count": 495,
   "board": [
     {
       "rank": 1,
-      "title": "Travaux d'égout (Reconstruction, réhabilitation), eau, voirie, éclairage, feux circulation et utilités publiques (Bell, CSEM), rue Sherbrooke de l’A-15 au boulevard Décarie,  arrondissement CDN",
-      "buyer": "Ville de Montréal / SIRR - Service des infrastructures du réseau routier",
-      "closing_date": "2026-10-15",
-      "score": 96,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 2,
-      "title": "6403-26-HA04 - Surveillance des travaux de reconstruction de chaussée en béton de ciment - sur l'Autoroute 20 direction Est, (Saint-Germain-de-Grantham)",
-      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
-      "closing_date": "2026-10-15",
-      "score": 96,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 3,
-      "title": "Remplacement d'un ponceau dans un cours d'eau sur le chemin Saint-Thomas",
-      "buyer": "Ville de Rigaud",
-      "closing_date": "2026-10-05",
-      "score": 93,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 4,
       "title": "Services professionnels en ingénierie civile pour la conception des plans et devis, ainsi que la surveillance des travaux de réfection des infrastructures d’égout, d’aqueduc et de voirie dans l’arrondissement de Lachine",
       "buyer": "Ville de Montréal - Arrondissement de Lachine",
       "closing_date": "2026-10-07",
@@ -60,7 +27,7 @@
       ]
     },
     {
-      "rank": 5,
+      "rank": 2,
       "title": "TRAVAUX DE D’AQUEDUC, DRAINAGE DES EAUX PLUVIALES, D'ÉGOUT SANITAIRE ET DE RÉFECTION DE CHAUSSÉE DE LA RUE ANDRÉ-SOUCY, DE LA 45E AVENUE ET DE LA 48E RUE",
       "buyer": "Municipalité de Pointe-Calumet.",
       "closing_date": "2026-10-07",
@@ -71,51 +38,29 @@
       ]
     },
     {
-      "rank": 6,
-      "title": "Services professionnels d'ingénierie - Ajout d'un système de désinfection des eaux usées - Usine d'épuration de St-Canut",
-      "buyer": "Ville de Mirabel",
-      "closing_date": "2026-10-15",
-      "score": 91,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 7,
-      "title": "Réhabilitation d'une conduite d'eau de 2100mm dans l'axe de l'avenue Viger entre la rue Wolfe et l'avenue Papineau",
-      "buyer": "Ville de Montréal - Service de l'Eau",
-      "closing_date": "2026-10-15",
-      "score": 91,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 8,
-      "title": "Travaux de réhabilitation de conduites d'égout par chemisage dans diverses rues de la ville de Montréal dans les arrondissements de ANJ, MHM, RPP et STL",
+      "rank": 3,
+      "title": "Travaux d'égout (Reconstruction, réhabilitation), eau, voirie, éclairage, feux circulation et utilités publiques (Bell, CSEM), rue Sherbrooke de l’A-15 au boulevard Décarie,  arrondissement CDN",
       "buyer": "Ville de Montréal / SIRR - Service des infrastructures du réseau routier",
       "closing_date": "2026-10-15",
-      "score": 91,
+      "score": 93,
       "source": "seao",
       "flags": [
         "value_unknown"
       ]
     },
     {
-      "rank": 9,
-      "title": "Installation du système de soude caustique à l'usine d'eau potable de Pierrefonds",
-      "buyer": "Ville de Montréal - Service de l'Eau",
+      "rank": 4,
+      "title": "6403-26-HA04 - Surveillance des travaux de reconstruction de chaussée en béton de ciment - sur l'Autoroute 20 direction Est, (Saint-Germain-de-Grantham)",
+      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
       "closing_date": "2026-10-15",
-      "score": 91,
+      "score": 93,
       "source": "seao",
       "flags": [
         "value_unknown"
       ]
     },
     {
-      "rank": 10,
+      "rank": 5,
       "title": "Mise à niveau et mise aux normes du réservoir et des installations de distribution d'eau potable",
       "buyer": "Municipalité de Sainte-Martine.",
       "closing_date": "2026-10-22",
@@ -126,7 +71,7 @@
       ]
     },
     {
-      "rank": 11,
+      "rank": 6,
       "title": "CI32 - Construction des structures auxiliaires SA1, SA2 et SA3",
       "buyer": "Société de transport de Montréal",
       "closing_date": "2026-10-27",
@@ -137,29 +82,18 @@
       ]
     },
     {
-      "rank": 12,
-      "title": "Travaux d'infrastructures municipales sur le chemin des Quatre-Bourgeois TW-04B (PSO250090)",
-      "buyer": "Ville de Québec",
+      "rank": 7,
+      "title": "Remplacement d'un ponceau dans un cours d'eau sur le chemin Saint-Thomas",
+      "buyer": "Ville de Rigaud",
       "closing_date": "2026-10-05",
-      "score": 89,
+      "score": 90,
       "source": "seao",
       "flags": [
         "value_unknown"
       ]
     },
     {
-      "rank": 13,
-      "title": "Remplacement de ponceaux rang Couturval et chemin lac Gauthier",
-      "buyer": "Municipalité de Sainte-Irène",
-      "closing_date": "2026-10-05",
-      "score": 89,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 14,
+      "rank": 8,
       "title": "Services professionnels pour la réfection du poste de pompage sanitaire Martel",
       "buyer": "Ville de Chambly",
       "closing_date": "2026-10-05",
@@ -170,7 +104,7 @@
       ]
     },
     {
-      "rank": 15,
+      "rank": 9,
       "title": "2503-21-1103 - Contrat suivant la qualif. en travaux complexes de const. ou d'ouvrage d'art, selon liste en vigueur au dépôt de la soumission, pour la construction d'un échangeur, de l'autoroute A-640 et Ave. Urbanova (Terrebonne)",
       "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
       "closing_date": "2026-10-05",
@@ -181,7 +115,7 @@
       ]
     },
     {
-      "rank": 16,
+      "rank": 10,
       "title": "6603-26-0224 - Travaux de maintien du tablier du Pont de Québec P-04925 sur la route 175 (Lévis)",
       "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
       "closing_date": "2026-10-05",
@@ -192,7 +126,7 @@
       ]
     },
     {
-      "rank": 17,
+      "rank": 11,
       "title": "2513-25-0905 - Travaux d’élargissement et ajout d’une voie réservée sur l’autoroute 10, directions Est et Ouest, échangeur de l’autoroute.30 et l’échangeur de l’autoroute 35 et le réaménagement de bretelles des autoroutes 10 et 35 (CMM)",
       "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
       "closing_date": "2026-10-05",
@@ -203,7 +137,7 @@
       ]
     },
     {
-      "rank": 18,
+      "rank": 12,
       "title": "2e publication - Nettoyage cours d'eau Décharge du Père-Hilaire et cours d'eau Décharge Neuve",
       "buyer": "Ville de Louiseville.",
       "closing_date": "2026-10-05",
@@ -214,7 +148,7 @@
       ]
     },
     {
-      "rank": 19,
+      "rank": 13,
       "title": "Réparation du mur de soutènement à l’intersection du boulevard La Vérendrye Ouest et de la rue Père-Bériault",
       "buyer": "Ville de Gatineau.",
       "closing_date": "2026-10-05",
@@ -225,7 +159,7 @@
       ]
     },
     {
-      "rank": 20,
+      "rank": 14,
       "title": "Pour des services de reproduction de marques longitudinales sur la chaussée et les voies cyclables",
       "buyer": "Ville de Blainville",
       "closing_date": "2026-10-06",
@@ -236,7 +170,7 @@
       ]
     },
     {
-      "rank": 21,
+      "rank": 15,
       "title": "Pavage d'un tronçon du boulevard Saint-Joseph",
       "buyer": "Ville de Notre-Dame-de-l'Île-Perrot",
       "closing_date": "2026-10-06",
@@ -247,7 +181,7 @@
       ]
     },
     {
-      "rank": 22,
+      "rank": 16,
       "title": "Augmentation de la capacité de la station d'épuration des eaux usées - Secteur \"Village\"",
       "buyer": "Municipalité de Saint-Denis-de-Brompton .",
       "closing_date": "2026-10-06",
@@ -258,7 +192,7 @@
       ]
     },
     {
-      "rank": 23,
+      "rank": 17,
       "title": "Services Professionnels en ingénierie et architecture pour des infrastructures de gestion des eaux pluviales et des eaux usées - Service de l'eau",
       "buyer": "Ville de Montréal - Service de l'approvisionnement",
       "closing_date": "2026-10-06",
@@ -269,7 +203,7 @@
       ]
     },
     {
-      "rank": 24,
+      "rank": 18,
       "title": "Services professionnels en aménagement urbain, en ingénierie et en architecture pour des études d’avant-projet préliminaire dans le corridor du viaduc Rosemont – Van Horne",
       "buyer": "Ville de Montréal - Service de l'approvisionnement",
       "closing_date": "2026-10-06",
@@ -280,10 +214,76 @@
       ]
     },
     {
-      "rank": 25,
+      "rank": 19,
       "title": "Serv. Prof. - ingénierie assainissement des eaux - Parent",
       "buyer": "Ville de La Tuque.",
       "closing_date": "2026-10-06",
+      "score": 89,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 20,
+      "title": "Travaux électriques pour l'éclairage sportif et structures de support",
+      "buyer": "Parc olympique",
+      "closing_date": "2026-10-07",
+      "score": 89,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 21,
+      "title": "Services professionnels en ingénierie pour plans et devis technique- modernisation de station d'égout sanitaire rue de l'Église",
+      "buyer": "Ville de Saint-Antonin",
+      "closing_date": "2026-10-07",
+      "score": 89,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 22,
+      "title": "Cours d'eau Rivière Delorme, branche 85 (25/6970/448) - Grand rang Saint-André, principal (25/8225/460) et branches 1 (25/8225/459) et 3 (25/8225/458) - Ville de Saint-Hyacinthe",
+      "buyer": "MRC des Maskoutains",
+      "closing_date": "2026-10-07",
+      "score": 89,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 23,
+      "title": "Cours d'eau Rivière Chibouet, branches 33 (22/1486/404) et 66 (25/1486/446) - Ste-Hélène-de-Bagot et d’Upton, cours d'eau Vandal, branche 1 (24/9044/416) et Grand Cours d'eau, branche Ouest (24/7571/417) - St-Liboire",
+      "buyer": "MRC des Maskoutains",
+      "closing_date": "2026-10-07",
+      "score": 89,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 24,
+      "title": "services professionnels en ingénierie des structures et génie civil pour réfection complète de tous les logements des bloc B et C, plomberie, électricité et structure Habitations De L’Érablière",
+      "buyer": "OMH de Montréal (OMHM)",
+      "closing_date": "2026-10-07",
+      "score": 89,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 25,
+      "title": "Réhabilitation des conduites d’égout par gainage structural",
+      "buyer": "Ville de Westmount",
+      "closing_date": "2026-10-07",
       "score": 89,
       "source": "seao",
       "flags": [

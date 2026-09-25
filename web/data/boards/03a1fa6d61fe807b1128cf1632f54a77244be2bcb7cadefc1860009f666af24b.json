@@ -10,8 +10,8 @@
       "ontario_any"
     ]
   },
-  "generated_at": "2026-09-24T14:43:53+00:00",
-  "candidate_count": 170,
+  "generated_at": "2026-09-25T15:05:32+00:00",
+  "candidate_count": 166,
   "board": [
     {
       "rank": 1,
@@ -48,17 +48,6 @@
     },
     {
       "rank": 4,
-      "title": "Clowes Weir Reconstruction - Rideau Canal National Historic Site of Canada",
-      "buyer": "Parks Canada Agency (PC)",
-      "closing_date": "2026-09-29",
-      "score": 85,
-      "source": "canadabuys",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 5,
       "title": "Septic System Replacement, Rouge National Urban Park",
       "buyer": "Parks Canada Agency (PC)",
       "closing_date": "2026-09-30",
@@ -69,10 +58,21 @@
       ]
     },
     {
-      "rank": 6,
+      "rank": 5,
       "title": "Retender EQ754-251469 Burlington Lift Bridge Security Gate and Fence Installation",
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-09-28",
+      "score": 80,
+      "source": "canadabuys",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 6,
+      "title": "Clowes Weir Reconstruction - Rideau Canal National Historic Site of Canada",
+      "buyer": "Parks Canada Agency (PC)",
+      "closing_date": "2026-09-29",
       "score": 80,
       "source": "canadabuys",
       "flags": [
@@ -137,17 +137,6 @@
     },
     {
       "rank": 12,
-      "title": "South Campus Watermain Replacement",
-      "buyer": "National Research Council of Canada (NRC)",
-      "closing_date": "2026-09-29",
-      "score": 75,
-      "source": "canadabuys",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 13,
       "title": "Sustainable Northern Operations: Water & Waste",
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-10-20",
@@ -158,7 +147,7 @@
       ]
     },
     {
-      "rank": 14,
+      "rank": 13,
       "title": "RF Data Fusion for Command and Control",
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-10-20",
@@ -169,7 +158,30 @@
       ]
     },
     {
+      "rank": 14,
+      "title": "South Campus Watermain Replacement",
+      "buyer": "National Research Council of Canada (NRC)",
+      "closing_date": "2026-09-29",
+      "score": 70,
+      "source": "canadabuys",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
       "rank": 15,
+      "title": "EQ754-270295 - Nassau Mills Dam at Lock 22 Replacement",
+      "buyer": "Department of Public Works and Government Services (PSPC)",
+      "closing_date": "2026-10-22",
+      "score": 68,
+      "source": "canadabuys",
+      "flags": [
+        "trade_unmapped",
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 16,
       "title": "APN_Construct Warehouse (CADSS/MAJAID), Trenton ON",
       "buyer": "Defence Construction Canada - Ontario Region",
       "closing_date": "2026-10-27",
@@ -181,7 +193,7 @@
       ]
     },
     {
-      "rank": 16,
+      "rank": 17,
       "title": "Canadian Macroeconomic Data",
       "buyer": "Office of the Superintendent of Financial Institutions (OSFI)",
       "closing_date": "2026-10-08",
@@ -192,7 +204,7 @@
       ]
     },
     {
-      "rank": 17,
+      "rank": 18,
       "title": "Plumbing Services, AAFC, Saskatoon Research and Development Centre",
       "buyer": "Department of Agriculture and Agri-Food (AAFC)",
       "closing_date": "2026-10-13",
@@ -203,7 +215,7 @@
       ]
     },
     {
-      "rank": 18,
+      "rank": 19,
       "title": "APN - NORAD Northern Basing Infrastructure (NNBI), NWT",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2026-11-30",
@@ -215,7 +227,7 @@
       ]
     },
     {
-      "rank": 19,
+      "rank": 20,
       "title": "APN - Facilities Maintenance and Support Services Northern Canada",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2026-11-30",
@@ -227,7 +239,7 @@
       ]
     },
     {
-      "rank": 20,
+      "rank": 21,
       "title": "Step 2 for 2 Service Battalion HQ Administration Company Building",
       "buyer": "Defence Construction Canada / Construction de Défense Canada",
       "closing_date": "2026-10-08",
@@ -239,7 +251,7 @@
       ]
     },
     {
-      "rank": 21,
+      "rank": 22,
       "title": "Community Residential Facilities",
       "buyer": "Correctional Service of Canada (CSC)",
       "closing_date": "2026-12-31",
@@ -250,7 +262,7 @@
       ]
     },
     {
-      "rank": 22,
+      "rank": 23,
       "title": "Environmental Consultant Services in Nunavut",
       "buyer": "Defence Construction Canada / Construction de Défense Canada",
       "closing_date": "2026-10-14",
@@ -262,7 +274,7 @@
       ]
     },
     {
-      "rank": 23,
+      "rank": 24,
       "title": "Directed Faith Community Reintegration Project – Muslim Initiative",
       "buyer": "Correctional Service of Canada (CSC)",
       "closing_date": "2026-10-02",
@@ -273,25 +285,13 @@
       ]
     },
     {
-      "rank": 24,
+      "rank": 25,
       "title": "Technical Assessment and Cost-Benefit Analysis on Fuel Storage Tank Systems Life Cycle (Installation, Maintenance and Removal)",
       "buyer": "Department of the Environment (ECCC )",
       "closing_date": "2026-10-02",
       "score": 64,
       "source": "canadabuys",
       "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 25,
-      "title": "APN - NORAD Northern Basing Infrastructure (NNBI), Nunavut",
-      "buyer": "Defence Construction Canada - National Capital Region",
-      "closing_date": "2027-01-11",
-      "score": 63,
-      "source": "canadabuys",
-      "flags": [
-        "trade_family_only",
         "value_unknown"
       ]
     }
