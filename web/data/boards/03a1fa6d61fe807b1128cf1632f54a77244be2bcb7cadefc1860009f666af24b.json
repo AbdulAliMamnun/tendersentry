@@ -10,7 +10,7 @@
       "ontario_any"
     ]
   },
-  "generated_at": "2026-09-26T14:14:04+00:00",
+  "generated_at": "2026-09-27T15:03:49+00:00",
   "candidate_count": 176,
   "board": [
     {
@@ -26,10 +26,10 @@
     },
     {
       "rank": 2,
-      "title": "Wharf Reconstruction - L'Orignal, ON",
+      "title": "Whitby South Shore Protection",
       "buyer": "Department of Fisheries and Oceans (DFO)",
-      "closing_date": "2026-10-01",
-      "score": 90,
+      "closing_date": "2026-10-07",
+      "score": 89,
       "source": "canadabuys",
       "flags": [
         "value_unknown"
@@ -37,10 +37,10 @@
     },
     {
       "rank": 3,
-      "title": "Whitby South Shore Protection",
+      "title": "Wharf Reconstruction - L'Orignal, ON",
       "buyer": "Department of Fisheries and Oceans (DFO)",
-      "closing_date": "2026-10-07",
-      "score": 89,
+      "closing_date": "2026-10-01",
+      "score": 84,
       "source": "canadabuys",
       "flags": [
         "value_unknown"
@@ -81,17 +81,6 @@
     },
     {
       "rank": 7,
-      "title": "RFSO -Coastal imaging, habitat classification, shoreline assessment in Canada",
-      "buyer": "Department of Fisheries and Oceans (DFO)",
-      "closing_date": "2026-10-06",
-      "score": 79,
-      "source": "canadabuys",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 8,
       "title": "South Campus Watermain Replacement",
       "buyer": "National Research Council of Canada (NRC)",
       "closing_date": "2026-10-08",
@@ -102,18 +91,7 @@
       ]
     },
     {
-      "rank": 9,
-      "title": "APN_ONTARIO ARMOURIES SITE ENHANCEMENT PROGRAM VARIOUS ONTARIO LOCATIONS",
-      "buyer": "Defence Construction Canada - Ontario Region",
-      "closing_date": "2026-10-06",
-      "score": 78,
-      "source": "canadabuys",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 10,
+      "rank": 8,
       "title": "CONSTRUCTION MANAGEMENT SERVICES, WHITEHORSE CADET TRAINING CENTRE  WHITEHORSE",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2026-10-12",
@@ -124,7 +102,7 @@
       ]
     },
     {
-      "rank": 11,
+      "rank": 9,
       "title": "Refrigeration and HVAC Services at the Pacific Biological Station (PBS), Nanaimo, British Columbia (B.C.).",
       "buyer": "Department of Fisheries and Oceans (DFO)",
       "closing_date": "2026-10-13",
@@ -135,7 +113,7 @@
       ]
     },
     {
-      "rank": 12,
+      "rank": 10,
       "title": "APN - RP OPS and CFHA Base Program , Nunavut",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2029-03-31",
@@ -143,6 +121,28 @@
       "source": "canadabuys",
       "flags": [
         "long_horizon",
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 11,
+      "title": "RFSO -Coastal imaging, habitat classification, shoreline assessment in Canada",
+      "buyer": "Department of Fisheries and Oceans (DFO)",
+      "closing_date": "2026-10-06",
+      "score": 75,
+      "source": "canadabuys",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 12,
+      "title": "APN_ONTARIO ARMOURIES SITE ENHANCEMENT PROGRAM VARIOUS ONTARIO LOCATIONS",
+      "buyer": "Defence Construction Canada - Ontario Region",
+      "closing_date": "2026-10-06",
+      "score": 74,
+      "source": "canadabuys",
+      "flags": [
         "value_unknown"
       ]
     },
