@@ -10,15 +10,15 @@
       "ontario_any"
     ]
   },
-  "generated_at": "2026-09-29T16:25:51+00:00",
-  "candidate_count": 166,
+  "generated_at": "2026-09-30T16:21:17+00:00",
+  "candidate_count": 169,
   "board": [
     {
       "rank": 1,
-      "title": "EQ754-261464 Long Lake and Little Brother Lake Dam Replacement Site Resident Services",
-      "buyer": "Department of Public Works and Government Services (PSPC)",
-      "closing_date": "2026-10-20",
-      "score": 91,
+      "title": "Whitby South Shore Protection",
+      "buyer": "Department of Fisheries and Oceans (DFO)",
+      "closing_date": "2026-10-14",
+      "score": 89,
       "source": "canadabuys",
       "flags": [
         "value_unknown"
@@ -26,10 +26,10 @@
     },
     {
       "rank": 2,
-      "title": "Whitby South Shore Protection",
-      "buyer": "Department of Fisheries and Oceans (DFO)",
-      "closing_date": "2026-10-07",
-      "score": 85,
+      "title": "EQ754-261464 Long Lake and Little Brother Lake Dam Replacement Site Resident Services",
+      "buyer": "Department of Public Works and Government Services (PSPC)",
+      "closing_date": "2026-10-20",
+      "score": 89,
       "source": "canadabuys",
       "flags": [
         "value_unknown"
@@ -37,6 +37,17 @@
     },
     {
       "rank": 3,
+      "title": "Retender EQ754-251469 Burlington Lift Bridge Security Gate and Fence Installation",
+      "buyer": "Department of Public Works and Government Services (PSPC)",
+      "closing_date": "2026-10-06",
+      "score": 85,
+      "source": "canadabuys",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 4,
       "title": "Clowes Weir Reconstruction - Rideau Canal National Historic Site of Canada",
       "buyer": "Parks Canada Agency (PC)",
       "closing_date": "2026-10-08",
@@ -47,22 +58,11 @@
       ]
     },
     {
-      "rank": 4,
+      "rank": 5,
       "title": "Wharf Reconstruction - L'Orignal, ON",
       "buyer": "Department of Fisheries and Oceans (DFO)",
       "closing_date": "2026-10-01",
       "score": 84,
-      "source": "canadabuys",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 5,
-      "title": "Septic System Replacement, Rouge National Urban Park",
-      "buyer": "Parks Canada Agency (PC)",
-      "closing_date": "2026-09-30",
-      "score": 80,
       "source": "canadabuys",
       "flags": [
         "value_unknown"
@@ -140,7 +140,7 @@
       "title": "Sustainable Northern Operations: Water & Waste",
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-10-20",
-      "score": 73,
+      "score": 71,
       "source": "canadabuys",
       "flags": [
         "value_unknown"
@@ -148,17 +148,6 @@
     },
     {
       "rank": 13,
-      "title": "RF Data Fusion for Command and Control",
-      "buyer": "Department of Public Works and Government Services (PSPC)",
-      "closing_date": "2026-10-20",
-      "score": 70,
-      "source": "canadabuys",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 14,
       "title": "EQ754-270295 - Nassau Mills Dam at Lock 22 Replacement",
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-10-22",
@@ -170,7 +159,7 @@
       ]
     },
     {
-      "rank": 15,
+      "rank": 14,
       "title": "APN_Construct Warehouse (CADSS/MAJAID), Trenton ON",
       "buyer": "Defence Construction Canada - Ontario Region",
       "closing_date": "2026-10-27",
@@ -182,10 +171,21 @@
       ]
     },
     {
-      "rank": 16,
+      "rank": 15,
       "title": "Plumbing Services, AAFC, Saskatoon Research and Development Centre",
       "buyer": "Department of Agriculture and Agri-Food (AAFC)",
       "closing_date": "2026-10-13",
+      "score": 68,
+      "source": "canadabuys",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 16,
+      "title": "RF Data Fusion for Command and Control",
+      "buyer": "Department of Public Works and Government Services (PSPC)",
+      "closing_date": "2026-10-20",
       "score": 68,
       "source": "canadabuys",
       "flags": [
@@ -276,9 +276,9 @@
     },
     {
       "rank": 24,
-      "title": "Psychological Risk Assessment Services (Psychologist) – Ontario Region",
-      "buyer": "Correctional Service of Canada (CSC)",
-      "closing_date": "2026-10-20",
+      "title": "TSPS – One (1) Procurement Specialist, Intermediate, One (1) Life Cycle Management Specialist Intermediate (Montreal).",
+      "buyer": "Department of National Defence (DND)",
+      "closing_date": "2026-10-22",
       "score": 62,
       "source": "canadabuys",
       "flags": [
@@ -288,9 +288,9 @@
     },
     {
       "rank": 25,
-      "title": "W0125-26WR02- Refurbishment of Chemical Storage Sheds",
-      "buyer": "Department of Public Works and Government Services (PSPC)",
-      "closing_date": "2026-10-20",
+      "title": "EDC Branded Merchandise Platform",
+      "buyer": "Export Development Canada - EDC",
+      "closing_date": "2026-10-23",
       "score": 62,
       "source": "canadabuys",
       "flags": [
