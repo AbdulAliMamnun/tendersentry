@@ -12,8 +12,8 @@
       "quebec"
     ]
   },
-  "generated_at": "2026-10-03T14:39:07+00:00",
-  "candidate_count": 487,
+  "generated_at": "2026-10-04T15:12:56+00:00",
+  "candidate_count": 478,
   "board": [
     {
       "rank": 1,
@@ -182,10 +182,10 @@
     },
     {
       "rank": 16,
-      "title": "Travaux ponctuels d’excavation et de réparation sur le réseau d’aqueduc et d’égout",
-      "buyer": "Ville de Longueuil",
-      "closing_date": "2026-10-08",
-      "score": 90,
+      "title": "2513-26-HE05 - Effectuer la surveillance des travaux de réfection de la structure P-13472 sur la route 116 dans l'échangeur A-30/R-116 ainsi que toute activité connexe (Saint-Bruno-de-Montarville)",
+      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
+      "closing_date": "2026-10-14",
+      "score": 89,
       "source": "seao",
       "flags": [
         "value_unknown"
@@ -193,9 +193,9 @@
     },
     {
       "rank": 17,
-      "title": "Pavage de la rue Forget",
-      "buyer": "Municipalité de Morin-Heights .",
-      "closing_date": "2026-10-13",
+      "title": "2602-21-AA01 – Réalisation d’une étude d'opportunité pour la reconstruction du pont P-13213 situé sur la route 112, au-dessus de l'autoroute 20, dans la ville de Longueuil. (Montérégie",
+      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
+      "closing_date": "2026-10-14",
       "score": 89,
       "source": "seao",
       "flags": [
@@ -204,9 +204,9 @@
     },
     {
       "rank": 18,
-      "title": "services professionnels en ingénierie des structures et génie civil dans le cadre d’un projet de remise à neuf de l’enveloppe aux habitations Beaudet",
-      "buyer": "OMH de Montréal (OMHM)",
-      "closing_date": "2026-10-13",
+      "title": "2513-26-1103 - CED suivant la qualif. en travaux complexes de const. et/ou de réparation de ponts et tunnels, selon la liste en vigueur à l'ouverture des soumissions, pour les travaux de réparation prioritaire de diverses structures (CMM)",
+      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
+      "closing_date": "2026-10-14",
       "score": 89,
       "source": "seao",
       "flags": [
@@ -215,9 +215,9 @@
     },
     {
       "rank": 19,
-      "title": "OPÉRATIONS DE DÉNEIGEMENT – TERRAINS, TROTTOIRS, ACCÈS PIÉTONS ET STATIONNEMENTS MUNICIPAUX",
-      "buyer": "Municipalité de Sainte-Béatrix.",
-      "closing_date": "2026-10-13",
+      "title": "Services professionnels pour la réalisation d’une étude préparatoire pour le remplacement du poste de pompage d’eau brute Memphrémagog",
+      "buyer": "Ville de Sherbrooke",
+      "closing_date": "2026-10-14",
       "score": 89,
       "source": "seao",
       "flags": [
@@ -226,9 +226,9 @@
     },
     {
       "rank": 20,
-      "title": "Services professionnels en aménagement urbain, en ingénierie et en architecture pour des études d’avant-projet préliminaire dans le corridor du viaduc Rosemont – Van Horne",
-      "buyer": "Ville de Montréal - Service de l'approvisionnement",
-      "closing_date": "2026-10-13",
+      "title": "Travaux d'infrastructures municipales sur le chemin des Quatre-Bourgeois TW-04B (PSO250090)",
+      "buyer": "Ville de Québec",
+      "closing_date": "2026-10-15",
       "score": 89,
       "source": "seao",
       "flags": [
@@ -237,9 +237,9 @@
     },
     {
       "rank": 21,
-      "title": "4174-25-PK01 Fournir les services d'une foreuse et son équipe en vue d'exécuter des forages et des sondages sur l'ensemble du territoire de la province de Québec (Direction générale du laboratoire des chaussées).",
-      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
-      "closing_date": "2026-10-13",
+      "title": "Travaux d’aménagement d’une passerelle et d’un trottoir de bois au Bois-de-la-Source",
+      "buyer": "Ville de Laval",
+      "closing_date": "2026-10-15",
       "score": 89,
       "source": "seao",
       "flags": [
@@ -248,9 +248,9 @@
     },
     {
       "rank": 22,
-      "title": "6315-26-0301 - Contrat à exécution sur demande pour le marquage longitudinal à base d'eau pour les nouvelles couches d'usure en fin de saison sur diverses routes (Bas-Saint-Laurent-Gaspésie-Îles-de-la-Madeleine",
-      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
-      "closing_date": "2026-10-13",
+      "title": "Services professionnels d'ingénierie - Ajout d'un système de désinfection des eaux usées - Usine d'épuration de St-Canut",
+      "buyer": "Ville de Mirabel",
+      "closing_date": "2026-10-15",
       "score": 89,
       "source": "seao",
       "flags": [
@@ -259,9 +259,9 @@
     },
     {
       "rank": 23,
-      "title": "6517-26-0301 - Contrat à exécution sur demande pour marquage longitudinal avec peinture à base d'eau sur diverses routes (Bas-Saint-Laurent-Gaspésie-Îles-de-la-Madeleine).",
-      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
-      "closing_date": "2026-10-13",
+      "title": "CONTRAT DE SERVICES POUR LE DÉNEIGEMENT, LE DÉGLAÇAGE ET L'ENTRETIEN D'HIVER DU RÉSEAU ROUTIER MUNICIPAL (INCLUANT OPTION TROTTOIRS) Saisons visées: 2026-2027 (Option 1) OU 2026-2027, 2027-2028 et 2028-2029 (Option 2)",
+      "buyer": "Municipalité de Saint-Paulin.",
+      "closing_date": "2026-10-15",
       "score": 89,
       "source": "seao",
       "flags": [
@@ -270,9 +270,9 @@
     },
     {
       "rank": 24,
-      "title": "Lot 0301 – Coffrage, armature, béton et imperméabilisation des fondations - Hôpital Charles-Le Moyne – Bloc opératoire et chirurgie d’un jour – Agrandissement et réaménagement (Module clinique transitoire), 2924 boul. Taschereau, Longueuil.",
-      "buyer": "Société québécoise des infrastructures",
-      "closing_date": "2026-10-13",
+      "title": "Déneigement et entretien d'hiver : stationnements, édifices (trottoirs en option non obligatoire)",
+      "buyer": "Municipalité de Saint-Paulin.",
+      "closing_date": "2026-10-15",
       "score": 89,
       "source": "seao",
       "flags": [
@@ -281,9 +281,9 @@
     },
     {
       "rank": 25,
-      "title": "Services professionnels d’un consultant technique en gestion des sédiments au réservoir Beaudet",
-      "buyer": "Ville de Victoriaville.",
-      "closing_date": "2026-10-14",
+      "title": "Réhabilitation d'une conduite d'eau de 2100mm dans l'axe de l'avenue Viger entre la rue Wolfe et l'avenue Papineau",
+      "buyer": "Ville de Montréal - Service de l'Eau",
+      "closing_date": "2026-10-15",
       "score": 89,
       "source": "seao",
       "flags": [
