@@ -5,18 +5,18 @@
   },
   "rows": [
     {
-      "title": "Whitby South Shore Protection",
-      "buyer": "Department of Fisheries and Oceans (DFO)",
-      "closing_date": "2026-10-14",
+      "title": "EQ754-261464 Long Lake and Little Brother Lake Dam Replacement Site Resident Services",
+      "buyer": "Department of Public Works and Government Services (PSPC)",
+      "closing_date": "2026-10-20",
       "source": "canadabuys",
       "score": 89,
       "scale_band": "$100–500K",
       "scale_source": "estimated_model"
     },
     {
-      "title": "EQ754-261464 Long Lake and Little Brother Lake Dam Replacement Site Resident Services",
+      "title": "Walpole Island Swing Bridge Health and Safety Repairs",
       "buyer": "Department of Public Works and Government Services (PSPC)",
-      "closing_date": "2026-10-20",
+      "closing_date": "2026-10-22",
       "source": "canadabuys",
       "score": 89,
       "scale_band": "$100–500K",
@@ -42,5 +42,5 @@
     "verification": "exact substring, re-read from the source PDF at generation",
     "reason": "Requires fax submission — this firm submits electronically only."
   },
-  "candidate_count": 167
+  "candidate_count": 154
 }

@@ -10,22 +10,11 @@
       "ontario_any"
     ]
   },
-  "generated_at": "2026-10-04T15:12:56+00:00",
-  "candidate_count": 167,
+  "generated_at": "2026-10-05T19:09:58+00:00",
+  "candidate_count": 154,
   "board": [
     {
       "rank": 1,
-      "title": "Whitby South Shore Protection",
-      "buyer": "Department of Fisheries and Oceans (DFO)",
-      "closing_date": "2026-10-14",
-      "score": 89,
-      "source": "canadabuys",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 2,
       "title": "EQ754-261464 Long Lake and Little Brother Lake Dam Replacement Site Resident Services",
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-10-20",
@@ -36,11 +25,22 @@
       ]
     },
     {
-      "rank": 3,
+      "rank": 2,
       "title": "Walpole Island Swing Bridge Health and Safety Repairs",
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-10-22",
       "score": 89,
+      "source": "canadabuys",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 3,
+      "title": "Whitby South Shore Protection",
+      "buyer": "Department of Fisheries and Oceans (DFO)",
+      "closing_date": "2026-10-14",
+      "score": 85,
       "source": "canadabuys",
       "flags": [
         "value_unknown"
@@ -59,17 +59,6 @@
     },
     {
       "rank": 5,
-      "title": "Retender EQ754-251469 Burlington Lift Bridge Security Gate and Fence Installation",
-      "buyer": "Department of Public Works and Government Services (PSPC)",
-      "closing_date": "2026-10-06",
-      "score": 80,
-      "source": "canadabuys",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 6,
       "title": "Clowes Weir Reconstruction - Rideau Canal National Historic Site of Canada",
       "buyer": "Parks Canada Agency (PC)",
       "closing_date": "2026-10-08",
@@ -80,7 +69,7 @@
       ]
     },
     {
-      "rank": 7,
+      "rank": 6,
       "title": "APN - RP OPS and CFHA Base Program , Nunavut",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2029-03-31",
@@ -92,7 +81,7 @@
       ]
     },
     {
-      "rank": 8,
+      "rank": 7,
       "title": "CONSTRUCTION MANAGEMENT SERVICES, WHITEHORSE CADET TRAINING CENTRE  WHITEHORSE",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2026-10-12",
@@ -103,7 +92,7 @@
       ]
     },
     {
-      "rank": 9,
+      "rank": 8,
       "title": "Refrigeration and HVAC Services at the Pacific Biological Station (PBS), Nanaimo, British Columbia (B.C.).",
       "buyer": "Department of Fisheries and Oceans (DFO)",
       "closing_date": "2026-10-13",
@@ -114,7 +103,7 @@
       ]
     },
     {
-      "rank": 10,
+      "rank": 9,
       "title": "Sustainable Northern Operations: Water & Waste",
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-10-20",
@@ -125,7 +114,7 @@
       ]
     },
     {
-      "rank": 11,
+      "rank": 10,
       "title": "Community Residential Facilities",
       "buyer": "Correctional Service of Canada (CSC)",
       "closing_date": "2026-12-31",
@@ -136,18 +125,7 @@
       ]
     },
     {
-      "rank": 12,
-      "title": "RFSO -Coastal imaging, habitat classification, shoreline assessment in Canada",
-      "buyer": "Department of Fisheries and Oceans (DFO)",
-      "closing_date": "2026-10-06",
-      "score": 70,
-      "source": "canadabuys",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 13,
+      "rank": 11,
       "title": "South Campus Watermain Replacement",
       "buyer": "National Research Council of Canada (NRC)",
       "closing_date": "2026-10-08",
@@ -158,18 +136,7 @@
       ]
     },
     {
-      "rank": 14,
-      "title": "APN_ONTARIO ARMOURIES SITE ENHANCEMENT PROGRAM VARIOUS ONTARIO LOCATIONS",
-      "buyer": "Defence Construction Canada - Ontario Region",
-      "closing_date": "2026-10-06",
-      "score": 69,
-      "source": "canadabuys",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 15,
+      "rank": 12,
       "title": "APN_Construct Warehouse (CADSS/MAJAID), Trenton ON",
       "buyer": "Defence Construction Canada - Ontario Region",
       "closing_date": "2026-10-27",
@@ -181,7 +148,7 @@
       ]
     },
     {
-      "rank": 16,
+      "rank": 13,
       "title": "RF Data Fusion for Command and Control",
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-10-20",
@@ -192,7 +159,7 @@
       ]
     },
     {
-      "rank": 17,
+      "rank": 14,
       "title": "Environmental Consultant Services in Nunavut",
       "buyer": "Defence Construction Canada / Construction de Défense Canada",
       "closing_date": "2026-10-28",
@@ -204,7 +171,7 @@
       ]
     },
     {
-      "rank": 18,
+      "rank": 15,
       "title": "APN - NORAD Northern Basing Infrastructure (NNBI), NWT",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2026-11-30",
@@ -216,7 +183,7 @@
       ]
     },
     {
-      "rank": 19,
+      "rank": 16,
       "title": "APN - Facilities Maintenance and Support Services Northern Canada",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2026-11-30",
@@ -228,7 +195,7 @@
       ]
     },
     {
-      "rank": 20,
+      "rank": 17,
       "title": "EQ754-270295 - Nassau Mills Dam at Lock 22 Replacement",
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-10-22",
@@ -240,7 +207,7 @@
       ]
     },
     {
-      "rank": 21,
+      "rank": 18,
       "title": "Dental Chairs and Accessories for Multiple Sites in Ontario region",
       "buyer": "Correctional Service of Canada (CSC)",
       "closing_date": "2026-10-16",
@@ -252,7 +219,7 @@
       ]
     },
     {
-      "rank": 22,
+      "rank": 19,
       "title": "Plumbing Services, AAFC, Saskatoon Research and Development Centre",
       "buyer": "Department of Agriculture and Agri-Food (AAFC)",
       "closing_date": "2026-10-13",
@@ -263,7 +230,7 @@
       ]
     },
     {
-      "rank": 23,
+      "rank": 20,
       "title": "APN - NORAD Northern Basing Infrastructure (NNBI), Nunavut",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2027-01-11",
@@ -275,7 +242,7 @@
       ]
     },
     {
-      "rank": 24,
+      "rank": 21,
       "title": "Request for Information for  Electronic Occupational Health Record System  for RCMP",
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-11-01",
@@ -287,11 +254,47 @@
       ]
     },
     {
-      "rank": 25,
+      "rank": 22,
       "title": "Contaminated Sites Assessment and Monitoring Services SL",
       "buyer": "Defence Construction Canada / Construction de Défense Canada",
       "closing_date": "2026-11-03",
       "score": 62,
+      "source": "canadabuys",
+      "flags": [
+        "trade_unmapped",
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 23,
+      "title": "Industry Sustainment Business Case Analysis (SBCA) Workshop",
+      "buyer": "Department of Public Works and Government Services (PSPC)",
+      "closing_date": "2026-12-31",
+      "score": 62,
+      "source": "canadabuys",
+      "flags": [
+        "trade_unmapped",
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 24,
+      "title": "TSPS - Stream 1.4 Employee Relation Consultant Tier 1",
+      "buyer": "Privy Council Office (PCO)",
+      "closing_date": "2026-10-15",
+      "score": 60,
+      "source": "canadabuys",
+      "flags": [
+        "trade_unmapped",
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 25,
+      "title": "Project Manager  – Level 3",
+      "buyer": "Department of Industry (ISED)",
+      "closing_date": "2026-10-16",
+      "score": 60,
       "source": "canadabuys",
       "flags": [
         "trade_unmapped",
