@@ -12,22 +12,11 @@
       "quebec"
     ]
   },
-  "generated_at": "2026-10-06T16:34:38+00:00",
-  "candidate_count": 544,
+  "generated_at": "2026-10-07T17:22:39+00:00",
+  "candidate_count": 517,
   "board": [
     {
       "rank": 1,
-      "title": "Travaux de conduites d’eau principales et secondaires, d’égout, de voirie, de la CSEM, d’éclairage et de feux de circulation dans l’avenue Laurier Est, entre les rues Saint-Hubert et de Brébeuf",
-      "buyer": "Ville de Montréal - Service de l'Eau",
-      "closing_date": "2026-10-27",
-      "score": 96,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 2,
       "title": "Services professionnels - Plans, devis et surveillance des travaux - Réfection du mur de soutènement en bordure de la rivière des Mille-Îles",
       "buyer": "Ville de Terrebonne",
       "closing_date": "2026-11-03",
@@ -38,84 +27,18 @@
       ]
     },
     {
+      "rank": 2,
+      "title": "Travaux de conduites d’eau principales et secondaires, d’égout, de voirie, de la CSEM, d’éclairage et de feux de circulation dans l’avenue Laurier Est, entre les rues Saint-Hubert et de Brébeuf",
+      "buyer": "Ville de Montréal - Service de l'Eau",
+      "closing_date": "2026-10-27",
+      "score": 93,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
       "rank": 3,
-      "title": "CI32 - Construction des structures auxiliaires SA1, SA2 et SA3",
-      "buyer": "Société de transport de Montréal",
-      "closing_date": "2026-10-27",
-      "score": 91,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 4,
-      "title": "Dépannage des sites de régulation et de mesure sur le réseau d'eau potable",
-      "buyer": "Ville de Montréal - Service de l'approvisionnement",
-      "closing_date": "2026-10-27",
-      "score": 91,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 5,
-      "title": "Services professionnels en gestion et surveillance des travaux pour les travaux de réfection d’infrastructures municipales sur le territoire de la Ville de Montréal",
-      "buyer": "Ville de Montréal - Service de l'approvisionnement",
-      "closing_date": "2026-10-27",
-      "score": 91,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 6,
-      "title": "Travaux de voirie pour le colmatage de nids-de-poule en conditions hivernales sur plusieurs rues de la ville de Montréal",
-      "buyer": "Ville de Montréal - Service de la concertation des arrondissements",
-      "closing_date": "2026-10-27",
-      "score": 91,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 7,
-      "title": "Nettoyage des égouts",
-      "buyer": "Ville de Prévost.",
-      "closing_date": "2026-10-27",
-      "score": 91,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 8,
-      "title": "26061-S Cartographie des zones de mobilité des cours d’eau du bassin versant de la rivière Rouge",
-      "buyer": "Ministère de l'Environnement, de la Lutte contre les changements climatiques, de la Faune et des Parcs",
-      "closing_date": "2026-10-27",
-      "score": 91,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 9,
-      "title": "Transport et disposition des biosolides de l'usine d'épuration Achille-Gagnon pour les années 2027, 2028 et 2029",
-      "buyer": "Ville de Victoriaville.",
-      "closing_date": "2026-10-28",
-      "score": 91,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 10,
       "title": "2513-25-0905 - Travaux d’élargissement et ajout d’une voie réservée sur l’autoroute 10, directions Est et Ouest, échangeur de l’autoroute.30 et l’échangeur de l’autoroute 35 et le réaménagement de bretelles des autoroutes 10 et 35 (CMM)",
       "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
       "closing_date": "2026-10-28",
@@ -126,7 +49,7 @@
       ]
     },
     {
-      "rank": 11,
+      "rank": 4,
       "title": "7009-26-0201 - Contrat à exécution sur demande pour la réparation de diverses structures (Mauricie-Centre-du-Québec).",
       "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
       "closing_date": "2026-10-28",
@@ -137,7 +60,7 @@
       ]
     },
     {
-      "rank": 12,
+      "rank": 5,
       "title": "8803-26-0003 - Stabilisation de talus de la route 327 et remplacement du ponceau 188069 dans la municipalité de Brownsburg-Chatham (Laurentides).",
       "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
       "closing_date": "2026-10-28",
@@ -148,7 +71,7 @@
       ]
     },
     {
-      "rank": 13,
+      "rank": 6,
       "title": "Installation du système de soude caustique à l'usine d'eau potable de Pierrefonds",
       "buyer": "Ville de Montréal - Service de l'Eau",
       "closing_date": "2026-10-29",
@@ -159,7 +82,7 @@
       ]
     },
     {
-      "rank": 14,
+      "rank": 7,
       "title": "Travaux de remplacement de branchements d’eau en plomb et de voirie (réhabilitation) dans diverses rues de la Ville de Montréal dans les arrondissements de CDN, LSO, OUT et VER",
       "buyer": "Ville de Montréal / SIRR - Service des infrastructures du réseau routier",
       "closing_date": "2026-10-29",
@@ -170,7 +93,7 @@
       ]
     },
     {
-      "rank": 15,
+      "rank": 8,
       "title": "Services professionnels pour la réalisation d’une étude préparatoire pour le remplacement du poste de pompage d’eau brute Memphrémagog",
       "buyer": "Ville de Sherbrooke",
       "closing_date": "2026-10-29",
@@ -181,7 +104,7 @@
       ]
     },
     {
-      "rank": 16,
+      "rank": 9,
       "title": "Réhabilitation des conduites d'aqueduc, rues des perdrix et des colibris",
       "buyer": "Ville de Sainte-Marthe-sur-le-Lac.",
       "closing_date": "2026-10-30",
@@ -192,7 +115,7 @@
       ]
     },
     {
-      "rank": 17,
+      "rank": 10,
       "title": "8614-26-KB09 - Effectuer le suivi ISO, audits et essais de laboratoire pour assurer le suivi de production des centrales d'enrobés (Montérégie).",
       "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
       "closing_date": "2026-11-02",
@@ -203,7 +126,7 @@
       ]
     },
     {
-      "rank": 18,
+      "rank": 11,
       "title": "Services professionnels en ingénierie mise à niveau de la station de traitement des eaux usées par étangs aérés",
       "buyer": "Ville de Repentigny.",
       "closing_date": "2026-11-03",
@@ -214,7 +137,7 @@
       ]
     },
     {
-      "rank": 19,
+      "rank": 12,
       "title": "Pavage d'un tronçon du boulevard Saint-Joseph",
       "buyer": "Ville de Notre-Dame-de-l'Île-Perrot",
       "closing_date": "2026-11-03",
@@ -225,7 +148,7 @@
       ]
     },
     {
-      "rank": 20,
+      "rank": 13,
       "title": "Services professionnels en ingénierie pour l’élaboration d’un plan de gestion des débordements et d’un plan directeur des infrastructures municipales de la Ville de Coteau-du-Lac",
       "buyer": "Ville de Coteau-du-Lac",
       "closing_date": "2026-11-03",
@@ -236,7 +159,7 @@
       ]
     },
     {
-      "rank": 21,
+      "rank": 14,
       "title": "Services professionnels en génie pour la construction des cellules 17 à 20, la fermeture des cellules 12, 14 et 15 et le déplacement du chemin d'accès au LET",
       "buyer": "MRC de La Vallée-de-l'Or.",
       "closing_date": "2026-11-03",
@@ -247,7 +170,7 @@
       ]
     },
     {
-      "rank": 22,
+      "rank": 15,
       "title": "Travaux électriques pour l'éclairage sportif et structures de support",
       "buyer": "Parc olympique",
       "closing_date": "2026-11-04",
@@ -258,7 +181,7 @@
       ]
     },
     {
-      "rank": 23,
+      "rank": 16,
       "title": "Terminus Montmorency - Remplacement d'un réservoir pétrolier",
       "buyer": "Société de transport de Laval",
       "closing_date": "2026-11-04",
@@ -269,7 +192,7 @@
       ]
     },
     {
-      "rank": 24,
+      "rank": 17,
       "title": "Provincial - Inspections structures civiles souterraines - Réseau Distribution",
       "buyer": "Hydro-Québec.",
       "closing_date": "2026-11-20",
@@ -280,11 +203,88 @@
       ]
     },
     {
-      "rank": 25,
+      "rank": 18,
       "title": "Travaux d'égout (Reconstruction, réhabilitation), eau, voirie, éclairage, feux circulation et utilités publiques (Bell, CSEM), rue Sherbrooke de l’A-15 au boulevard Décarie,  arrondissement CDN",
       "buyer": "Ville de Montréal / SIRR - Service des infrastructures du réseau routier",
       "closing_date": "2026-10-15",
       "score": 90,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 19,
+      "title": "6403-26-HA04 - Surveillance des travaux de reconstruction de chaussée en béton de ciment - sur l'Autoroute 20 direction Est, (Saint-Germain-de-Grantham)",
+      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
+      "closing_date": "2026-10-15",
+      "score": 90,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 20,
+      "title": "Services professionnels pour la réfection du poste de pompage sanitaire Martel",
+      "buyer": "Ville de Chambly",
+      "closing_date": "2026-10-19",
+      "score": 89,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 21,
+      "title": "2503-21-1103 - Contrat suivant la qualif. en travaux complexes de const. ou d'ouvrage d'art, selon liste en vigueur au dépôt de la soumission, pour la construction d'un échangeur, de l'autoroute A-640 et Ave. Urbanova (Terrebonne)",
+      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
+      "closing_date": "2026-10-19",
+      "score": 89,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 22,
+      "title": "6603-26-0224 - Travaux de maintien du tablier du Pont de Québec P-04925 sur la route 175 (Lévis)",
+      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
+      "closing_date": "2026-10-19",
+      "score": 89,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 23,
+      "title": "Exploitation de l'usine de traitement des eaux usées et postes de pompage",
+      "buyer": "Municipalité de Saint-Alphonse-de-Granby.",
+      "closing_date": "2026-10-20",
+      "score": 89,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 24,
+      "title": "Services professionnels pour la réfection des ponts PO-01 et PO-02",
+      "buyer": "Ville de Sept-Îles",
+      "closing_date": "2026-10-20",
+      "score": 89,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 25,
+      "title": "Services professionnels de gestion et surveillance des travaux d'infrastructures municipales dans l'arrondissement de Villeray–Saint-Michel–Parc-Extension",
+      "buyer": "Ville de Montréal - Arrondissement de Villeray—Saint-Michel—Parc-Extension",
+      "closing_date": "2026-10-20",
+      "score": 89,
       "source": "seao",
       "flags": [
         "value_unknown"

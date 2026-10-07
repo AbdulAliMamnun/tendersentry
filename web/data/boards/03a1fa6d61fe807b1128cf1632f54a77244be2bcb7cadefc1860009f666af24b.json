@@ -10,8 +10,8 @@
       "ontario_any"
     ]
   },
-  "generated_at": "2026-10-06T16:34:38+00:00",
-  "candidate_count": 155,
+  "generated_at": "2026-10-07T17:22:39+00:00",
+  "candidate_count": 159,
   "board": [
     {
       "rank": 1,
@@ -26,6 +26,17 @@
     },
     {
       "rank": 2,
+      "title": "Wharf Repairs - Harbour Breton, NL",
+      "buyer": "Department of Fisheries and Oceans (DFO)",
+      "closing_date": "2026-10-21",
+      "score": 89,
+      "source": "canadabuys",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 3,
       "title": "Walpole Island Swing Bridge Health and Safety Repairs",
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-10-22",
@@ -36,7 +47,7 @@
       ]
     },
     {
-      "rank": 3,
+      "rank": 4,
       "title": "Whitby South Shore Protection",
       "buyer": "Department of Fisheries and Oceans (DFO)",
       "closing_date": "2026-10-14",
@@ -47,7 +58,40 @@
       ]
     },
     {
-      "rank": 4,
+      "rank": 5,
+      "title": "Clowes Weir Reconstruction - Rideau Canal National Historic Site of Canada",
+      "buyer": "Parks Canada Agency (PC)",
+      "closing_date": "2026-10-15",
+      "score": 85,
+      "source": "canadabuys",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 6,
+      "title": "Analysis of Wastewater, Sludge/Biosolids, Leachate and Other Complex Environmental Matrices for Metformin and Guanylurea to Environment and Climate Change Canada",
+      "buyer": "Department of the Environment (ECCC )",
+      "closing_date": "2026-10-30",
+      "score": 81,
+      "source": "canadabuys",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 7,
+      "title": "EZ899-270448 - Multi-Disciplinary Engineering Services, Request for Standing Offer (RFSO), Esquimalt Graving Dock (EGD)",
+      "buyer": "Department of Public Works and Government Services (PSPC)",
+      "closing_date": "2026-11-06",
+      "score": 81,
+      "source": "canadabuys",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 8,
       "title": "Sanitary and Storm Sewer Separation - Phase 4",
       "buyer": "National Research Council of Canada (NRC)",
       "closing_date": "2026-11-10",
@@ -58,18 +102,18 @@
       ]
     },
     {
-      "rank": 5,
-      "title": "Clowes Weir Reconstruction - Rideau Canal National Historic Site of Canada",
-      "buyer": "Parks Canada Agency (PC)",
-      "closing_date": "2026-10-08",
-      "score": 80,
+      "rank": 9,
+      "title": "Advance Procurement Notice - Independent Certifier for Alexandra Bridge Replacement Project",
+      "buyer": "Department of Public Works and Government Services (PSPC)",
+      "closing_date": "2026-10-27",
+      "score": 79,
       "source": "canadabuys",
       "flags": [
         "value_unknown"
       ]
     },
     {
-      "rank": 6,
+      "rank": 10,
       "title": "APN - RP OPS and CFHA Base Program , Nunavut",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2029-03-31",
@@ -81,7 +125,7 @@
       ]
     },
     {
-      "rank": 7,
+      "rank": 11,
       "title": "CONSTRUCTION MANAGEMENT SERVICES, WHITEHORSE CADET TRAINING CENTRE  WHITEHORSE",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2026-10-12",
@@ -92,7 +136,7 @@
       ]
     },
     {
-      "rank": 8,
+      "rank": 12,
       "title": "Refrigeration and HVAC Services at the Pacific Biological Station (PBS), Nanaimo, British Columbia (B.C.).",
       "buyer": "Department of Fisheries and Oceans (DFO)",
       "closing_date": "2026-10-13",
@@ -103,7 +147,7 @@
       ]
     },
     {
-      "rank": 9,
+      "rank": 13,
       "title": "Sustainable Northern Operations: Water & Waste",
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-10-20",
@@ -114,7 +158,7 @@
       ]
     },
     {
-      "rank": 10,
+      "rank": 14,
       "title": "Community Residential Facilities",
       "buyer": "Correctional Service of Canada (CSC)",
       "closing_date": "2026-12-31",
@@ -125,7 +169,7 @@
       ]
     },
     {
-      "rank": 11,
+      "rank": 15,
       "title": "South Campus Watermain Replacement",
       "buyer": "National Research Council of Canada (NRC)",
       "closing_date": "2026-10-08",
@@ -136,19 +180,7 @@
       ]
     },
     {
-      "rank": 12,
-      "title": "APN_Construct Warehouse (CADSS/MAJAID), Trenton ON",
-      "buyer": "Defence Construction Canada - Ontario Region",
-      "closing_date": "2026-10-27",
-      "score": 68,
-      "source": "canadabuys",
-      "flags": [
-        "trade_unmapped",
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 13,
+      "rank": 16,
       "title": "RF Data Fusion for Command and Control",
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-10-20",
@@ -159,7 +191,7 @@
       ]
     },
     {
-      "rank": 14,
+      "rank": 17,
       "title": "Environmental Consultant Services in Nunavut",
       "buyer": "Defence Construction Canada / Construction de Défense Canada",
       "closing_date": "2026-10-28",
@@ -171,7 +203,7 @@
       ]
     },
     {
-      "rank": 15,
+      "rank": 18,
       "title": "APN - NORAD Northern Basing Infrastructure (NNBI), NWT",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2026-11-30",
@@ -183,7 +215,7 @@
       ]
     },
     {
-      "rank": 16,
+      "rank": 19,
       "title": "APN - Facilities Maintenance and Support Services Northern Canada",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2026-11-30",
@@ -195,7 +227,7 @@
       ]
     },
     {
-      "rank": 17,
+      "rank": 20,
       "title": "EQ754-270295 - Nassau Mills Dam at Lock 22 Replacement",
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-10-22",
@@ -207,19 +239,19 @@
       ]
     },
     {
-      "rank": 18,
-      "title": "Dental Chairs and Accessories for Multiple Sites in Ontario region",
-      "buyer": "Correctional Service of Canada (CSC)",
-      "closing_date": "2026-10-16",
-      "score": 65,
+      "rank": 21,
+      "title": "APN_Construct Warehouse (CADSS/MAJAID), Trenton ON",
+      "buyer": "Defence Construction Canada - Ontario Region",
+      "closing_date": "2026-10-27",
+      "score": 66,
       "source": "canadabuys",
       "flags": [
-        "trade_family_only",
+        "trade_unmapped",
         "value_unknown"
       ]
     },
     {
-      "rank": 19,
+      "rank": 22,
       "title": "Plumbing Services, AAFC, Saskatoon Research and Development Centre",
       "buyer": "Department of Agriculture and Agri-Food (AAFC)",
       "closing_date": "2026-10-13",
@@ -230,7 +262,7 @@
       ]
     },
     {
-      "rank": 20,
+      "rank": 23,
       "title": "APN - NORAD Northern Basing Infrastructure (NNBI), Nunavut",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2027-01-11",
@@ -242,47 +274,11 @@
       ]
     },
     {
-      "rank": 21,
-      "title": "Request for Information for  Electronic Occupational Health Record System  for RCMP",
-      "buyer": "Department of Public Works and Government Services (PSPC)",
-      "closing_date": "2026-11-01",
-      "score": 62,
-      "source": "canadabuys",
-      "flags": [
-        "trade_unmapped",
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 22,
-      "title": "Contaminated Sites Assessment and Monitoring Services SL",
-      "buyer": "Defence Construction Canada / Construction de Défense Canada",
-      "closing_date": "2026-11-03",
-      "score": 62,
-      "source": "canadabuys",
-      "flags": [
-        "trade_unmapped",
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 23,
-      "title": "Industry Sustainment Business Case Analysis (SBCA) Workshop",
-      "buyer": "Department of Public Works and Government Services (PSPC)",
-      "closing_date": "2026-12-31",
-      "score": 62,
-      "source": "canadabuys",
-      "flags": [
-        "trade_unmapped",
-        "value_unknown"
-      ]
-    },
-    {
       "rank": 24,
-      "title": "Project Manager  – Level 3",
-      "buyer": "Department of Industry (ISED)",
-      "closing_date": "2026-10-16",
-      "score": 60,
+      "title": "Step 2 for 2 Service Battalion HQ Administration Company Building",
+      "buyer": "Defence Construction Canada / Construction de Défense Canada",
+      "closing_date": "2026-10-14",
+      "score": 62,
       "source": "canadabuys",
       "flags": [
         "trade_unmapped",
@@ -291,10 +287,10 @@
     },
     {
       "rank": 25,
-      "title": "MS DYNAMICS 365 DIGITAL PLATFORM FOR THE GRANTS AND CONTRIBUTIONS INFORMATION MANAGEMENT SYSTEM (GCIMS)",
-      "buyer": "Office of Infrastructure of Canada (INFC)",
-      "closing_date": "2026-10-19",
-      "score": 60,
+      "title": "Request for Information for  Electronic Occupational Health Record System  for RCMP",
+      "buyer": "Department of Public Works and Government Services (PSPC)",
+      "closing_date": "2026-11-01",
+      "score": 62,
       "source": "canadabuys",
       "flags": [
         "trade_unmapped",

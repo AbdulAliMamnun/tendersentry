@@ -14,9 +14,9 @@
       "scale_source": "estimated_model"
     },
     {
-      "title": "Walpole Island Swing Bridge Health and Safety Repairs",
-      "buyer": "Department of Public Works and Government Services (PSPC)",
-      "closing_date": "2026-10-22",
+      "title": "Wharf Repairs - Harbour Breton, NL",
+      "buyer": "Department of Fisheries and Oceans (DFO)",
+      "closing_date": "2026-10-21",
       "source": "canadabuys",
       "score": 89,
       "scale_band": "$100–500K",
@@ -42,5 +42,5 @@
     "verification": "exact substring, re-read from the source PDF at generation",
     "reason": "Requires fax submission — this firm submits electronically only."
   },
-  "candidate_count": 155
+  "candidate_count": 159
 }
