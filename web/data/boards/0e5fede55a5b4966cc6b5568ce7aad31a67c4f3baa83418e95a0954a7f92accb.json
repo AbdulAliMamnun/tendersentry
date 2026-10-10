@@ -12,8 +12,8 @@
       "quebec"
     ]
   },
-  "generated_at": "2026-10-09T16:53:12+00:00",
-  "candidate_count": 498,
+  "generated_at": "2026-10-10T15:49:25+00:00",
+  "candidate_count": 500,
   "board": [
     {
       "rank": 1,
@@ -149,83 +149,6 @@
     },
     {
       "rank": 13,
-      "title": "Services professionnels pour la réfection du poste de pompage sanitaire Martel",
-      "buyer": "Ville de Chambly",
-      "closing_date": "2026-10-19",
-      "score": 89,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 14,
-      "title": "2503-21-1103 - Contrat suivant la qualif. en travaux complexes de const. ou d'ouvrage d'art, selon liste en vigueur au dépôt de la soumission, pour la construction d'un échangeur, de l'autoroute A-640 et Ave. Urbanova (Terrebonne)",
-      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
-      "closing_date": "2026-10-19",
-      "score": 89,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 15,
-      "title": "6603-26-0224 - Travaux de maintien du tablier du Pont de Québec P-04925 sur la route 175 (Lévis)",
-      "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
-      "closing_date": "2026-10-19",
-      "score": 89,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 16,
-      "title": "Exploitation de l'usine de traitement des eaux usées et postes de pompage",
-      "buyer": "Municipalité de Saint-Alphonse-de-Granby.",
-      "closing_date": "2026-10-20",
-      "score": 89,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 17,
-      "title": "Services professionnels pour la réfection des ponts PO-01 et PO-02",
-      "buyer": "Ville de Sept-Îles",
-      "closing_date": "2026-10-20",
-      "score": 89,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 18,
-      "title": "Services professionnels de gestion et surveillance des travaux d'infrastructures municipales dans l'arrondissement de Villeray–Saint-Michel–Parc-Extension",
-      "buyer": "Ville de Montréal - Arrondissement de Villeray—Saint-Michel—Parc-Extension",
-      "closing_date": "2026-10-20",
-      "score": 89,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 19,
-      "title": "Services professionnels pour la préparation des plans et devis pour la consolidation du barrage Davignon",
-      "buyer": "Ville de Cowansville",
-      "closing_date": "2026-10-20",
-      "score": 89,
-      "source": "seao",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 20,
       "title": "Service de nettoyage et d'inspection télévisée des conduites d'égouts incluant le transport et la disposition des résidus - Multi arrondissements",
       "buyer": "Ville de Montréal - Service de l'approvisionnement",
       "closing_date": "2026-10-20",
@@ -236,7 +159,7 @@
       ]
     },
     {
-      "rank": 21,
+      "rank": 14,
       "title": "Côte-Nord / CA Forestville - Remplacement d'un réservoir d'huile usée",
       "buyer": "Hydro-Québec.",
       "closing_date": "2026-10-20",
@@ -247,7 +170,7 @@
       ]
     },
     {
-      "rank": 22,
+      "rank": 15,
       "title": "Nord-du-Québec / Brisay, Fontanges et LA2 - Vidange des réservoirs de fosses septiques",
       "buyer": "Hydro-Québec.",
       "closing_date": "2026-10-20",
@@ -258,7 +181,7 @@
       ]
     },
     {
-      "rank": 23,
+      "rank": 16,
       "title": "INSPECTION DES BORNES D’INCENDIE ET RINÇAGE UNIDIRECTIONNEL DU RÉSEAU D’AQUEDUC",
       "buyer": "Ville de L'Assomption.",
       "closing_date": "2026-10-21",
@@ -269,7 +192,7 @@
       ]
     },
     {
-      "rank": 24,
+      "rank": 17,
       "title": "Services professionnels pour l’augmentation de la capacité et l’amélioration de la station de traitement des eaux usées",
       "buyer": "Ville Saint-Rémi",
       "closing_date": "2026-10-21",
@@ -280,10 +203,87 @@
       ]
     },
     {
-      "rank": 25,
+      "rank": 18,
       "title": "8603-26-0907 - Planage fin, pose d'enrobé, marquage, gestion de la circulation et signalisation sur les autoroutes 15 et 20 (Montérégie)",
       "buyer": "Ministère des Transports et de la Mobilité durable (Direction générale de la gestion contractuelle)",
       "closing_date": "2026-10-21",
+      "score": 89,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 19,
+      "title": "Services professionnels en ingénierie spécialité structures entreposage pour divers bâtiments",
+      "buyer": "Ville de Québec",
+      "closing_date": "2026-10-22",
+      "score": 89,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 20,
+      "title": "Technologie RFID – Bibliothèque Georgette-Lepage - Travaux d’aménagement du rez-de-chaussée et de l’étage",
+      "buyer": "Ville de Brossard",
+      "closing_date": "2026-10-22",
+      "score": 89,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 21,
+      "title": "Travaux de réhabilitation de conduites d'eau secondaires par chemisage et de voirie (réhabilitation) dans diverses rues de la ville de Montréal dans l'arrondissement de CDN",
+      "buyer": "Ville de Montréal / SIRR - Service des infrastructures du réseau routier",
+      "closing_date": "2026-10-22",
+      "score": 89,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 22,
+      "title": "Mise à niveau et mise aux normes du réservoir et des installations de distribution d'eau potable",
+      "buyer": "Municipalité de Sainte-Martine.",
+      "closing_date": "2026-10-22",
+      "score": 89,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 23,
+      "title": "Plan directeur du réseau d'égout pluvial",
+      "buyer": "Ville de Saint-Hyacinthe .",
+      "closing_date": "2026-10-23",
+      "score": 89,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 24,
+      "title": "Marquage de chaussée 2027-2029",
+      "buyer": "Ville de Mont-Royal.",
+      "closing_date": "2026-10-26",
+      "score": 89,
+      "source": "seao",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 25,
+      "title": "Services professionnels en ingénierie de la circulation, de la signalisation, du marquage et de la sécurité routière",
+      "buyer": "Ville de Lévis.",
+      "closing_date": "2026-10-26",
       "score": 89,
       "source": "seao",
       "flags": [

@@ -10,8 +10,8 @@
       "ontario_any"
     ]
   },
-  "generated_at": "2026-10-09T16:53:12+00:00",
-  "candidate_count": 161,
+  "generated_at": "2026-10-10T15:49:25+00:00",
+  "candidate_count": 164,
   "board": [
     {
       "rank": 1,
@@ -70,17 +70,6 @@
     },
     {
       "rank": 6,
-      "title": "Whitby South Shore Protection",
-      "buyer": "Department of Fisheries and Oceans (DFO)",
-      "closing_date": "2026-10-14",
-      "score": 85,
-      "source": "canadabuys",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 7,
       "title": "Clowes Weir Reconstruction - Rideau Canal National Historic Site of Canada",
       "buyer": "Parks Canada Agency (PC)",
       "closing_date": "2026-10-15",
@@ -91,18 +80,7 @@
       ]
     },
     {
-      "rank": 8,
-      "title": "Analysis of Wastewater, Sludge/Biosolids, Leachate and Other Complex Environmental Matrices for Metformin and Guanylurea to Environment and Climate Change Canada",
-      "buyer": "Department of the Environment (ECCC )",
-      "closing_date": "2026-10-30",
-      "score": 81,
-      "source": "canadabuys",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 9,
+      "rank": 7,
       "title": "EZ899-270448 - Multi-Disciplinary Engineering Services, Request for Standing Offer (RFSO), Esquimalt Graving Dock (EGD)",
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-11-06",
@@ -113,7 +91,7 @@
       ]
     },
     {
-      "rank": 10,
+      "rank": 8,
       "title": "Sanitary and Storm Sewer Separation - Phase 4",
       "buyer": "National Research Council of Canada (NRC)",
       "closing_date": "2026-11-10",
@@ -124,7 +102,18 @@
       ]
     },
     {
-      "rank": 11,
+      "rank": 9,
+      "title": "Whitby South Shore Protection",
+      "buyer": "Department of Fisheries and Oceans (DFO)",
+      "closing_date": "2026-10-14",
+      "score": 80,
+      "source": "canadabuys",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 10,
       "title": "Advance Procurement Notice - Independent Certifier for Alexandra Bridge Replacement Project",
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-10-27",
@@ -135,10 +124,21 @@
       ]
     },
     {
-      "rank": 12,
+      "rank": 11,
       "title": "Advance Procurement Notice - Independent Certifier for Alexandra Bridge Replacement Project",
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-10-28",
+      "score": 79,
+      "source": "canadabuys",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 12,
+      "title": "Analysis of Wastewater, Sludge/Biosolids, Leachate and Other Complex Environmental Matrices for Metformin and Guanylurea to Environment and Climate Change Canada",
+      "buyer": "Department of the Environment (ECCC )",
+      "closing_date": "2026-10-30",
       "score": 79,
       "source": "canadabuys",
       "flags": [
@@ -286,9 +286,9 @@
     },
     {
       "rank": 25,
-      "title": "Step 2 for 2 Service Battalion HQ Administration Company Building",
-      "buyer": "Defence Construction Canada / Construction de Défense Canada",
-      "closing_date": "2026-10-14",
+      "title": "Request for Information for  Electronic Occupational Health Record System  for RCMP",
+      "buyer": "Department of Public Works and Government Services (PSPC)",
+      "closing_date": "2026-11-01",
       "score": 62,
       "source": "canadabuys",
       "flags": [
