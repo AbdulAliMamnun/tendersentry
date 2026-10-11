@@ -10,22 +10,11 @@
       "ontario_any"
     ]
   },
-  "generated_at": "2026-10-10T15:49:25+00:00",
+  "generated_at": "2026-10-11T16:12:56+00:00",
   "candidate_count": 164,
   "board": [
     {
       "rank": 1,
-      "title": "EQ754-261464 Long Lake and Little Brother Lake Dam Replacement Site Resident Services",
-      "buyer": "Department of Public Works and Government Services (PSPC)",
-      "closing_date": "2026-10-20",
-      "score": 89,
-      "source": "canadabuys",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 2,
       "title": "Wharf Repairs - Harbour Breton, NL",
       "buyer": "Department of Fisheries and Oceans (DFO)",
       "closing_date": "2026-10-21",
@@ -36,7 +25,7 @@
       ]
     },
     {
-      "rank": 3,
+      "rank": 2,
       "title": "Walpole Island Swing Bridge Health and Safety Repairs",
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-10-22",
@@ -47,7 +36,7 @@
       ]
     },
     {
-      "rank": 4,
+      "rank": 3,
       "title": "Wharf Repairs - Musgrave Harbour, NL",
       "buyer": "Department of Fisheries and Oceans (DFO)",
       "closing_date": "2026-10-22",
@@ -58,7 +47,7 @@
       ]
     },
     {
-      "rank": 5,
+      "rank": 4,
       "title": "Wharf Repairs - North Rustico, PEI",
       "buyer": "Department of Fisheries and Oceans (DFO)",
       "closing_date": "2026-10-26",
@@ -69,10 +58,10 @@
       ]
     },
     {
-      "rank": 6,
-      "title": "Clowes Weir Reconstruction - Rideau Canal National Historic Site of Canada",
-      "buyer": "Parks Canada Agency (PC)",
-      "closing_date": "2026-10-15",
+      "rank": 5,
+      "title": "EQ754-261464 Long Lake and Little Brother Lake Dam Replacement Site Resident Services",
+      "buyer": "Department of Public Works and Government Services (PSPC)",
+      "closing_date": "2026-10-20",
       "score": 85,
       "source": "canadabuys",
       "flags": [
@@ -80,7 +69,7 @@
       ]
     },
     {
-      "rank": 7,
+      "rank": 6,
       "title": "EZ899-270448 - Multi-Disciplinary Engineering Services, Request for Standing Offer (RFSO), Esquimalt Graving Dock (EGD)",
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-11-06",
@@ -91,7 +80,7 @@
       ]
     },
     {
-      "rank": 8,
+      "rank": 7,
       "title": "Sanitary and Storm Sewer Separation - Phase 4",
       "buyer": "National Research Council of Canada (NRC)",
       "closing_date": "2026-11-10",
@@ -102,10 +91,21 @@
       ]
     },
     {
-      "rank": 9,
+      "rank": 8,
       "title": "Whitby South Shore Protection",
       "buyer": "Department of Fisheries and Oceans (DFO)",
       "closing_date": "2026-10-14",
+      "score": 80,
+      "source": "canadabuys",
+      "flags": [
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 9,
+      "title": "Clowes Weir Reconstruction - Rideau Canal National Historic Site of Canada",
+      "buyer": "Parks Canada Agency (PC)",
+      "closing_date": "2026-10-15",
       "score": 80,
       "source": "canadabuys",
       "flags": [
@@ -159,17 +159,6 @@
     },
     {
       "rank": 14,
-      "title": "Sustainable Northern Operations: Water & Waste",
-      "buyer": "Department of Public Works and Government Services (PSPC)",
-      "closing_date": "2026-10-20",
-      "score": 71,
-      "source": "canadabuys",
-      "flags": [
-        "value_unknown"
-      ]
-    },
-    {
-      "rank": 15,
       "title": "Community Residential Facilities",
       "buyer": "Correctional Service of Canada (CSC)",
       "closing_date": "2026-12-31",
@@ -180,7 +169,7 @@
       ]
     },
     {
-      "rank": 16,
+      "rank": 15,
       "title": "CONSTRUCTION MANAGEMENT SERVICES, WHITEHORSE CADET TRAINING CENTRE  WHITEHORSE",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2026-10-12",
@@ -191,7 +180,7 @@
       ]
     },
     {
-      "rank": 17,
+      "rank": 16,
       "title": "Refrigeration and HVAC Services at the Pacific Biological Station (PBS), Nanaimo, British Columbia (B.C.).",
       "buyer": "Department of Fisheries and Oceans (DFO)",
       "closing_date": "2026-10-13",
@@ -202,7 +191,7 @@
       ]
     },
     {
-      "rank": 18,
+      "rank": 17,
       "title": "RF Data Fusion for Command and Control",
       "buyer": "Department of Public Works and Government Services (PSPC)",
       "closing_date": "2026-10-29",
@@ -213,7 +202,7 @@
       ]
     },
     {
-      "rank": 19,
+      "rank": 18,
       "title": "APN - NORAD Northern Basing Infrastructure (NNBI), NWT",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2026-11-30",
@@ -225,7 +214,7 @@
       ]
     },
     {
-      "rank": 20,
+      "rank": 19,
       "title": "APN - Facilities Maintenance and Support Services Northern Canada",
       "buyer": "Defence Construction Canada - National Capital Region",
       "closing_date": "2026-11-30",
@@ -233,6 +222,17 @@
       "source": "canadabuys",
       "flags": [
         "trade_family_only",
+        "value_unknown"
+      ]
+    },
+    {
+      "rank": 20,
+      "title": "Sustainable Northern Operations: Water & Waste",
+      "buyer": "Department of Public Works and Government Services (PSPC)",
+      "closing_date": "2026-10-20",
+      "score": 67,
+      "source": "canadabuys",
+      "flags": [
         "value_unknown"
       ]
     },
